@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/BookItNow.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/Gallery.dart';
+import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,8 +16,8 @@ import 'Room.dart';
 import 'maps.dart';
 
 class hotelDetail2 extends StatefulWidget {
-  String imageD, titleD, locationD, idD, typeD, userId;
-  List<String> photoD, serviceD, descriptionD;
+  String imageD, titleD, locationD, idD, typeD, userId, descriptionD;
+  List<String> photoD, serviceD;
   num ratingD, priceD, latLang1D, latLang2D;
 
   hotelDetail2(
@@ -41,6 +42,7 @@ class hotelDetail2 extends StatefulWidget {
 class _hotelDetail2State extends State<hotelDetail2> {
   /// Check user
   bool _checkUser = true;
+
   _checkFirst() async {
     SharedPreferences prefs;
     prefs = await SharedPreferences.getInstance();
@@ -63,43 +65,14 @@ class _hotelDetail2State extends State<hotelDetail2> {
 
   String _nama, _photoProfile, _email;
 
-  void _getData() {
-    StreamBuilder(
-      stream: Firestore.instance
-          .collection('users')
-          .document(widget.userId)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return new Text("Loading");
-        } else {
-          var userDocument = snapshot.data;
-          _nama = userDocument["name"];
-          _email = userDocument["email"];
-          _photoProfile = userDocument["photoProfile"];
 
-          setState(() {
-            var userDocument = snapshot.data;
-            _nama = userDocument["name"];
-            _email = userDocument["email"];
-            _photoProfile = userDocument["photoProfile"];
-          });
-        }
-
-        var userDocument = snapshot.data;
-        return Stack(
-          children: <Widget>[Text(userDocument["name"])],
-        );
-      },
-    );
-  }
 
   String _book = "Book Now";
 
   final Set<Marker> _markers = {};
 
   void initState() {
-    _getData();
+    // _getData();
     _checkFirst();
     _markers.add(
       Marker(
@@ -114,47 +87,7 @@ class _hotelDetail2State extends State<hotelDetail2> {
 
   @override
   Widget build(BuildContext context) {
-    void addDataBooking() {
-      Firestore.instance.runTransaction((Transaction transaction) async {
-        Firestore.instance
-            .collection("Booking")
-            .document("user")
-            .collection(widget.titleD)
-            .document(widget.userId)
-            .setData({
-          "Name": _nama,
-          "photoProfile": _photoProfile,
-          "Email": _email,
-          "user ID": widget.userId
-        });
-      });
-    }
 
-    void userSaved() {
-      Firestore.instance.runTransaction((Transaction transaction) async {
-        SharedPreferences prefs;
-        prefs = await SharedPreferences.getInstance();
-        Firestore.instance
-            .collection("users")
-            .document(widget.userId)
-            .collection('Booking')
-            .add({
-          "title": widget.titleD,
-          "image": widget.imageD,
-          "price": widget.priceD,
-          "location": widget.locationD,
-          "id": widget.idD,
-          "photo": widget.photoD,
-          "service": widget.serviceD,
-          "description": widget.descriptionD,
-          "userID": widget.userId,
-          "type": widget.typeD,
-          "latLang1": widget.latLang1D,
-          "latLang2": widget.latLang2D,
-          "rating": widget.ratingD
-        });
-      });
-    }
 
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
@@ -236,7 +169,7 @@ class _hotelDetail2State extends State<hotelDetail2> {
                   title: widget.titleD,
                   price: widget.priceD,
                   location: widget.locationD,
-                  ratting: widget.ratingD),
+                  ratting: double.parse(widget.ratingD.toString())),
               pinned: true,
             ),
 
@@ -255,9 +188,9 @@ class _hotelDetail2State extends State<hotelDetail2> {
                         return new Text("Loading");
                       } else {
                         var userDocument = snapshot.data;
-                        _nama = userDocument["name"];
-                        _email = userDocument["email"];
-                        _photoProfile = userDocument["photoProfile"];
+                        // _nama = userDocument["name"];
+                        // _email = userDocument["email"];
+                        // _photoProfile = userDocument["photoProfile"];
                       }
 
                       var userDocument = snapshot.data;
@@ -282,35 +215,33 @@ class _hotelDetail2State extends State<hotelDetail2> {
                     padding: const EdgeInsets.only(
                         top: 0.0, left: 20.0, right: 20.0, bottom: 0.0),
                     child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: widget.descriptionD
-                            .map((item) => Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10.0, left: 10.0, bottom: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                1.3,
-                                        child: new Text(
-                                          item,
-                                          textAlign: TextAlign.justify,
-                                          style: TextStyle(
-                                              fontFamily: "Sofia",
-                                              color: Colors.black54,
-                                              fontSize: 18.0),
-                                          overflow: TextOverflow.clip,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ))
-                            .toList()),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10.0, left: 10.0, bottom: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width / 1.3,
+                                child: new Text(
+                                  widget.descriptionD,
+                                  textAlign: TextAlign.justify,
+                                  style: TextStyle(
+                                      fontFamily: "Sofia",
+                                      color: Colors.black54,
+                                      fontSize: 18.0),
+                                  overflow: TextOverflow.clip,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
 
                   /// Location
@@ -425,7 +356,7 @@ class _hotelDetail2State extends State<hotelDetail2> {
                               width: MediaQuery.of(context).size.width / 3,
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: NetworkImage(widget.photoD[1]),
+                                      image: NetworkImage(AppStrings.imagePAth+widget.photoD[0]),
                                       fit: BoxFit.cover)),
                             ),
                             Container(
@@ -433,7 +364,7 @@ class _hotelDetail2State extends State<hotelDetail2> {
                               width: MediaQuery.of(context).size.width / 3,
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: NetworkImage(widget.photoD[2]),
+                                      image: NetworkImage(AppStrings.imagePAth+widget.photoD[1]),
                                       fit: BoxFit.cover)),
                             ),
                             Container(
@@ -441,7 +372,7 @@ class _hotelDetail2State extends State<hotelDetail2> {
                               width: MediaQuery.of(context).size.width / 3,
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: NetworkImage(widget.photoD[3]),
+                                      image: NetworkImage(AppStrings.imagePAth+widget.photoD[2]),
                                       fit: BoxFit.cover)),
                             ),
                           ],
@@ -655,7 +586,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
               decoration: new BoxDecoration(
                 image: new DecorationImage(
                   fit: BoxFit.cover,
-                  image: new NetworkImage(img),
+                  image: new NetworkImage(AppStrings.imagePAth+img),
                 ),
                 shape: BoxShape.rectangle,
               ),
@@ -1013,6 +944,7 @@ Widget _relatedPost(String image, title, location, ratting) {
 
 class reviewList extends StatelessWidget {
   String image, name, time;
+
   reviewList({this.image, this.name, this.time});
 
   @override

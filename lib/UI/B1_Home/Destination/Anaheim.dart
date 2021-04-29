@@ -1,37 +1,61 @@
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/bloc/HomeBloc.dart';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HomeResponse.dart';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HotelByLocationResponse.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/DataSample/travelModelData.dart';
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
 
-class Anaheim extends StatefulWidget {
+class PopularDestination extends StatefulWidget {
   String title, userId;
-  Anaheim({this.title, this.userId});
+  var destinations;
+
+  PopularDestination({this.title, this.userId, this.destinations});
 
   @override
-  _AnaheimState createState() => _AnaheimState();
+  _PopularDestinationState createState() => _PopularDestinationState();
 }
 
-class _AnaheimState extends State<Anaheim> {
+class _PopularDestinationState extends State<PopularDestination> {
+  HomeBloc _homeBloc;
+  AppConstantHelper _appConstantHelper;
+
+  @override
+  void initState() {
+    _homeBloc = HomeBloc();
+    _appConstantHelper = AppConstantHelper();
+    _appConstantHelper.setContext(context);
+    getHotelByLocationFromServer();
+    super.initState();
+  }
+
+  void getHotelByLocationFromServer() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        _homeBloc.getHotelByLocationCategory(
+            context: context, location: widget.title);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var onClickMenuIcon = () {
-      Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (_, __, ___) => new Home(),
-          transitionDuration: Duration(milliseconds: 750),
-
-          /// Set animation with opacity
-          transitionsBuilder:
-              (_, Animation<double> animation, __, Widget child) {
-            return Opacity(
-              opacity: animation.value,
-              child: child,
-            );
-          }));
-    };
-
     var _appBar = PreferredSize(
       preferredSize: Size.fromHeight(45.0),
       child: AppBar(
@@ -60,7 +84,7 @@ class _AnaheimState extends State<Anaheim> {
           child: Container(
               width: MediaQuery.of(context).size.width - 10.0,
               child: Text(
-                "Anaheim is a city outside Los Angeles, in Southern California. It's home to the Disneyland Resort, a massive complex of family-friendly, Disney-themed rides, restaurants, hotels and shops. The city's also home to pro sports teams.",
+                "${widget.destinations.description}",
                 style: TextStyle(
                     fontFamily: "Sofia",
                     fontWeight: FontWeight.w300,
@@ -73,7 +97,104 @@ class _AnaheimState extends State<Anaheim> {
       ],
     );
 
-    var _topAnaheim = Column(
+    return Scaffold(
+      appBar: _appBar,
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  height: 250.0,
+                  child: widget.destinations.images != null &&
+                          widget.destinations.images.length > 0
+                      ? new Carousel(
+                          boxFit: BoxFit.cover,
+                          dotColor: Colors.white.withOpacity(0.8),
+                          dotSize: 5.5,
+                          dotSpacing: 16.0,
+                          dotBgColor: Colors.transparent,
+                          showIndicator: true,
+                          overlayShadow: true,
+                          overlayShadowColors: Colors.white.withOpacity(0.9),
+                          overlayShadowSize: 0.9,
+                          images: widget.destinations.images.map((i) {
+                            return InkWell(
+                              onTap: () {},
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: FractionalOffset(0.0, 0.0),
+                                    end: FractionalOffset(0.0, 1.0),
+                                    stops: [0.0, 1.0],
+                                    colors: <Color>[
+                                      Color(0x00FFFFFF),
+                                      Color(0xFFFFFFFF),
+                                    ],
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 9.0,
+                                        spreadRadius: 7.0,
+                                        color: Colors.black12.withOpacity(0.03))
+                                  ],
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                          AppStrings.imagePAth + i),
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        )
+                      : Container(
+                          height: 190.0,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: NetworkImage(
+                                      "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
+                                  fit: BoxFit.cover)),
+                        ),
+                ),
+
+                SizedBox(
+                  height: 20.0,
+                ),
+
+                /// Description
+                _description,
+
+                /// Category
+                // _category,
+
+                /// Top Anaheim
+                ///
+                _topAnaheim(),
+
+                /// Recommended
+                _recommended(),
+              ],
+            ),
+          ),
+          StreamBuilder<bool>(
+            stream: _homeBloc.progressStream,
+            builder: (context, snapshot) {
+              return Center(
+                  child: CommmonProgressIndicator(
+                      snapshot.hasData ? snapshot.data : false));
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _topAnaheim() {
+    return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -90,12 +211,10 @@ class _AnaheimState extends State<Anaheim> {
         SizedBox(height: 5.0),
         Container(
           height: 320.0,
-          child: StreamBuilder(
-            stream: Firestore.instance
-                .collection("discover")
-                .where("location", isEqualTo: 'Anaheim')
-                .snapshots(),
-            builder: (BuildContext ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
+          child: StreamBuilder<HotelByLocationResponse>(
+            initialData: null,
+            stream: _homeBloc.hotelByLocationCategoryDataStream,
+            builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return new Container(
                   height: 190.0,
@@ -106,10 +225,14 @@ class _AnaheimState extends State<Anaheim> {
                               "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                 );
               }
-              return snapshot.hasData
+              return snapshot.hasData &&
+                      snapshot.data != null &&
+                      snapshot.data.data != null &&
+                      snapshot.data.data.top != null &&
+                      snapshot.data.data.top.length > 0
                   ? new card(
                       dataUser: widget.userId,
-                      list: snapshot.data.documents,
+                      list: snapshot.data.data.top,
                     )
                   : Container(
                       height: 10.0,
@@ -122,15 +245,17 @@ class _AnaheimState extends State<Anaheim> {
         ),
       ],
     );
+  }
 
-    var _recommended = Column(
+  Widget _recommended() {
+    return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(left: 22.0),
           child: Text(
-            "Hotels in Anaheim",
+            "Hotels in ${widget.title}",
             style: TextStyle(
                 fontFamily: "Sofia",
                 fontSize: 20.0,
@@ -139,12 +264,10 @@ class _AnaheimState extends State<Anaheim> {
         ),
         Padding(
           padding: EdgeInsets.only(left: 5.0),
-          child: StreamBuilder(
-            stream: Firestore.instance
-                .collection("hotel")
-                .where('location', isEqualTo: 'Anaheim')
-                .snapshots(),
-            builder: (BuildContext ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
+          child: StreamBuilder<HotelByLocationResponse>(
+            initialData: null,
+            stream: _homeBloc.hotelByLocationCategoryDataStream,
+            builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return new Container(
                   height: 190.0,
@@ -155,10 +278,14 @@ class _AnaheimState extends State<Anaheim> {
                               "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                 );
               }
-              return snapshot.hasData
-                  ? new cardList(
+              return snapshot.hasData &&
+                      snapshot.data != null &&
+                      snapshot.data.data != null &&
+                      snapshot.data.data.all != null &&
+                      snapshot.data.data.all.length > 0
+                  ? new CardList(
                       dataUser: widget.userId,
-                      list: snapshot.data.documents,
+                      list: snapshot.data.data.all,
                     )
                   : Container(
                       height: 10.0,
@@ -171,119 +298,13 @@ class _AnaheimState extends State<Anaheim> {
         ),
       ],
     );
-
-    Future getCarouselWidget() async {
-      var firestore = Firestore.instance;
-      QuerySnapshot qn = await firestore
-          .collection("banner")
-          .where("location", isEqualTo: "Anaheim")
-          .getDocuments();
-      return qn.documents;
-    }
-
-    return Scaffold(
-      appBar: _appBar,
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: 250.0,
-              child: new Carousel(
-                boxFit: BoxFit.cover,
-                dotColor: Colors.white.withOpacity(0.8),
-                dotSize: 5.5,
-                dotSpacing: 16.0,
-                dotBgColor: Colors.transparent,
-                showIndicator: true,
-                overlayShadow: true,
-                overlayShadowColors: Colors.white.withOpacity(0.9),
-                overlayShadowSize: 0.9,
-                images: [0, 1, 2].map((i) {
-                  return FutureBuilder(
-                      future: getCarouselWidget(),
-                      builder: (context, AsyncSnapshot snapshot) {
-                        if (!snapshot.hasData) {
-                          return new Container(
-                            height: 190.0,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: NetworkImage(
-                                        "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
-                                    fit: BoxFit.cover)),
-                          );
-                        }
-
-                        // List<String> ingredients =
-                        //     List.from(snapshot.data[i].data['ingredients']);
-                        // List<String> directions =
-                        //     List.from(snapshot.data[i].data['directions']);
-                        // String title = snapshot.data[i].data['title'].toString();
-                        // num rating = snapshot.data[i].data['rating'];
-                        // String category = snapshot.data[i].data['category'].toString();
-                        // String image = snapshot.data[i].data['image'].toString();
-                        // String id = snapshot.data[i].data['id'].toString();
-                        // String time = snapshot.data[i].data['time'].toString();
-                        // String calorie = snapshot.data[i].data['calorie'].toString();
-                        return InkWell(
-                          onTap: () {},
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: FractionalOffset(0.0, 0.0),
-                                end: FractionalOffset(0.0, 1.0),
-                                stops: [0.0, 1.0],
-                                colors: <Color>[
-                                  Color(0x00FFFFFF),
-                                  Color(0xFFFFFFFF),
-                                ],
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 9.0,
-                                    spreadRadius: 7.0,
-                                    color: Colors.black12.withOpacity(0.03))
-                              ],
-                              image: DecorationImage(
-                                  image: NetworkImage(
-                                      snapshot.data[i].data["imageBanner"]),
-                                  fit: BoxFit.cover),
-                            ),
-                          ),
-                        );
-                      });
-                }).toList(),
-              ),
-            ),
-
-            SizedBox(
-              height: 20.0,
-            ),
-
-            /// Description
-            _description,
-
-            /// Category
-            // _category,
-
-            /// Top Anaheim
-            _topAnaheim,
-
-            /// Recommended
-            _recommended,
-          ],
-        ),
-      ),
-    );
   }
 }
 
 class card extends StatelessWidget {
   String dataUser;
-  final List<DocumentSnapshot> list;
+  final List<HotelLocationTopChoicesData> list;
+
   card({this.dataUser, this.list});
 
   @override
@@ -294,18 +315,18 @@ class card extends StatelessWidget {
         primary: false,
         itemCount: list.length,
         itemBuilder: (context, i) {
-          List<String> photo = List.from(list[i].data['photo']);
-          List<String> service = List.from(list[i].data['service']);
-          List<String> description = List.from(list[i].data['description']);
-          String title = list[i].data['title'].toString();
-          String type = list[i].data['type'].toString();
-          num rating = list[i].data['rating'];
-          String location = list[i].data['location'].toString();
-          String image = list[i].data['image'].toString();
-          String id = list[i].data['id'].toString();
-          num price = list[i].data['price'];
-          num latLang1 = list[i].data['latLang1'];
-          num latLang2 = list[i].data['latLang2'];
+          List<String> photo = List.from(list[i].images);
+          List<String> service = List.from(list[i].amenities);
+          String description = list[i].description;
+          String title = list[i].name.toString();
+          String type = list[i].name.toString();
+          num rating = num.parse(list[i].rating.toString());
+          String location = list[i].address.toString();
+          String image = list[i].images.first.toString();
+          String id = list[i].sId.toString();
+          num price = 100;
+          num latLang1 = num.parse(list[i].latitude);
+          num latLang2 = num.parse(list[i].longitude);
 
           return Padding(
             padding: const EdgeInsets.all(8.0),
@@ -341,14 +362,16 @@ class card extends StatelessWidget {
                         }));
                   },
                   child: Hero(
-                    tag: 'hero-tag-${id}',
+                    tag: 'hero-tag-AllChoices-${id}',
                     child: Material(
                       child: Container(
                         height: 220.0,
                         width: 160.0,
                         decoration: BoxDecoration(
                             image: DecorationImage(
-                                image: NetworkImage(image), fit: BoxFit.cover),
+                                image:
+                                    NetworkImage(AppStrings.imagePAth + image),
+                                fit: BoxFit.cover),
                             color: Colors.black12,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0)),
@@ -441,9 +464,9 @@ class card extends StatelessWidget {
   }
 }
 
-class cardList extends StatelessWidget {
+class CardList extends StatelessWidget {
   String dataUser;
-  final List<DocumentSnapshot> list;
+  final List<HotelLocationTopChoicesData> list;
 
   @override
   var _txtStyleTitle = TextStyle(
@@ -460,7 +483,7 @@ class cardList extends StatelessWidget {
     fontWeight: FontWeight.w600,
   );
 
-  cardList({
+  CardList({
     this.dataUser,
     this.list,
   });
@@ -470,20 +493,20 @@ class cardList extends StatelessWidget {
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         primary: false,
-        itemCount: list.length,
+        itemCount: list.length > 0 ? list.length : 0,
         itemBuilder: (context, i) {
-          List<String> photo = List.from(list[i].data['photo']);
-          List<String> service = List.from(list[i].data['service']);
-          List<String> description = List.from(list[i].data['description']);
-          String title = list[i].data['title'].toString();
-          String type = list[i].data['type'].toString();
-          num rating = list[i].data['rating'];
-          String location = list[i].data['location'].toString();
-          String image = list[i].data['image'].toString();
-          String id = list[i].data['id'].toString();
-          num price = list[i].data['price'];
-          num latLang1 = list[i].data['latLang1'];
-          num latLang2 = list[i].data['latLang2'];
+          List<String> photo = List.from(list[i].images);
+          List<String> service = List.from(list[i].amenities);
+          String description = list[i].description;
+          String title = list[i].name.toString();
+          String type = list[i].name.toString();
+          num rating = num.parse(list[i].rating.toString());
+          String location = list[i].address.toString();
+          String image = list[i].images.first.toString();
+          String id = list[i].sId.toString();
+          num price = 100;
+          num latLang1 = num.parse(list[i].latitude);
+          num latLang2 = num.parse(list[i].longitude);
 
           return Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
@@ -527,7 +550,7 @@ class cardList extends StatelessWidget {
                     ]),
                 child: Column(children: [
                   Hero(
-                    tag: 'hero-tag-${id}',
+                    tag: 'hero-tag-topChoices-${id}',
                     child: Material(
                       child: Container(
                         height: 165.0,
@@ -537,7 +560,8 @@ class cardList extends StatelessWidget {
                               topRight: Radius.circular(10.0),
                               topLeft: Radius.circular(10.0)),
                           image: DecorationImage(
-                              image: NetworkImage(image), fit: BoxFit.cover),
+                              image: NetworkImage(AppStrings.imagePAth + image),
+                              fit: BoxFit.cover),
                         ),
                         alignment: Alignment.topRight,
                       ),
@@ -564,7 +588,7 @@ class cardList extends StatelessWidget {
                               Row(
                                 children: <Widget>[
                                   ratingbar(
-                                    starRating: rating,
+                                    starRating: double.parse(rating.toString()),
                                     color: Colors.blueAccent,
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 5.0)),
@@ -724,6 +748,7 @@ Widget _card(String image, title, location, ratting) {
 class cardCountry extends StatelessWidget {
   Color colorTop, colorBottom;
   String image, title;
+
   cardCountry({this.colorTop, this.colorBottom, this.title, this.image});
 
   @override

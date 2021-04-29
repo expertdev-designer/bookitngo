@@ -70,6 +70,7 @@ class SimpleVerticalCalendar extends StatefulWidget {
   final CalendarOptions calendarOption;
 
   final void Function(DateTime startDate, DateTime endDate) onDateTap;
+
   SimpleVerticalCalendar({
     this.startDate,
     this.endDate,
@@ -81,6 +82,7 @@ class SimpleVerticalCalendar extends StatefulWidget {
     this.calendarOption = CalendarOptions.RANGE_SELECTION,
     this.dayOfWeek = const ["M", "T", "W", "T", "F", "S", "S"],
   });
+
   @override
   _VerticalCalendarState createState() => _VerticalCalendarState();
 }
@@ -92,6 +94,7 @@ class _VerticalCalendarState extends State<SimpleVerticalCalendar> {
   DateTime startDate;
   DateTime endDate;
   double boxHeight;
+
   _VerticalCalendarState({
     this.current,
     this.startMonth,
@@ -99,6 +102,7 @@ class _VerticalCalendarState extends State<SimpleVerticalCalendar> {
     this.startDate,
     this.endDate,
   });
+
   @override
   void initState() {
     current = DateTime.now();
@@ -144,6 +148,7 @@ class _VerticalCalendarState extends State<SimpleVerticalCalendar> {
       // padding: EdgeInsets.symmetric(horizontal: 35),
       child: ListView.builder(
         itemCount: widget.numOfMonth,
+        shrinkWrap: true,
         itemBuilder: (context, index) {
           DateTime currentListMonth =
               DateTime(current.year, current.month + index, 1);
@@ -214,7 +219,7 @@ class _VerticalCalendarState extends State<SimpleVerticalCalendar> {
                                         ),
                                         margin: EdgeInsets.only(
                                           left: startDate == days[d * 7 + w]
-                                              ? boxHeight/ 2
+                                              ? boxHeight / 2
                                               : 0,
                                           right: endDate == days[d * 7 + w]
                                               ? boxHeight / 2
@@ -273,11 +278,13 @@ class _VerticalCalendarState extends State<SimpleVerticalCalendar> {
                       ),
                 ],
               ),
-              Container(height: 16,color: Colors.grey.withOpacity(0.1),),
+              Container(
+                height: 16,
+                color: Colors.grey.withOpacity(0.1),
+              ),
             ],
           );
         },
-
       ),
     );
   }

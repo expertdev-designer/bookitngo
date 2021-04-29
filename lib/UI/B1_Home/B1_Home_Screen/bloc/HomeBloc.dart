@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HomeResponse.dart';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HotelByLocationResponse.dart';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HotelHotelByCategoryResponse.dart';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
@@ -16,6 +19,32 @@ class HomeBloc {
 
   StreamSink get progressSink => progressController.sink;
 
+  Stream get homeDataStream => homeDataController.stream;
+
+  final BehaviorSubject homeDataController = BehaviorSubject<HomeResponse>();
+
+  StreamSink get homeDataSink => homeDataController.sink;
+
+  Stream get hotelByCategoryDataStream => hotelByCategoryDataController.stream;
+
+  // ignore: close_sinks
+  final BehaviorSubject hotelByCategoryDataController =
+      // ignore: close_sinks
+      BehaviorSubject<HotelByCategoryResponse>();
+
+  StreamSink get hotelByCategoryDataSink => hotelByCategoryDataController.sink;
+
+  Stream get hotelByLocationCategoryDataStream =>
+      hotelByLocationCategoryDataController.stream;
+
+  // ignore: close_sinks
+  final BehaviorSubject hotelByLocationCategoryDataController =
+      // ignore: close_sinks
+      BehaviorSubject<HotelByLocationResponse>();
+
+  StreamSink get hotelByLocationCategoryDataSink =>
+      hotelByLocationCategoryDataController.sink;
+
   ApiRepository apiRepository = ApiRepository();
   AppConstantHelper helper = AppConstantHelper();
 
@@ -28,8 +57,60 @@ class HomeBloc {
         print("Error From Server  " + onResponse.message);
         showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
+        homeDataSink.add(onResponse);
+      }
+      progressSink.add(false);
+    }).catchError((onError) {
+      progressSink.add(false);
+      print("On_Error" + onError.toString());
+      showErrorDialog(context, "Error", onError.toString());
+    });
+  }
 
+  void getHotelByCategory({BuildContext context, String categoryId}) {
+    progressSink.add(true);
+    apiRepository
+        .getHotelByCategoryApi(categoryId: categoryId)
+        .then((onResponse) {
+      if (!onResponse.status) {
+        print("Error From Server  " + onResponse.message);
+        showErrorDialog(context, "Error", onResponse.message);
+      } else if (onResponse.status) {
+        hotelByCategoryDataSink.add(onResponse);
+      }
+      progressSink.add(false);
+    }).catchError((onError) {
+      progressSink.add(false);
+      print("On_Error" + onError.toString());
+      showErrorDialog(context, "Error", onError.toString());
+    });
+  }
 
+  void getRecommendedHotelByCategory({BuildContext context}) {
+    progressSink.add(true);
+    apiRepository.getRecommendedHotelsApi().then((onResponse) {
+      if (!onResponse.status) {
+        print("Error From Server  " + onResponse.message);
+        showErrorDialog(context, "Error", onResponse.message);
+      } else if (onResponse.status) {
+        hotelByCategoryDataSink.add(onResponse);
+      }
+      progressSink.add(false);
+    }).catchError((onError) {
+      progressSink.add(false);
+      print("On_Error" + onError.toString());
+      showErrorDialog(context, "Error", onError.toString());
+    });
+  }
+
+  void getHotelByLocationCategory({BuildContext context, String location}) {
+    progressSink.add(true);
+    apiRepository.getHotelByLocation(location: location).then((onResponse) {
+      if (!onResponse.status) {
+        print("Error From Server  " + onResponse.message);
+        showErrorDialog(context, "Error", onResponse.message);
+      } else if (onResponse.status) {
+        hotelByLocationCategoryDataSink.add(onResponse);
       }
       progressSink.add(false);
     }).catchError((onError) {
@@ -72,6 +153,4 @@ class HomeBloc {
       print('UserImage...........$image');
     });
   }
-
-
 }

@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B4_Booking/BookingDetail.dart';
+import 'package:book_it/UI/B4_Booking/bloc/BookingHistoryBloc.dart';
 import 'package:book_it/UI/Utills/AppColors.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
@@ -27,15 +29,6 @@ class _BookingScreenState extends State<BookingScreen> {
 
   SharedPreferences prefs;
 
-  Future<Null> _function() async {
-    SharedPreferences prefs;
-    prefs = await SharedPreferences.getInstance();
-    this.setState(() {
-      mail = prefs.getString("username") ?? '';
-    });
-  }
-
-  ///
   /// Get image data dummy from firebase server
   ///
   var imageNetwork = NetworkImage(
@@ -45,6 +38,9 @@ class _BookingScreenState extends State<BookingScreen> {
   /// check the condition is right or wrong for image loaded or no
   ///
   bool loadImage = true;
+  BookingHistoryBloc _bookingHistoryBloc;
+  String _error;
+  AppConstantHelper _appConstantHelper;
 
   @override
   void initState() {
@@ -53,8 +49,30 @@ class _BookingScreenState extends State<BookingScreen> {
         loadImage = false;
       });
     });
-    _function();
+
+    _bookingHistoryBloc = BookingHistoryBloc();
+    _appConstantHelper = AppConstantHelper();
+    _appConstantHelper.setContext(context);
+
+    getBookingHistory();
     super.initState();
+  }
+
+  void getBookingHistory() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        _bookingHistoryBloc.getBookingsHistory(context: context);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
   }
 
   @override

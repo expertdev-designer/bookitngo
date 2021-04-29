@@ -1,4 +1,8 @@
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/bloc/HomeBloc.dart';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HotelHotelByCategoryResponse.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,31 +11,48 @@ import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
 
 class RecommendedDetail extends StatefulWidget {
-  String title, userId, keyID;
-  RecommendedDetail({this.title, this.userId, this.keyID});
+  String title, categoryId, keyID;
+
+  RecommendedDetail({this.title, this.categoryId, this.keyID});
 
   @override
   _RecommendedDetailState createState() => _RecommendedDetailState();
 }
 
 class _RecommendedDetailState extends State<RecommendedDetail> {
+  HomeBloc _homeBloc;
+  AppConstantHelper _appConstantHelper;
+
+  @override
+  void initState() {
+    _homeBloc = HomeBloc();
+    _appConstantHelper = AppConstantHelper();
+    _appConstantHelper.setContext(context);
+    getRecommendedHotelList();
+    print("${widget.categoryId}");
+    super.initState();
+  }
+
+  void getRecommendedHotelList() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        _homeBloc.getRecommendedHotelByCategory(
+            context: context);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var onClickMenuIcon = () {
-      Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (_, __, ___) => new Home(),
-          transitionDuration: Duration(milliseconds: 750),
-
-          /// Set animation with opacity
-          transitionsBuilder:
-              (_, Animation<double> animation, __, Widget child) {
-            return Opacity(
-              opacity: animation.value,
-              child: child,
-            );
-          }));
-    };
-
     var _appBar = PreferredSize(
       preferredSize: Size.fromHeight(45.0),
       child: AppBar(
@@ -47,26 +68,28 @@ class _RecommendedDetailState extends State<RecommendedDetail> {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(left: 5.0),
-          child: StreamBuilder(
-            stream: Firestore.instance
-                .collection("hotel")
-                .where('key', isEqualTo: widget.keyID)
-                .snapshots(),
-            builder: (BuildContext ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
+          child: StreamBuilder<HotelByCategoryResponse>(
+            stream: _homeBloc.hotelByCategoryDataStream,
+            builder: (BuildContext ctx, snapshot) {
               if (!snapshot.hasData) {
                 return new Container(
                   height: 190.0,
+                  margin: EdgeInsets.all(20),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       image: DecorationImage(
+                          fit: BoxFit.cover,
                           image: NetworkImage(
-                              "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                            "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc",
+                          ))),
                 );
               }
-              return snapshot.hasData
-                  ? new cardList(
-                      dataUser: widget.userId,
-                      list: snapshot.data.documents,
+              return snapshot.hasData &&
+                      snapshot.data != null &&
+                      snapshot.data.data.length > 0
+                  ? CardList(
+                      dataUser: widget.categoryId,
+                      list: snapshot.data.data,
                     )
                   : Container(
                       height: 10.0,
@@ -108,6 +131,7 @@ class _RecommendedDetailState extends State<RecommendedDetail> {
 class card extends StatelessWidget {
   String dataUser;
   final List<DocumentSnapshot> list;
+
   card({this.dataUser, this.list});
 
   @override
@@ -149,7 +173,7 @@ class card extends StatelessWidget {
                               latLang2D: latLang2,
                               locationD: location,
                               priceD: price,
-                              descriptionD: description,
+                              descriptionD: null,
                               photoD: photo,
                               ratingD: rating,
                               serviceD: service,
@@ -265,9 +289,9 @@ class card extends StatelessWidget {
   }
 }
 
-class cardList extends StatelessWidget {
+class CardList extends StatelessWidget {
   String dataUser;
-  final List<DocumentSnapshot> list;
+  final List<HotelByCategoryData> list;
 
   @override
   var _txtStyleTitle = TextStyle(
@@ -284,7 +308,7 @@ class cardList extends StatelessWidget {
     fontWeight: FontWeight.w600,
   );
 
-  cardList({
+  CardList({
     this.dataUser,
     this.list,
   });
@@ -296,18 +320,18 @@ class cardList extends StatelessWidget {
         primary: false,
         itemCount: list.length,
         itemBuilder: (context, i) {
-          List<String> photo = List.from(list[i].data['photo']);
-          List<String> service = List.from(list[i].data['service']);
-          List<String> description = List.from(list[i].data['description']);
-          String title = list[i].data['title'].toString();
-          String type = list[i].data['type'].toString();
-          num rating = list[i].data['rating'];
-          String location = list[i].data['location'].toString();
-          String image = list[i].data['image'].toString();
-          String id = list[i].data['id'].toString();
-          num price = list[i].data['price'];
-          num latLang1 = list[i].data['latLang1'];
-          num latLang2 = list[i].data['latLang2'];
+          List<String> photo = List.from(list[i].images);
+          List<String> service = List.from(list[i].amenities);
+          String description = list[i].description;
+          String title = list[i].name;
+          String type = list[i].name.toString();
+          num rating = list[i].rating;
+          String location = list[i].address.toString();
+          String image = list[i].images.first.toString();
+          String id = list[i].sId.toString();
+          num price = 100;
+          num latLang1 = num.parse(list[i].latitude);
+          num latLang2 = num.parse(list[i].longitude);
 
           return Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
@@ -361,7 +385,7 @@ class cardList extends StatelessWidget {
                               topRight: Radius.circular(10.0),
                               topLeft: Radius.circular(10.0)),
                           image: DecorationImage(
-                              image: NetworkImage(image), fit: BoxFit.cover),
+                              image: NetworkImage(AppStrings.imagePAth+image), fit: BoxFit.cover),
                         ),
                         alignment: Alignment.topRight,
                       ),
@@ -388,7 +412,7 @@ class cardList extends StatelessWidget {
                               Row(
                                 children: <Widget>[
                                   ratingbar(
-                                    starRating: rating,
+                                    starRating: double.parse(rating.toString()),
                                     color: Colors.blueAccent,
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 5.0)),
@@ -548,6 +572,7 @@ Widget _card(String image, title, location, ratting) {
 class cardCountry extends StatelessWidget {
   Color colorTop, colorBottom;
   String image, title;
+
   cardCountry({this.colorTop, this.colorBottom, this.title, this.image});
 
   @override

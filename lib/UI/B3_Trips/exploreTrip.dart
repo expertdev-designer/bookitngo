@@ -1,9 +1,11 @@
+import 'dart:math';
+
 import 'package:book_it/UI/B1_Home/Destination/Anaheim.dart';
-import 'package:book_it/UI/B1_Home/Destination/Florida.dart';
-import 'package:book_it/UI/B1_Home/Destination/LasVegas.dart';
-import 'package:book_it/UI/B1_Home/Destination/LosAngels.dart';
-import 'package:book_it/UI/B1_Home/Destination/NewYork.dart';
-import 'package:book_it/UI/B1_Home/Destination/SanFrancisco.dart';
+import 'package:book_it/UI/B3_Trips/bloc/DiscoverNewPlacesBloc.dart';
+import 'package:book_it/UI/B3_Trips/model/DiscoverNewPlacesResponse.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +18,7 @@ import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_conc
 
 class exploreTrip extends StatefulWidget {
   String userId;
+
   exploreTrip({this.userId});
 
   @override
@@ -23,6 +26,36 @@ class exploreTrip extends StatefulWidget {
 }
 
 class _exploreTripState extends State<exploreTrip> {
+  DiscoverNewPlacesBloc discoverNewPlacesBloc;
+
+  AppConstantHelper appConstantHelper;
+
+  @override
+  void initState() {
+    discoverNewPlacesBloc = DiscoverNewPlacesBloc();
+    appConstantHelper = AppConstantHelper();
+    appConstantHelper.setContext(context);
+    getNewPlaces();
+    super.initState();
+  }
+
+  void getNewPlaces() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        discoverNewPlacesBloc.getDiscoverNewPlace(context: context);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Future getCarouselWidget() async {
@@ -101,406 +134,339 @@ class _exploreTripState extends State<exploreTrip> {
     double _height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Container(
-          height: _height,
-          child: ListView(
-            children: <Widget>[
-              Stack(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              height: _height,
+              child: ListView(
                 children: <Widget>[
-                  //      _sliderImage,
+                  Stack(
+                    children: <Widget>[
+                      //      _sliderImage,
+                      Container(
+                        height: 292.0,
+                        child: new Carousel(
+                          boxFit: BoxFit.cover,
+                          dotColor: Colors.white.withOpacity(0.8),
+                          dotSize: 5.5,
+                          dotSpacing: 16.0,
+                          dotBgColor: Colors.transparent,
+                          showIndicator: true,
+                          overlayShadow: true,
+                          overlayShadowColors: Colors.white.withOpacity(0.9),
+                          overlayShadowSize: 0.9,
+                          images: [0, 1, 2, 3].map((i) {
+                            return FutureBuilder(
+                                future: getCarouselWidget(),
+                                builder: (context, AsyncSnapshot snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return new Container(
+                                      height: 190.0,
+                                      width: MediaQuery.of(context).size.width,
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: NetworkImage(
+                                                  "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
+                                              fit: BoxFit.cover)),
+                                    );
+                                  }
+                                  return InkWell(
+                                    onTap: () {},
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: FractionalOffset(0.0, 0.0),
+                                          end: FractionalOffset(0.0, 1.0),
+                                          stops: [0.0, 1.0],
+                                          colors: <Color>[
+                                            Color(0x00FFFFFF),
+                                            Color(0xFFFFFFFF),
+                                          ],
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              blurRadius: 9.0,
+                                              spreadRadius: 7.0,
+                                              color: Colors.black12
+                                                  .withOpacity(0.03))
+                                        ],
+                                        image: DecorationImage(
+                                            image: NetworkImage(snapshot
+                                                .data[i].data["imageBanner"]),
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                  );
+                                });
+                          }).toList(),
+                        ),
+                      ),
+                      Container(
+                        height: 292.0,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: FractionalOffset(0.0, 0.0),
+                            end: FractionalOffset(0.0, 1.0),
+                            stops: [0.0, 1.0],
+                            colors: <Color>[
+                              Color(0x00FFFFFF),
+                              Color(0xFFFFFFFF),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 25.0, left: 15.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            height: 45.0,
+                            width: 45.0,
+                            decoration: BoxDecoration(
+                              color: Colors.black45,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50.0)),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Text(
+                      "Discover New Places",
+                      style: TextStyle(
+                          fontFamily: "Sofia",
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  SizedBox(height: 5.0),
                   Container(
-                    height: 292.0,
-                    child: new Carousel(
-                      boxFit: BoxFit.cover,
-                      dotColor: Colors.white.withOpacity(0.8),
-                      dotSize: 5.5,
-                      dotSpacing: 16.0,
-                      dotBgColor: Colors.transparent,
-                      showIndicator: true,
-                      overlayShadow: true,
-                      overlayShadowColors: Colors.white.withOpacity(0.9),
-                      overlayShadowSize: 0.9,
-                      images: [0, 1, 2, 3].map((i) {
-                        return FutureBuilder(
-                            future: getCarouselWidget(),
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (!snapshot.hasData) {
-                                return new Container(
+                    height: 320.0,
+                    child: StreamBuilder<DiscoverNewPlacesResponse>(
+                      initialData: null,
+                      stream: discoverNewPlacesBloc.discoverNewPlacesDataStream,
+                      builder: (BuildContext ctx, snapshot) {
+                        if (!snapshot.hasData) {
+                          return new Container(
+                            height: 190.0,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                        "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                          );
+                        }
+                        return snapshot.hasData &&
+                                snapshot.data != null &&
+                                snapshot.data.data != null &&
+                                snapshot.data.data.newPlaces != null &&
+                                snapshot.data.data.newPlaces.length > 0
+                            ? new card(
+                                dataUser: widget.userId,
+                                list: snapshot.data.data.newPlaces,
+                              )
+                            : Container(
+                                height: 10.0,
+                              );
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            "Top Destination",
+                            style: TextStyle(
+                                fontFamily: "Sofia",
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w700),
+                          ),
+                          Text(
+                            "See all",
+                            style: TextStyle(
+                                fontFamily: "Sofia",
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w300),
+                          ),
+                        ]),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 10.0,
+                    ),
+                    child: StreamBuilder<DiscoverNewPlacesResponse>(
+                        initialData: null,
+                        stream:
+                            discoverNewPlacesBloc.discoverNewPlacesDataStream,
+                        builder: (BuildContext ctx, snapshot) {
+                          if (!snapshot.hasData) {
+                            return new Container(
+                              height: 190.0,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                          "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                            );
+                          }
+                          return snapshot.hasData &&
+                                  snapshot.data != null &&
+                                  snapshot.data.data != null &&
+                                  snapshot.data.data.topDestinations != null &&
+                                  snapshot.data.data.topDestinations.length > 0
+                              ? Container(
+                                  height: 140.0,
+                                  padding: EdgeInsets.only(left: 0),
+                                  child: ListView.builder(
+                                    padding:
+                                        EdgeInsets.only(left: 14, right: 14),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: snapshot.data.data
+                                                .topDestinations.length >
+                                            0
+                                        ? snapshot.data.data
+                                        .topDestinations.length
+                                        : 0,
+                                    itemBuilder: (BuildContext context, index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                              PageRouteBuilder(
+                                                  pageBuilder: (_, __, ___) =>
+                                                      new PopularDestination(
+                                                        title: '${snapshot.data.data.topDestinations[index].name}',
+                                                        userId: snapshot.data.data.topDestinations[index].sId,
+                                                        destinations: snapshot.data.data.topDestinations[index],
+                                                      ),
+                                                  transitionDuration: Duration(
+                                                      milliseconds: 600),
+                                                  transitionsBuilder: (_,
+                                                      Animation<double>
+                                                          animation,
+                                                      __,
+                                                      Widget child) {
+                                                    return Opacity(
+                                                      opacity: animation.value,
+                                                      child: child,
+                                                    );
+                                                  }));
+                                        },
+                                        child: cardCountry(
+                                          colorBottom: Color(Random().nextInt(0xffffffff)),
+                                          colorTop: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+                                          image:
+                                              "assets/image/icon/amerika.png",
+                                          title: "${snapshot.data.data.topDestinations[index].name}",
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                )
+                              : Container(
                                   height: 190.0,
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
                                       image: DecorationImage(
                                           image: NetworkImage(
-                                              "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
-                                          fit: BoxFit.cover)),
+                                              "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                                 );
-                              }
-
-                              // List<String> ingredients =
-                              //     List.from(snapshot.data[i].data['ingredients']);
-                              // List<String> directions =
-                              //     List.from(snapshot.data[i].data['directions']);
-                              // String title = snapshot.data[i].data['title'].toString();
-                              // num rating = snapshot.data[i].data['rating'];
-                              // String category = snapshot.data[i].data['category'].toString();
-                              // String image = snapshot.data[i].data['image'].toString();
-                              // String id = snapshot.data[i].data['id'].toString();
-                              // String time = snapshot.data[i].data['time'].toString();
-                              // String calorie = snapshot.data[i].data['calorie'].toString();
-                              return InkWell(
-                                onTap: () {},
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: FractionalOffset(0.0, 0.0),
-                                      end: FractionalOffset(0.0, 1.0),
-                                      stops: [0.0, 1.0],
-                                      colors: <Color>[
-                                        Color(0x00FFFFFF),
-                                        Color(0xFFFFFFFF),
-                                      ],
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          blurRadius: 9.0,
-                                          spreadRadius: 7.0,
-                                          color:
-                                              Colors.black12.withOpacity(0.03))
-                                    ],
-                                    image: DecorationImage(
-                                        image: NetworkImage(snapshot
-                                            .data[i].data["imageBanner"]),
-                                        fit: BoxFit.cover),
-                                  ),
-                                ),
-                              );
-                            });
-                      }).toList(),
-                    ),
+                        }),
                   ),
-                  Container(
-                    height: 292.0,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: FractionalOffset(0.0, 0.0),
-                        end: FractionalOffset(0.0, 1.0),
-                        stops: [0.0, 1.0],
-                        colors: <Color>[
-                          Color(0x00FFFFFF),
-                          Color(0xFFFFFFFF),
-                        ],
-                      ),
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 22.0),
+                    child: Text(
+                      "Recommended",
+                      style: TextStyle(
+                          fontFamily: "Sofia",
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w700),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 25.0, left: 15.0),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: StreamBuilder<DiscoverNewPlacesResponse>(
+                      initialData: null,
+                      stream:
+                      discoverNewPlacesBloc.discoverNewPlacesDataStream,
+                      builder: (BuildContext ctx, snapshot) {
+                        if (!snapshot.hasData) {
+                          return new Container(
+                            height: 190.0,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                        "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                          );
+                        }
+                         return snapshot.hasData &&
+                            snapshot.data != null &&
+                            snapshot.data.data != null &&
+                            snapshot.data.data.recommended != null &&
+                            snapshot.data.data.recommended.length > 0
+                            ? new recommendedCardList(
+                                dataUser: widget.userId,
+                                list: snapshot.data.data.recommended,
+                              )
+                            : Container(
+                           height: 190.0,
+                           width: MediaQuery.of(context).size.width,
+                           decoration: BoxDecoration(
+                               image: DecorationImage(
+                                   image: NetworkImage(
+                                       "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                         );
                       },
-                      child: Container(
-                        height: 45.0,
-                        width: 45.0,
-                        decoration: BoxDecoration(
-                          color: Colors.black45,
-                          borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
                     ),
                   ),
+                  SizedBox(
+                    height: 20.0,
+                  )
                 ],
               ),
-              SizedBox(
-                height: 30.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0),
-                child: Text(
-                  "Discover New Places",
-                  style: TextStyle(
-                      fontFamily: "Sofia",
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w700),
-                ),
-              ),
-              SizedBox(height: 5.0),
-              Container(
-                height: 320.0,
-                child: StreamBuilder(
-                  stream: Firestore.instance.collection("discover").snapshots(),
-                  builder: (BuildContext ctx,
-                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (!snapshot.hasData) {
-                      return new Container(
-                        height: 190.0,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                    "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                      );
-                    }
-                    return snapshot.hasData
-                        ? new card(
-                            dataUser: widget.userId,
-                            list: snapshot.data.documents,
-                          )
-                        : Container(
-                            height: 10.0,
-                          );
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 25.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "Top Destination",
-                        style: TextStyle(
-                            fontFamily: "Sofia",
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      Text(
-                        "See all",
-                        style: TextStyle(
-                            fontFamily: "Sofia",
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w300),
-                      ),
-                    ]),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 10.0,
-                ),
-                child: Container(
-                  height: 140.0,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 20.0,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => new Anaheim(
-                                    title: 'Anaheim',
-                                    userId: widget.userId,
-                                  ),
-                              transitionDuration: Duration(milliseconds: 600),
-                              transitionsBuilder: (_,
-                                  Animation<double> animation,
-                                  __,
-                                  Widget child) {
-                                return Opacity(
-                                  opacity: animation.value,
-                                  child: child,
-                                );
-                              }));
-                        },
-                        child: cardCountry(
-                          colorTop: Color(0xFFF07DA4),
-                          colorBottom: Color(0xFFF5AE87),
-                          image: "assets/image/icon/amerika.png",
-                          title: "Anaheim",
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => new LosAngeles(
-                                    title: 'Los Angeles',
-                                    userId: widget.userId,
-                                  ),
-                              transitionDuration: Duration(milliseconds: 600),
-                              transitionsBuilder: (_,
-                                  Animation<double> animation,
-                                  __,
-                                  Widget child) {
-                                return Opacity(
-                                  opacity: animation.value,
-                                  child: child,
-                                );
-                              }));
-                        },
-                        child: cardCountry(
-                            colorTop: Color(0xFF63CCD1),
-                            colorBottom: Color(0xFF75E3AC),
-                            image: "assets/image/icon/amerika.png",
-                            title: "Los Angeles"),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => new Florida(
-                                    title: 'Florida',
-                                    userId: widget.userId,
-                                  ),
-                              transitionDuration: Duration(milliseconds: 600),
-                              transitionsBuilder: (_,
-                                  Animation<double> animation,
-                                  __,
-                                  Widget child) {
-                                return Opacity(
-                                  opacity: animation.value,
-                                  child: child,
-                                );
-                              }));
-                        },
-                        child: cardCountry(
-                            colorTop: Color(0xFF9183FC),
-                            colorBottom: Color(0xFFDB8EF6),
-                            image: "assets/image/icon/amerika.png",
-                            title: "Florida"),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => new SanFrancisco(
-                                    title: 'San Francisco',
-                                    userId: widget.userId,
-                                  ),
-                              transitionDuration: Duration(milliseconds: 600),
-                              transitionsBuilder: (_,
-                                  Animation<double> animation,
-                                  __,
-                                  Widget child) {
-                                return Opacity(
-                                  opacity: animation.value,
-                                  child: child,
-                                );
-                              }));
-                        },
-                        child: cardCountry(
-                            colorTop: Color(0xFF56B4EE),
-                            colorBottom: Color(0xFF59CCE1),
-                            image: "assets/image/icon/amerika.png",
-                            title: "San Francisco"),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => new LasVegas(
-                                    title: 'Las Vegas',
-                                    userId: widget.userId,
-                                  ),
-                              transitionDuration: Duration(milliseconds: 600),
-                              transitionsBuilder: (_,
-                                  Animation<double> animation,
-                                  __,
-                                  Widget child) {
-                                return Opacity(
-                                  opacity: animation.value,
-                                  child: child,
-                                );
-                              }));
-                        },
-                        child: cardCountry(
-                            colorTop: Color(0xFF56AB2F),
-                            colorBottom: Color(0xFFA8E063),
-                            image: "assets/image/icon/amerika.png",
-                            title: "Las Vegas"),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => new NewYork(
-                                    title: 'New York',
-                                    userId: widget.userId,
-                                  ),
-                              transitionDuration: Duration(milliseconds: 600),
-                              transitionsBuilder: (_,
-                                  Animation<double> animation,
-                                  __,
-                                  Widget child) {
-                                return Opacity(
-                                  opacity: animation.value,
-                                  child: child,
-                                );
-                              }));
-                        },
-                        child: cardCountry(
-                            colorTop: Color(0xFF74EBD5),
-                            colorBottom: Color(0xFFACB6E5),
-                            image: "assets/image/icon/amerika.png",
-                            title: "New York"),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 25.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 22.0),
-                child: Text(
-                  "Recommended",
-                  style: TextStyle(
-                      fontFamily: "Sofia",
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w700),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 5.0),
-                child: StreamBuilder(
-                  stream: Firestore.instance
-                      .collection("hotel")
-                      .where('type', isEqualTo: 'recommended')
-                      .snapshots(),
-                  builder: (BuildContext ctx,
-                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (!snapshot.hasData) {
-                      return new Container(
-                        height: 190.0,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                    "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                      );
-                    }
-                    return snapshot.hasData
-                        ? new cardList(
-                            dataUser: widget.userId,
-                            list: snapshot.data.documents,
-                          )
-                        : Container(
-                            height: 10.0,
-                          );
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              )
-            ],
+            ),
           ),
-        ),
+          StreamBuilder<bool>(
+            stream: discoverNewPlacesBloc.progressStream,
+            builder: (context, snapshot) {
+              return Center(
+                  child: CommmonProgressIndicator(
+                      snapshot.hasData ? snapshot.data : false));
+            },
+          )
+        ],
       ),
     );
   }
 }
 
-class cardList extends StatelessWidget {
+class recommendedCardList extends StatelessWidget {
   String dataUser;
-  final List<DocumentSnapshot> list;
+  final List<NewPlacesAndRecommended> list;
 
   @override
   var _txtStyleTitle = TextStyle(
@@ -517,7 +483,7 @@ class cardList extends StatelessWidget {
     fontWeight: FontWeight.w600,
   );
 
-  cardList({
+  recommendedCardList({
     this.dataUser,
     this.list,
   });
@@ -529,18 +495,18 @@ class cardList extends StatelessWidget {
         primary: false,
         itemCount: list.length,
         itemBuilder: (context, i) {
-          List<String> photo = List.from(list[i].data['photo']);
-          List<String> service = List.from(list[i].data['service']);
-          List<String> description = List.from(list[i].data['description']);
-          String title = list[i].data['title'].toString();
-          String type = list[i].data['type'].toString();
-          num rating = list[i].data['rating'];
-          String location = list[i].data['location'].toString();
-          String image = list[i].data['image'].toString();
-          String id = list[i].data['id'].toString();
-          num price = list[i].data['price'];
-          num latLang1 = list[i].data['latLang1'];
-          num latLang2 = list[i].data['latLang2'];
+          List<String> photo = List.from(list[i].images);
+          List<String> service = List.from(list[i].amenities);
+          String description = list[i].description;
+          String title = list[i].name.toString();
+          String type = list[i].name.toString();
+          num rating = num.parse(list[i].rating.toString());
+          String location = list[i].address.toString();
+          String image = list[i].images.first;
+          String id = list[i].sId.toString();
+          num price = 20;
+          num latLang1 = num.parse(list[i].latitude);
+          num latLang2 = num.parse(list[i].longitude);
 
           return Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
@@ -584,7 +550,7 @@ class cardList extends StatelessWidget {
                     ]),
                 child: Column(children: [
                   Hero(
-                    tag: 'hero-tag-${id}',
+                    tag: 'hero-tag-recommended${id}',
                     child: Material(
                       child: Container(
                         height: 165.0,
@@ -594,7 +560,7 @@ class cardList extends StatelessWidget {
                               topRight: Radius.circular(10.0),
                               topLeft: Radius.circular(10.0)),
                           image: DecorationImage(
-                              image: NetworkImage(image), fit: BoxFit.cover),
+                              image: NetworkImage(AppStrings.imagePAth+image), fit: BoxFit.cover),
                         ),
                         alignment: Alignment.topRight,
                       ),
@@ -621,7 +587,7 @@ class cardList extends StatelessWidget {
                               Row(
                                 children: <Widget>[
                                   ratingbar(
-                                    starRating: rating,
+                                    starRating: double.parse(rating.toString()),
                                     color: Colors.blueAccent,
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 5.0)),
@@ -682,7 +648,8 @@ class cardList extends StatelessWidget {
 
 class card extends StatelessWidget {
   String dataUser;
-  final List<DocumentSnapshot> list;
+  final List<NewPlacesAndRecommended> list;
+
   card({this.dataUser, this.list});
 
   @override
@@ -693,18 +660,18 @@ class card extends StatelessWidget {
         primary: false,
         itemCount: list.length,
         itemBuilder: (context, i) {
-          List<String> photo = List.from(list[i].data['photo']);
-          List<String> service = List.from(list[i].data['service']);
-          List<String> description = List.from(list[i].data['description']);
-          String title = list[i].data['title'].toString();
-          String type = list[i].data['type'].toString();
-          num rating = list[i].data['rating'];
-          String location = list[i].data['location'].toString();
-          String image = list[i].data['image'].toString();
-          String id = list[i].data['id'].toString();
-          num price = list[i].data['price'];
-          num latLang1 = list[i].data['latLang1'];
-          num latLang2 = list[i].data['latLang2'];
+          List<String> photo = List.from(list[i].images);
+          List<String> service = List.from(list[i].amenities);
+          String description = list[i].description;
+          String title = list[i].name.toString();
+          String type = list[i].name.toString();
+          num rating = num.parse(list[i].rating.toString());
+          String location = list[i].address.toString();
+          String image = list[i].images.first;
+          String id = list[i].sId.toString();
+          num price = 20;
+          num latLang1 = num.parse(list[i].latitude);
+          num latLang2 = num.parse(list[i].longitude);
 
           return Padding(
             padding: const EdgeInsets.all(8.0),
@@ -747,7 +714,9 @@ class card extends StatelessWidget {
                         width: 160.0,
                         decoration: BoxDecoration(
                             image: DecorationImage(
-                                image: NetworkImage(image), fit: BoxFit.cover),
+                                image:
+                                    NetworkImage(AppStrings.imagePAth + image),
+                                fit: BoxFit.cover),
                             color: Colors.black12,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0)),
@@ -843,6 +812,7 @@ class card extends StatelessWidget {
 class cardCountry extends StatelessWidget {
   Color colorTop, colorBottom;
   String image, title;
+
   cardCountry({this.colorTop, this.colorBottom, this.title, this.image});
 
   @override
@@ -861,8 +831,11 @@ class cardCountry extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
               gradient: LinearGradient(
                   colors: [colorTop, colorBottom],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight),
+                  // begin: Alignment.topLeft,
+                  // end: Alignment.bottomRight),
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter),
+
             ),
             child: Padding(
               padding: const EdgeInsets.only(right: 4.0),

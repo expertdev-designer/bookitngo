@@ -12,5 +12,12 @@ class ApiEndPoints {
   static const String addCard = "addCard";
   static const String getCards = "getCards";
   static const String deleteCard = "deleteCard";
-  static const String post_api_home = "home";
+  static const String post_api_home = "getHomePage";
+  static const String post_api_getRoom = "getRoom";
+  static const String post_api_GetHotelByCategory = "getHotelByCategory";
+  static const String post_api_GetRecommendedHotels = "getRecommendedHotels";
+  static const String post_api_GotHotelByLocation = "getHotelByLocation";
+  static const String post_api_create_booking = "createBooking";
+  static const String post_api_get_booking = "getBooking";
+  static const String post_api_discoverNewPlaces = "discoverNewPlaces";
 }

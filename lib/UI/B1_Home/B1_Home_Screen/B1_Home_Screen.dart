@@ -1,26 +1,19 @@
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/Destination/Anaheim.dart';
-import 'package:book_it/UI/B1_Home/Destination/Florida.dart';
-import 'package:book_it/UI/B1_Home/Destination/LasVegas.dart';
-import 'package:book_it/UI/B1_Home/Destination/LosAngels.dart';
-import 'package:book_it/UI/B1_Home/Destination/NewYork.dart';
-import 'package:book_it/UI/B1_Home/Destination/SanFrancisco.dart';
 import 'package:book_it/UI/B1_Home/Recommendation/RecommendationDetailScreen.dart';
-import 'package:book_it/UI/B1_Home/Vocation/Mountains.dart';
-import 'package:book_it/UI/B1_Home/Vocation/Sun.dart';
-import 'package:book_it/UI/B1_Home/Vocation/Tropical.dart';
 import 'package:book_it/UI/B1_Home/Vocation/beaches.dart';
 import 'package:book_it/UI/Search/search.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:book_it/network_helper/local_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
 import 'package:shimmer/shimmer.dart';
-
 import 'bloc/HomeBloc.dart';
 import 'editProfile.dart';
+import 'model/HomeResponse.dart';
 
 class Home extends StatefulWidget {
   String userID;
@@ -41,17 +34,25 @@ class _HomeState extends State<Home> {
   HomeBloc _homeBloc;
   AppConstantHelper _appConstantHelper;
   bool _enabled = false;
+  List<HotelData> _featured = [];
+  List<HotelData> _recommended = [];
+  List<Destinations> _destinations = [];
+  List<Categories> _categories = [];
+  List<HotelData> _rooms = [];
+
   @override
   void initState() {
     _homeBloc = HomeBloc();
     _appConstantHelper = AppConstantHelper();
     _appConstantHelper.setContext(context);
     getLocalStorage();
+    getHomeDataFrommServer();
+
     super.initState();
   }
 
 
-  void getHomeData(String username) {
+  void getHomeDataFrommServer() {
     AppConstantHelper.checkConnectivity().then((isConnected) {
       if (isConnected) {
         _homeBloc.getHomePageData(context: context);
@@ -67,7 +68,6 @@ class _HomeState extends State<Home> {
       }
     });
   }
-
 
   getLocalStorage() {
     LocalStorage.getEmail().then((email) {
@@ -199,7 +199,109 @@ class _HomeState extends State<Home> {
       ),
     );
 
-    var _recomendedbookitngo = Container(
+    ///  Grid item in bottom of Category
+
+    return Scaffold(
+      appBar: _appBar,
+      body: Container(
+        decoration: BoxDecoration(color: Colors.white),
+        child: Stack(
+          children: <Widget>[
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: StreamBuilder<HomeResponse>(
+                    initialData: null,
+                    stream: _homeBloc.homeDataStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData &&
+                          snapshot.data != null &&
+                          snapshot.data.data != null) {
+                        _featured = [];
+                        _recommended = [];
+                        _destinations = [];
+                        _categories = [];
+                        _rooms = [];
+                        _featured = snapshot.data.data.featured;
+                        print("_featured${_featured.length}");
+                        _recommended = snapshot.data.data.recommended;
+                        print("_recommended${_recommended.length}");
+                        _destinations = snapshot.data.data.destinations;
+                        _categories = snapshot.data.data.categories;
+                        _rooms = snapshot.data.data.rooms;
+                      }
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          _searchBox,
+                          _featuredHotel(),
+                          Recomendedbookitngo(),
+                          _destinationPopuler(),
+                          _vacations(),
+                          _recommendedRooms()
+                        ],
+                      );
+                    }),
+              ),
+            ),
+            StreamBuilder<bool>(
+              stream: _homeBloc.progressStream,
+              builder: (context, snapshot) {
+                return Center(
+                    child: CommmonProgressIndicator(
+                        snapshot.hasData ? snapshot.data : false));
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _featuredHotel()
+  {
+    return  Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(
+              left: 20.0, top: 10.0),
+          child: Text(
+            "Featured",
+            style: _txtStyle,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 10.0,
+          ),
+          child: Container(
+              height: 195.0,
+              child: _featured != null &&
+                  _featured.length > 0
+                  ? new FeaturedCard(
+                dataUser: widget.userID,
+                featured: _featured,
+              )
+                  : Container(
+                height: 190.0,
+                width: MediaQuery.of(context)
+                    .size
+                    .width,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: NetworkImage(
+                            "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+              )),
+        )
+      ],
+    );
+  }
+
+  Widget Recomendedbookitngo() {
+    return Container(
       padding: EdgeInsets.only(top: 40.0),
       height: 350.0,
       width: double.infinity,
@@ -218,41 +320,30 @@ class _HomeState extends State<Home> {
             padding: const EdgeInsets.only(
               top: 10.0,
             ),
-            child: Container(
-              height: 250.0,
-              child: StreamBuilder(
-                stream: Firestore.instance
-                    .collection("recommendedCard")
-                    .snapshots(),
-                builder:
-                    (BuildContext ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (!snapshot.hasData) {
-                    return new Container(
-                      height: 260.0,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                    );
-                  }
-                  return snapshot.hasData
-                      ? new cardSuggeted(
-                          dataUser: widget.userID,
-                          list: snapshot.data.documents,
-                        )
-                      : Container(
-                          height: 10.0,
-                        );
-                },
-              ),
-            ),
+            child: _recommended != null && _recommended.length > 0
+                ? Container(
+                    height: 250.0,
+                    child: new CardRecommended(
+                      dataUser: widget.userID,
+                      list: _recommended,
+                    ),
+                  )
+                : Container(
+                    height: 260.0,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: NetworkImage(
+                                "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                  ),
           ),
         ],
       ),
     );
+  }
 
-    var _destinationPopuler = Container(
+  Widget _destinationPopuler() {
+    return Container(
       padding: EdgeInsets.only(top: 30.0),
       height: 280.0,
       width: double.infinity,
@@ -279,143 +370,51 @@ class _HomeState extends State<Home> {
                 ],
               )),
           Expanded(
-            child:  ListView(
+            child: ListView(
               scrollDirection: Axis.horizontal,
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(left: 15.0),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new Anaheim(
-                              title: 'Anaheim',
-                              userId: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
-                  },
-                  child: cardDestinationPopuler(
-                    txt: 'Anaheim',
-                    img:
-                        'https://images.pexels.com/photos/374870/pexels-photo-374870.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                  ),
+                Container(
+                  height: 400.0,
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount:
+                          _destinations != null && _destinations.length > 0
+                              ? _destinations.length
+                              : 0,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(PageRouteBuilder(
+                                pageBuilder: (_, __, ___) => new PopularDestination(
+                                      title: "${_destinations[index].name}",
+                                      userId: widget.userID,
+                                      destinations: _destinations[index],
+                                    ),
+                                transitionDuration: Duration(milliseconds: 600),
+                                transitionsBuilder: (_,
+                                    Animation<double> animation,
+                                    __,
+                                    Widget child) {
+                                  return Opacity(
+                                    opacity: animation.value,
+                                    child: child,
+                                  );
+                                }));
+                          },
+                          child: CardDestinationPopuler(
+                            txt: _destinations[index].name,
+                            img: AppStrings.imagePAth +
+                                _destinations[index].images[index],
+                          ),
+                        );
+                      }),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new LosAngeles(
-                              title: 'Los Angeles',
-                              userId: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
-                  },
-                  child: cardDestinationPopuler(
-                    txt: 'Los Angeles',
-                    img:
-                        'https://images.pexels.com/photos/373912/pexels-photo-373912.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500',
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new Florida(
-                              title: 'Florida',
-                              userId: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
-                  },
-                  child: cardDestinationPopuler(
-                    txt: 'Florida',
-                    img:
-                        'https://images.pexels.com/photos/3643461/pexels-photo-3643461.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500',
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new SanFrancisco(
-                              title: 'San Francisco',
-                              userId: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
-                  },
-                  child: cardDestinationPopuler(
-                    txt: 'San Francisco',
-                    img:
-                        'https://images.pexels.com/photos/208745/pexels-photo-208745.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new LasVegas(
-                              title: 'Las Vegas',
-                              userId: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
-                  },
-                  child: cardDestinationPopuler(
-                    txt: 'Las Vegas',
-                    img:
-                        'https://images.pexels.com/photos/2837909/pexels-photo-2837909.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new NewYork(
-                              title: 'New York',
-                              userId: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
-                  },
-                  child: cardDestinationPopuler(
-                    txt: 'New York',
-                    img:
-                        'https://images.pexels.com/photos/2190283/pexels-photo-2190283.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                  ),
+                Padding(
+                  padding: EdgeInsets.only(right: 15.0),
                 ),
               ],
             ),
@@ -423,8 +422,10 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
 
-    var _vacations = Container(
+  Widget _vacations() {
+    return Container(
       padding: EdgeInsets.only(top: 30.0),
       height: 280.0,
       width: double.infinity,
@@ -457,93 +458,43 @@ class _HomeState extends State<Home> {
                 Padding(
                   padding: EdgeInsets.only(left: 15.0),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new Beaches(
-                              title: 'Beaches',
-                              userId: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
-                  },
-                  child: cardDestinationPopuler(
-                    txt: 'Beaches',
-                    img:
-                        'https://images.pexels.com/photos/1174732/pexels-photo-1174732.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                  ),
+                Container(
+                  height: 400.0,
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _categories != null && _categories.length > 0
+                          ? _categories.length
+                          : 0,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(PageRouteBuilder(
+                                pageBuilder: (_, __, ___) => new Beaches(
+                                      title: '${_categories[index].name}',
+                                      categoryId: "${_categories[index].sId}",
+                                    ),
+                                transitionDuration: Duration(milliseconds: 600),
+                                transitionsBuilder: (_,
+                                    Animation<double> animation,
+                                    __,
+                                    Widget child) {
+                                  return Opacity(
+                                    opacity: animation.value,
+                                    child: child,
+                                  );
+                                }));
+                          },
+                          child: CardDestinationPopuler(
+                            txt: _categories[index].name,
+                            img:
+                                AppStrings.imagePAth + _categories[index].image,
+                          ),
+                        );
+                      }),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new Mountains(
-                              title: 'Mountains',
-                              userId: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
-                  },
-                  child: cardDestinationPopuler(
-                    txt: 'Mountains',
-                    img:
-                        'https://images.pexels.com/photos/2574643/pexels-photo-2574643.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new Sun(
-                              title: 'Sun',
-                              userId: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
-                  },
-                  child: cardDestinationPopuler(
-                    txt: 'Sun',
-                    img:
-                        'https://images.pexels.com/photos/3768/sky-sunny-clouds-cloudy.jpg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new Tropical(
-                              title: 'Tropical',
-                              userId: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
-                  },
-                  child: cardDestinationPopuler(
-                    txt: 'Tropical',
-                    img:
-                        'https://images.pexels.com/photos/1033729/pexels-photo-1033729.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260',
-                  ),
+                Padding(
+                  padding: EdgeInsets.only(right: 15.0),
                 ),
               ],
             ),
@@ -551,9 +502,10 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
 
-    ///  Grid item in bottom of Category
-    var _recommendedRooms = SingleChildScrollView(
+  Widget _recommendedRooms() {
+    return SingleChildScrollView(
       child: Container(
         color: Colors.white,
         child: Column(
@@ -568,323 +520,211 @@ class _HomeState extends State<Home> {
 
             /// To set GridView item
             ///
-            StreamBuilder(
-              stream: Firestore.instance
-                  .collection("hotel")
-                  .where('type', isEqualTo: 'recommended')
-                  .snapshots(),
-              builder:
-                  (BuildContext ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (!snapshot.hasData) {
-                  return new Container(
+            _rooms != null && _rooms.length > 0
+                ? GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 0.795, crossAxisCount: 2),
+                    itemCount: _rooms.length,
+                    shrinkWrap: true,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                    primary: false,
+                    itemBuilder: (BuildContext context, int i) {
+                      List<String> photo = List.from(_rooms[i].images);
+                      List<String> service = List.from(_rooms[i].amenities);
+                      String description = _rooms[i].description;
+                      String title = _rooms[i].name.toString();
+                      String type = _rooms[i].name.toString();
+                      num rating = num.parse(_rooms[i].rating.toString());
+                      String location = _rooms[i].address.toString();
+                      String image = _rooms[i].images.first.toString();
+                      String id = _rooms[i].sId.toString();
+                      num price = 100;
+                      num latLang1 = num.parse(_rooms[i].latitude.toString());
+                      num latLang2 = num.parse(_rooms[i].longitude.toString());
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(PageRouteBuilder(
+                                pageBuilder: (_, __, ___) => new hotelDetail2(
+                                      userId: widget.userID,
+                                      titleD: title,
+                                      idD: id,
+                                      imageD: image,
+                                      latLang1D: latLang1,
+                                      latLang2D: latLang2,
+                                      locationD: location,
+                                      priceD: price,
+                                      descriptionD: description,
+                                      photoD: photo,
+                                      ratingD: rating,
+                                      serviceD: service,
+                                      typeD: type,
+                                    ),
+                                transitionDuration: Duration(milliseconds: 600),
+                                transitionsBuilder: (_,
+                                    Animation<double> animation,
+                                    __,
+                                    Widget child) {
+                                  return Opacity(
+                                    opacity: animation.value,
+                                    child: child,
+                                  );
+                                }));
+                          },
+                          child: Container(
+                            height: 1000.0,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xFF656565).withOpacity(0.15),
+                                    blurRadius: 4.0,
+                                    spreadRadius: 1.0,
+                                    //           offset: Offset(4.0, 10.0)
+                                  )
+                                ]),
+                            child: Wrap(
+                              children: <Widget>[
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Hero(
+                                      tag: 'hero-tag_room-${id}',
+                                      child: Material(
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              5.8,
+                                          width: 200.0,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(7.0),
+                                                  topRight:
+                                                      Radius.circular(7.0)),
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                      AppStrings.imagePAth +
+                                                          image),
+                                                  fit: BoxFit.cover)),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(padding: EdgeInsets.only(top: 5.0)),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0, right: 10.0),
+                                      child: Container(
+                                        width: 130.0,
+                                        child: Text(
+                                          title,
+                                          style: TextStyle(
+                                              letterSpacing: 0.5,
+                                              color: Colors.black54,
+                                              fontFamily: "Sans",
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13.0),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(padding: EdgeInsets.only(top: 2.0)),
+                                    Row(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 10.0, right: 0.0),
+                                          child: Text(
+                                            "\$${price.toString()}",
+                                            style: TextStyle(
+                                                color: Colors.black54,
+                                                fontFamily: "Gotik",
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 14.0),
+                                          ),
+                                        ),
+                                        Text(
+                                          "/night",
+                                          style: TextStyle(
+                                              color: Colors.black54,
+                                              fontFamily: "Gotik",
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 10.0),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0, right: 15.0, top: 5.0),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Row(
+                                            children: <Widget>[
+                                              ratingbar(
+                                                starRating: double.parse(
+                                                    rating.toString()),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 12.0),
+                                                child: Text(
+                                                  rating.toString(),
+                                                  style: TextStyle(
+                                                      fontFamily: "Sans",
+                                                      color: Colors.black26,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 12.0),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    })
+                : Container(
                     height: 190.0,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             image: NetworkImage(
                                 "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                  );
-                }
-                String dataUser;
-                List<DocumentSnapshot> list = snapshot.data.documents;
-                double mediaQueryData;
-                return snapshot.hasData
-                    ? Shimmer.fromColors(
-                  baseColor: Colors.grey.withOpacity(0.2),
-                  highlightColor: Colors.grey[100],
-                  enabled: _enabled,
-                      child: new GridView.builder(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              childAspectRatio: 0.795, crossAxisCount: 2),
-                          itemCount: snapshot.data.documents.length,
-                          shrinkWrap: true,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 10.0),
-                          primary: false,
-                          itemBuilder: (BuildContext context, int i) {
-                            List<String> photo = List.from(list[i].data['photo']);
-                            List<String> service =
-                                List.from(list[i].data['service']);
-                            List<String> description =
-                                List.from(list[i].data['description']);
-                            String title = list[i].data['title'].toString();
-                            String type = list[i].data['type'].toString();
-                            num rating = list[i].data['rating'];
-                            String location = list[i].data['location'].toString();
-                            String image = list[i].data['image'].toString();
-                            String id = list[i].data['id'].toString();
-                            num price = list[i].data['price'];
-                            num latLang1 = list[i].data['latLang1'];
-                            num latLang2 = list[i].data['latLang2'];
-
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(PageRouteBuilder(
-                                      pageBuilder: (_, __, ___) =>
-                                          new hotelDetail2(
-                                            userId: widget.userID,
-                                            titleD: title,
-                                            idD: id,
-                                            imageD: image,
-                                            latLang1D: latLang1,
-                                            latLang2D: latLang2,
-                                            locationD: location,
-                                            priceD: price,
-                                            descriptionD: description,
-                                            photoD: photo,
-                                            ratingD: rating,
-                                            serviceD: service,
-                                            typeD: type,
-                                          ),
-                                      transitionDuration:
-                                          Duration(milliseconds: 600),
-                                      transitionsBuilder: (_,
-                                          Animation<double> animation,
-                                          __,
-                                          Widget child) {
-                                        return Opacity(
-                                          opacity: animation.value,
-                                          child: child,
-                                        );
-                                      }));
-                                },
-                                child: Container(
-                                  height: 1000.0,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10.0)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color:
-                                              Color(0xFF656565).withOpacity(0.15),
-                                          blurRadius: 4.0,
-                                          spreadRadius: 1.0,
-                                          //           offset: Offset(4.0, 10.0)
-                                        )
-                                      ]),
-                                  child: Wrap(
-                                    children: <Widget>[
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Hero(
-                                            tag: 'hero-tag-${id}',
-                                            child: Material(
-                                              child: Container(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height /
-                                                    5.8,
-                                                width: 200.0,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    7.0),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    7.0)),
-                                                    image: DecorationImage(
-                                                        image:
-                                                            NetworkImage(image),
-                                                        fit: BoxFit.cover)),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                              padding: EdgeInsets.only(top: 5.0)),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 10.0, right: 10.0),
-                                            child: Container(
-                                              width: 130.0,
-                                              child: Text(
-                                                title,
-                                                style: TextStyle(
-                                                    letterSpacing: 0.5,
-                                                    color: Colors.black54,
-                                                    fontFamily: "Sans",
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 13.0),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                              padding: EdgeInsets.only(top: 2.0)),
-                                          Row(
-                                            children: <Widget>[
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10.0, right: 0.0),
-                                                child: Text(
-                                                  price.toString(),
-                                                  style: TextStyle(
-                                                      color: Colors.black54,
-                                                      fontFamily: "Gotik",
-                                                      fontWeight: FontWeight.w800,
-                                                      fontSize: 14.0),
-                                                ),
-                                              ),
-                                              Text(
-                                                "/night",
-                                                style: TextStyle(
-                                                    color: Colors.black54,
-                                                    fontFamily: "Gotik",
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 10.0),
-                                              ),
-                                            ],
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 10.0,
-                                                right: 15.0,
-                                                top: 5.0),
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: <Widget>[
-                                                Row(
-                                                  children: <Widget>[
-                                                    ratingbar(
-                                                      starRating: rating,
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 12.0),
-                                                      child: Text(
-                                                        rating.toString(),
-                                                        style: TextStyle(
-                                                            fontFamily: "Sans",
-                                                            color: Colors.black26,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 12.0),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                    )
-                    : Container(
-                        height: 10.0,
-                      );
-              },
-            ),
+                  )
           ],
-        ),
-      ),
-    );
-
-    return Scaffold(
-      appBar: _appBar,
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(color: Colors.white),
-          child: Stack(
-            children: <Widget>[
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _searchBox,
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                            const EdgeInsets.only(left: 20.0, top: 10.0),
-                            child: Text(
-                              "Featured",
-                              style: _txtStyle,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 10.0,
-                            ),
-                            child: Container(
-                              height: 195.0,
-                              child: StreamBuilder(
-                                stream: Firestore.instance
-                                    .collection("hotel")
-                                    .where('type', isEqualTo: 'popular')
-                                    .snapshots(),
-                                builder: (BuildContext ctx,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return new Container(
-                                      height: 190.0,
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: NetworkImage(
-                                                  "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                                    );
-                                  }
-                                  return snapshot.hasData
-                                      ? new cardLastActivity(
-                                    dataUser: widget.userID,
-                                    list: snapshot.data.documents,
-                                  )
-                                      : Container(
-                                    height: 10.0,
-                                  );
-                                },
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      _recomendedbookitngo,
-                      _destinationPopuler,
-                      _vacations,
-                      _recommendedRooms
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
   }
 }
 
-class cardLastActivity extends StatelessWidget {
+// ignore: must_be_immutable
+class FeaturedCard extends StatelessWidget {
   String dataUser;
-  final List<DocumentSnapshot> list;
+  final List<HotelData> featured;
 
-  cardLastActivity({
+  FeaturedCard({
     this.dataUser,
-    this.list,
+    this.featured,
   });
 
   @override
@@ -893,20 +733,21 @@ class cardLastActivity extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         primary: false,
-        itemCount: list.length,
+        itemCount:
+            featured != null && featured.length > 0 ? featured.length : 0,
         itemBuilder: (context, i) {
-          List<String> photo = List.from(list[i].data['photo']);
-          List<String> service = List.from(list[i].data['service']);
-          List<String> description = List.from(list[i].data['description']);
-          String title = list[i].data['title'].toString();
-          String type = list[i].data['type'].toString();
-          num rating = list[i].data['rating'];
-          String location = list[i].data['location'].toString();
-          String image = list[i].data['image'].toString();
-          String id = list[i].data['id'].toString();
-          num price = list[i].data['price'];
-          num latLang1 = list[i].data['latLang1'];
-          num latLang2 = list[i].data['latLang2'];
+          List<String> photo = featured[i].images;
+          List<String> service = featured[i].amenities;
+          String description = featured[i].description;
+          String title = featured[i].name.toString();
+          String type = featured[i].name.toString();
+          num rating = featured[i].rating;
+          String location = featured[i].address;
+          String image = featured[i].images[0];
+          String id = featured[i].sId.toString();
+          num price = 150;
+          var latLang1 = featured[i].latitude;
+          var latLang2 = featured[i].longitude;
 
           return Padding(
             padding: const EdgeInsets.only(left: 18.0, top: 10.0, bottom: 8.0),
@@ -918,13 +759,13 @@ class cardLastActivity extends StatelessWidget {
                           titleD: title,
                           idD: id,
                           imageD: image,
-                          latLang1D: latLang1,
-                          latLang2D: latLang2,
+                          latLang1D: num.parse(latLang1),
+                          latLang2D: num.parse(latLang2),
                           locationD: location,
                           priceD: price,
                           descriptionD: description,
                           photoD: photo,
-                          ratingD: rating,
+                          ratingD: rating.toDouble(),
                           serviceD: service,
                           typeD: type,
                         ),
@@ -966,7 +807,8 @@ class cardLastActivity extends StatelessWidget {
                                       topLeft: Radius.circular(7.0),
                                       topRight: Radius.circular(7.0)),
                                   image: DecorationImage(
-                                      image: NetworkImage(image),
+                                      image: NetworkImage(
+                                          AppStrings.imagePAth + image),
                                       fit: BoxFit.cover)),
                             ),
                           ),
@@ -1024,7 +866,7 @@ class cardLastActivity extends StatelessWidget {
                               Row(
                                 children: <Widget>[
                                   ratingbar(
-                                    starRating: rating,
+                                    starRating: double.parse(rating.toString()),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 12.0),
@@ -1053,13 +895,13 @@ class cardLastActivity extends StatelessWidget {
   }
 }
 
-class cardSuggeted extends StatelessWidget {
+class CardRecommended extends StatelessWidget {
   @override
   String dataUser;
-  final List<DocumentSnapshot> list;
+  final List<HotelData> list;
   GestureTapCallback navigatorOntap;
 
-  cardSuggeted({
+  CardRecommended({
     this.dataUser,
     this.list,
   });
@@ -1072,11 +914,11 @@ class cardSuggeted extends StatelessWidget {
         primary: false,
         itemCount: list.length,
         itemBuilder: (context, i) {
-          String title = list[i].data['title'].toString();
-          String image = list[i].data['image'].toString();
-          String textImage = list[i].data['textImage'].toString();
-          String desc = list[i].data['desc'].toString();
-          String key = list[i].data['key'].toString();
+          String title = list[i].name.toString();
+          String image = list[i].images.first;
+          String textImage = list[i].images.first.toString();
+          String desc = list[i].description.toString();
+          String key = list[i].sId.toString();
           return Padding(
             padding: const EdgeInsets.only(
                 left: 15.0, right: 12.0, top: 8.0, bottom: 10.0),
@@ -1090,7 +932,7 @@ class cardSuggeted extends StatelessWidget {
                         pageBuilder: (_, __, ___) => new RecommendedDetail(
                               keyID: key,
                               title: title,
-                              userId: dataUser,
+                              categoryId: dataUser,
                             )));
                   },
                   child: Container(
@@ -1098,7 +940,8 @@ class cardSuggeted extends StatelessWidget {
                     height: 135.0,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: NetworkImage(image), fit: BoxFit.cover),
+                            image: NetworkImage(AppStrings.imagePAth + image),
+                            fit: BoxFit.cover),
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
@@ -1109,21 +952,21 @@ class cardSuggeted extends StatelessWidget {
                           )
                         ]),
                     /*child: Center(
-                      child: Text(
-                        textImage,
-                        style: TextStyle(
-                            fontFamily: 'Amira',
-                            color: Colors.white,
-                            fontSize: 40.0,
-                            letterSpacing: 2.0,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black12.withOpacity(0.1),
-                                blurRadius: 2.0,
-                              )
-                            ]),
-                      ),
-                    )*/
+                     child: Text(
+                       textImage,
+                       style: TextStyle(
+                           fontFamily: 'Amira',
+                           color: Colors.white,
+                           fontSize: 40.0,
+                           letterSpacing: 2.0,
+                           shadows: [
+                             Shadow(
+                               color: Colors.black12.withOpacity(0.1),
+                               blurRadius: 2.0,
+                             )
+                           ]),
+                     ),
+                   )*/
                   ),
                 ),
                 Padding(
@@ -1161,10 +1004,10 @@ class cardSuggeted extends StatelessWidget {
   }
 }
 
-class cardDestinationPopuler extends StatelessWidget {
+class CardDestinationPopuler extends StatelessWidget {
   String img, txt;
 
-  cardDestinationPopuler({this.img, this.txt});
+  CardDestinationPopuler({this.img, this.txt});
 
   @override
   Widget build(BuildContext context) {
@@ -1182,7 +1025,7 @@ class cardDestinationPopuler extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                   color: Colors.black12.withOpacity(0.1),
-                  blurRadius: 2.0,
+                  blurRadius: 4.0,
                   spreadRadius: 1.0)
             ]),
         child: Center(
@@ -1248,7 +1091,7 @@ class ItemGrid extends StatelessWidget {
                           latLang2D: latLang2,
                           locationD: location,
                           priceD: price,
-                          descriptionD: description,
+                          descriptionD: null,
                           photoD: photo,
                           ratingD: rating,
                           serviceD: service,

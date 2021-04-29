@@ -1,7 +1,9 @@
+import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:flutter/material.dart';
 
 class gallery extends StatefulWidget {
   List<String> image;
+
   gallery({this.image});
 
   @override
@@ -23,12 +25,6 @@ class _galleryState extends State<gallery> {
             initialPage: 0,
           ),
           scrollDirection: Axis.horizontal,
-
-          ///Enable physics property to provide your PageView with a
-          ///custom scroll behaviour
-          ///Here BouncingScrollPhysics will pull back the boundary
-          ///item (first or last) if the user tries to scroll further.
-          //physics: BouncingScrollPhysics(),
           pageSnapping: true,
           children: widget.image
               .map(
@@ -38,7 +34,8 @@ class _galleryState extends State<gallery> {
                   child: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: NetworkImage(item), fit: BoxFit.cover),
+                          image: NetworkImage(AppStrings.imagePAth + item),
+                          fit: BoxFit.cover),
                     ),
                   ),
                 ),

@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/BookingConfirmPage.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/SelectCheckInOutDate.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/BookingRoomList.dart';
 import 'package:book_it/UI/B5_Profile/ListProfile/CallCenter.dart';
 import 'package:book_it/UI/B5_Profile/model/PaymentCardResponse.dart';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
@@ -57,6 +60,45 @@ class PaymentBloc {
         showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
         cardDataSink.add(onResponse);
+      }
+      progressSink.add(false);
+    }).catchError((onError) {
+      progressSink.add(false);
+      print("On_Error" + onError.toString());
+      showErrorDialog(context, "Error", onError.toString());
+    });
+  }
+
+  void createBooking(
+      {BuildContext context,
+      BookingRoomList roomList,
+      String amount,
+      String phone,
+      String specialInstruction}) {
+    progressSink.add(true);
+    apiRepository
+        .bookHotelApi(
+            roomList: roomList)
+        .then((onResponse) {
+      if (!onResponse.status) {
+        print("Error From Server  " + onResponse.message);
+        showErrorDialog(context, "Error", onResponse.message);
+      } else if (onResponse.status) {
+        Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+                pageBuilder: (_, __, ___) =>
+                new BookingConfirmPage(bookingData: onResponse.data,),
+                transitionDuration:
+                Duration(milliseconds: 600),
+                transitionsBuilder: (_,
+                    Animation<double> animation,
+                    __,
+                    Widget child) {
+                  return Opacity(
+                    opacity: animation.value,
+                    child: child,
+                  );
+                }));
       }
       progressSink.add(false);
     }).catchError((onError) {

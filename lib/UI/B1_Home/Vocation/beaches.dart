@@ -1,4 +1,9 @@
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/bloc/HomeBloc.dart';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HotelHotelByCategoryResponse.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,31 +12,48 @@ import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
 
 class Beaches extends StatefulWidget {
-  String title, userId;
-  Beaches({this.title, this.userId});
+  String title, categoryId;
+
+  Beaches({this.title, this.categoryId});
 
   @override
   _BeachesState createState() => _BeachesState();
 }
 
 class _BeachesState extends State<Beaches> {
+  HomeBloc _homeBloc;
+  AppConstantHelper _appConstantHelper;
+
+  @override
+  void initState() {
+    _homeBloc = HomeBloc();
+    _appConstantHelper = AppConstantHelper();
+    _appConstantHelper.setContext(context);
+    getHotelByCategoryHotel();
+    print("${widget.categoryId}");
+    super.initState();
+  }
+
+  void getHotelByCategoryHotel() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        _homeBloc.getHotelByCategory(
+            context: context, categoryId: widget.categoryId);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var onClickMenuIcon = () {
-      Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (_, __, ___) => new Home(),
-          transitionDuration: Duration(milliseconds: 750),
-
-          /// Set animation with opacity
-          transitionsBuilder:
-              (_, Animation<double> animation, __, Widget child) {
-            return Opacity(
-              opacity: animation.value,
-              child: child,
-            );
-          }));
-    };
-
     var _appBar = PreferredSize(
       preferredSize: Size.fromHeight(45.0),
       child: AppBar(
@@ -41,111 +63,6 @@ class _BeachesState extends State<Beaches> {
       ),
     );
 
-    var _category = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(left: 20.0, top: 30.0, right: 20.0),
-          child: Text(
-            "Category",
-            style: TextStyle(
-                fontFamily: "Sofia",
-                fontWeight: FontWeight.w700,
-                fontSize: 20.0),
-          ),
-        ),
-        Padding(padding: EdgeInsets.only(top: 30.0)),
-
-        /// Get class CategoryIconValue
-        CategoryIconValue(
-          tap1: onClickMenuIcon,
-          icon1: "assets/image/icon/confetti.png",
-          title1: "Attraction",
-          tap2: onClickMenuIcon,
-          icon2: "assets/image/icon/tour.png",
-          title2: "Tour",
-          tap3: onClickMenuIcon,
-          icon3: "assets/image/icon/bag.png",
-          title3: "Travel",
-          tap4: onClickMenuIcon,
-          icon4: "assets/image/icon/plant.png",
-          title4: "Spa",
-        ),
-        Padding(padding: EdgeInsets.only(top: 23.0)),
-        CategoryIconValue(
-          icon1: "assets/image/icon/lamp.png",
-          tap1: onClickMenuIcon,
-          title1: "Courses",
-          icon2: "assets/image/icon/sneaker.png",
-          tap2: onClickMenuIcon,
-          title2: "Sports",
-          icon3: "assets/image/icon/playground.png",
-          tap3: onClickMenuIcon,
-          title3: "Played",
-          icon4: "assets/image/icon/ticket.png",
-          tap4: onClickMenuIcon,
-          title4: "Cinema",
-        ),
-        Padding(padding: EdgeInsets.only(top: 43.0)),
-
-        Container(
-          height: 30.0,
-          width: double.infinity,
-          color: Colors.black12.withOpacity(0.03),
-        ),
-      ],
-    );
-
-    var _topBeaches = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 20.0, top: 30.0),
-          child: Text(
-            "Top New York",
-            style: TextStyle(
-                fontFamily: "Sofia",
-                fontSize: 20.0,
-                fontWeight: FontWeight.w700),
-          ),
-        ),
-        SizedBox(height: 5.0),
-        Container(
-          height: 320.0,
-          child: StreamBuilder(
-            stream: Firestore.instance
-                .collection("discover")
-                .where("location", isEqualTo: 'New York')
-                .snapshots(),
-            builder: (BuildContext ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (!snapshot.hasData) {
-                return new Container(
-                  height: 190.0,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: NetworkImage(
-                              "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                );
-              }
-              return snapshot.hasData
-                  ? new card(
-                      dataUser: widget.userId,
-                      list: snapshot.data.documents,
-                    )
-                  : Container(
-                      height: 10.0,
-                    );
-            },
-          ),
-        ),
-        SizedBox(
-          height: 25.0,
-        ),
-      ],
-    );
-
     var _recommended = Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +70,7 @@ class _BeachesState extends State<Beaches> {
         Padding(
           padding: const EdgeInsets.only(left: 22.0),
           child: Text(
-            "Hotels around beach :",
+            "Hotels around ${widget.title + "s"} :",
             style: TextStyle(
                 fontFamily: "Sofia",
                 fontSize: 20.0,
@@ -162,26 +79,28 @@ class _BeachesState extends State<Beaches> {
         ),
         Padding(
           padding: EdgeInsets.only(left: 5.0),
-          child: StreamBuilder(
-            stream: Firestore.instance
-                .collection("hotel")
-                .where('vacations', isEqualTo: 'beaches')
-                .snapshots(),
-            builder: (BuildContext ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
+          child: StreamBuilder<HotelByCategoryResponse>(
+            stream: _homeBloc.hotelByCategoryDataStream,
+            builder: (BuildContext ctx, snapshot) {
               if (!snapshot.hasData) {
                 return new Container(
                   height: 190.0,
+                  margin: EdgeInsets.all(20),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       image: DecorationImage(
+                          fit: BoxFit.cover,
                           image: NetworkImage(
-                              "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                            "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc",
+                          ))),
                 );
               }
-              return snapshot.hasData
-                  ? new cardList(
-                      dataUser: widget.userId,
-                      list: snapshot.data.documents,
+              return snapshot.hasData &&
+                      snapshot.data != null &&
+                      snapshot.data.data.length > 0
+                  ? CardList(
+                      dataUser: widget.categoryId,
+                      list: snapshot.data.data,
                     )
                   : Container(
                       height: 10.0,
@@ -195,35 +114,38 @@ class _BeachesState extends State<Beaches> {
       ],
     );
 
-    Future getCarouselWidget() async {
-      var firestore = Firestore.instance;
-      QuerySnapshot qn = await firestore
-          .collection("banner")
-          .where("location", isEqualTo: "New York")
-          .getDocuments();
-      return qn.documents;
-    }
-
     return Scaffold(
       appBar: _appBar,
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            /// Category
-            // _category,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                /// Category
+                // _category,
 
-            /// Top Beaches
-            /// _topBeaches,
-            SizedBox(
-              height: 20.0,
+                /// Top Beaches
+                /// _topBeaches,
+                SizedBox(
+                  height: 20.0,
+                ),
+
+                /// Recommended
+                _recommended,
+              ],
             ),
-
-            /// Recommended
-            _recommended,
-          ],
-        ),
+          ),
+          StreamBuilder<bool>(
+            stream: _homeBloc.progressStream,
+            builder: (context, snapshot) {
+              return Center(
+                  child: CommmonProgressIndicator(
+                      snapshot.hasData ? snapshot.data : false));
+            },
+          )
+        ],
       ),
     );
   }
@@ -232,6 +154,7 @@ class _BeachesState extends State<Beaches> {
 class card extends StatelessWidget {
   String dataUser;
   final List<DocumentSnapshot> list;
+
   card({this.dataUser, this.list});
 
   @override
@@ -273,7 +196,7 @@ class card extends StatelessWidget {
                               latLang2D: latLang2,
                               locationD: location,
                               priceD: price,
-                              descriptionD: description,
+                              descriptionD: null,
                               photoD: photo,
                               ratingD: rating,
                               serviceD: service,
@@ -389,9 +312,9 @@ class card extends StatelessWidget {
   }
 }
 
-class cardList extends StatelessWidget {
+class CardList extends StatelessWidget {
   String dataUser;
-  final List<DocumentSnapshot> list;
+  final List<HotelByCategoryData> list;
 
   @override
   var _txtStyleTitle = TextStyle(
@@ -408,7 +331,7 @@ class cardList extends StatelessWidget {
     fontWeight: FontWeight.w600,
   );
 
-  cardList({
+  CardList({
     this.dataUser,
     this.list,
   });
@@ -420,18 +343,18 @@ class cardList extends StatelessWidget {
         primary: false,
         itemCount: list.length,
         itemBuilder: (context, i) {
-          List<String> photo = List.from(list[i].data['photo']);
-          List<String> service = List.from(list[i].data['service']);
-          List<String> description = List.from(list[i].data['description']);
-          String title = list[i].data['title'].toString();
-          String type = list[i].data['type'].toString();
-          num rating = list[i].data['rating'];
-          String location = list[i].data['location'].toString();
-          String image = list[i].data['image'].toString();
-          String id = list[i].data['id'].toString();
-          num price = list[i].data['price'];
-          num latLang1 = list[i].data['latLang1'];
-          num latLang2 = list[i].data['latLang2'];
+          List<String> photo = List.from(list[i].images);
+          List<String> service = List.from(list[i].amenities);
+          String description = list[i].description;
+          String title = list[i].name.toString();
+          String type = list[i].name.toString();
+          num rating = num.parse(list[i].rating.toString());
+          String location = list[i].address.toString();
+          String image = list[i].images.first;
+          String id = list[i].sId.toString();
+          num price = 110;
+          num latLang1 = num.parse(list[i].latitude);
+          num latLang2 = num.parse(list[i].longitude);
 
           return Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
@@ -485,7 +408,8 @@ class cardList extends StatelessWidget {
                               topRight: Radius.circular(10.0),
                               topLeft: Radius.circular(10.0)),
                           image: DecorationImage(
-                              image: NetworkImage(image), fit: BoxFit.cover),
+                              image: NetworkImage(AppStrings.imagePAth + image),
+                              fit: BoxFit.cover),
                         ),
                         alignment: Alignment.topRight,
                       ),
@@ -512,7 +436,7 @@ class cardList extends StatelessWidget {
                               Row(
                                 children: <Widget>[
                                   ratingbar(
-                                    starRating: rating,
+                                    starRating: double.parse(rating.toString()),
                                     color: Colors.blueAccent,
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 5.0)),
@@ -672,6 +596,7 @@ Widget _card(String image, title, location, ratting) {
 class cardCountry extends StatelessWidget {
   Color colorTop, colorBottom;
   String image, title;
+
   cardCountry({this.colorTop, this.colorBottom, this.title, this.image});
 
   @override

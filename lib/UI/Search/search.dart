@@ -162,8 +162,7 @@ class _SearchState extends State<Search> {
                                       titleD: document['title'],
                                       idD: document['id'],
                                       imageD: document['image'],
-                                      descriptionD:
-                                          List.from(document['description']),
+                                      descriptionD:null,
                                       userId: widget.userId,
                                       ratingD: document['rating'],
                                       latLang1D: document['latLang1'],

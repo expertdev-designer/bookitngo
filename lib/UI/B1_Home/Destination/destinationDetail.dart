@@ -1,18 +1,50 @@
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/bloc/HomeBloc.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/DataSample/travelModelData.dart';
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
 
-class destination extends StatefulWidget {
+class PopularDestinationPage extends StatefulWidget {
   String title;
-  destination({Key key, this.title}) : super(key: key);
+
+  PopularDestinationPage({Key key, this.title}) : super(key: key);
 
   @override
-  _destinationState createState() => _destinationState();
+  _PopularDestinationPageState createState() => _PopularDestinationPageState();
 }
 
-class _destinationState extends State<destination> {
+class _PopularDestinationPageState extends State<PopularDestinationPage> {
+  HomeBloc _homeBloc;
+  AppConstantHelper _appConstantHelper;
+
+  @override
+  void initState() {
+    _homeBloc = HomeBloc();
+    _appConstantHelper = AppConstantHelper();
+    _appConstantHelper.setContext(context);
+    // getHotelByCategory();
+    super.initState();
+  }
+
+  void getHotelByCategory() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        _homeBloc.getHotelByCategory(context: context);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var onClickMenuIcon = () {
@@ -276,6 +308,7 @@ class cardList extends StatelessWidget {
   travelListData hotelData;
 
   cardList(this.hotelData);
+
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
@@ -482,6 +515,7 @@ Widget _card(String image, title, location, ratting) {
 class cardCountry extends StatelessWidget {
   Color colorTop, colorBottom;
   String image, title;
+
   cardCountry({this.colorTop, this.colorBottom, this.title, this.image});
 
   @override

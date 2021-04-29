@@ -1,6 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HomeResponse.dart';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HotelByLocationResponse.dart';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HotelHotelByCategoryResponse.dart';
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/ImageUplaodResponse.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/SelectCheckInOutDate.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/BookingRoomList.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/CreateBookingResponse.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/HotelRoomListingResponse.dart';
+import 'package:book_it/UI/B3_Trips/model/DiscoverNewPlacesResponse.dart';
+import 'package:book_it/UI/B4_Booking/model/BookingHistoryResponse.dart';
 import 'package:book_it/UI/B5_Profile/model/PaymentCardResponse.dart';
 import 'package:book_it/UI/IntroApps/model/CategoriesResponse.dart';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
@@ -171,15 +180,97 @@ class ApiRepository {
 
 /*................... Home Page  api ..........*/
 
-  Future<CommonResponse> homePageApi() async {
+  Future<HomeResponse> homePageApi() async {
     getDioOptions(_dio);
     var response = await _dio.post(base_url + ApiEndPoints.post_api_home);
     print("homeResponse" + response.toString());
     Map<String, dynamic> data = jsonDecode(response.toString());
-    return CommonResponse.fromJson(data);
+    return HomeResponse.fromJson(data);
   }
 
+// /*.....................Get Rooms api ...............*/
 
+  Future<HotelRoomListingResponse> getRooms({String hotelId}) async {
+    getDioOptions(_dio);
+    var response =
+        await _dio.post(base_url + ApiEndPoints.post_api_getRoom, data: {
+      'hotel_id': hotelId,
+    });
+    print("HotelListingResponse" + response.toString());
+    Map<String, dynamic> data = jsonDecode(response.toString());
+    return HotelRoomListingResponse.fromJson(data);
+  }
+
+//*.....................Get Hotel by category api ...............*/
+
+  Future<HotelByCategoryResponse> getHotelByCategoryApi(
+      {String categoryId}) async {
+    getDioOptions(_dio);
+    var response = await _dio
+        .post(base_url + ApiEndPoints.post_api_GetHotelByCategory, data: {
+      'category_id': categoryId,
+    });
+    print("GetHotelByCategoryResponse" + response.toString());
+    Map<String, dynamic> data = jsonDecode(response.toString());
+    return HotelByCategoryResponse.fromJson(data);
+  }
+
+//*.....................Get Hotel by category api ...............*/
+
+  Future<HotelByLocationResponse> getHotelByLocation(
+      {String categoryId, String location}) async {
+    getDioOptions(_dio);
+    var response = await _dio
+        .post(base_url + ApiEndPoints.post_api_GotHotelByLocation, data: {
+      'location': location,
+    });
+    print("GetHotelByLocationResponse" + response.toString());
+    Map<String, dynamic> data = jsonDecode(response.toString());
+    return HotelByLocationResponse.fromJson(data);
+  }
+
+  //*.....................get Recommended Hotels api ...............*/
+
+  Future<HotelByCategoryResponse> getRecommendedHotelsApi() async {
+    getDioOptions(_dio);
+    var response =
+        await _dio.post(base_url + ApiEndPoints.post_api_GetRecommendedHotels);
+    print("RecommendedHotelsApiResponse" + response.toString());
+    Map<String, dynamic> data = jsonDecode(response.toString());
+    return HotelByCategoryResponse.fromJson(data);
+  }
+
+//*....................create Booking api ...............*/
+
+  Future<CreateBookingResponse> bookHotelApi({BookingRoomList roomList}) async {
+    getDioOptions(_dio);
+    var response = await _dio.post(base_url + "createBooking", data: roomList);
+    print("CreateBookingResponse" + response.toString());
+    Map<String, dynamic> data = jsonDecode(response.toString());
+    return CreateBookingResponse.fromJson(data);
+  }
+
+  //*.....................get Bookings api ...............*/
+
+  Future<BookingHistoryResponse> getBookings() async {
+    getDioOptions(_dio);
+    var response =
+        await _dio.post(base_url + ApiEndPoints.post_api_get_booking);
+    print("GetBookingsResponse" + response.toString());
+    Map<String, dynamic> data = jsonDecode(response.toString());
+    return BookingHistoryResponse.fromJson(data);
+  }
+
+  //*.....................discover New Places api ...............*/
+
+  Future<DiscoverNewPlacesResponse> discoverNewPlacesApi() async {
+    getDioOptions(_dio);
+    var response =
+        await _dio.post(base_url + ApiEndPoints.post_api_discoverNewPlaces);
+    print("discoverNewPlacesResponse" + response.toString());
+    Map<String, dynamic> data = jsonDecode(response.toString());
+    return DiscoverNewPlacesResponse.fromJson(data);
+  }
 
   getDioOptions(Dio _dio) {
     String authTOKEN;

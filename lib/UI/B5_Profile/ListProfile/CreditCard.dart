@@ -1,10 +1,13 @@
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/BookingConfirmPage.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/SelectCheckInOutDate.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/BookingRoomList.dart';
 import 'package:book_it/UI/B5_Profile/bloc/payment_bloc.dart';
 import 'package:book_it/UI/B5_Profile/model/PaymentCardResponse.dart';
 import 'package:book_it/UI/Utills/AppColors.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_form.dart';
 import 'package:flutter_credit_card/credit_card_model.dart';
@@ -17,6 +20,26 @@ class AddCreditCard extends StatefulWidget {
   //
   // AddCreditCard(
   //     {this.name, this.photoProfile, this.uid, this.email, this.password});
+  String hotelID;
+  String roomID;
+  var checkInDate;
+  var checkOutDate;
+  List<SelectedRoomList> roomList;
+  String amount;
+  String phone;
+  String specialInstruction;
+  String isFor;
+
+  AddCreditCard(
+      {this.hotelID,
+      this.roomID,
+      this.checkInDate,
+      this.checkOutDate,
+      this.roomList,
+      this.amount,
+      this.phone,
+      this.specialInstruction,
+      this.isFor});
 
   @override
   _AddCreditCardState createState() => _AddCreditCardState();
@@ -110,6 +133,23 @@ class _AddCreditCardState extends State<AddCreditCard> {
     });
   }
 
+  void doCreateBookingApiCall({BookingRoomList roomList}) {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        _paymentBloc.createBooking(context: context, roomList: roomList);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,7 +230,8 @@ class _AddCreditCardState extends State<AddCreditCard> {
                             ? Stack(
                                 children: [
                                   Container(
-                                    height:MediaQuery.of(context).size.width*0.50,
+                                    height: MediaQuery.of(context).size.width *
+                                        0.50,
                                     width: MediaQuery.of(context).size.width,
                                     margin: EdgeInsets.symmetric(
                                       horizontal: 20,
@@ -238,10 +279,11 @@ class _AddCreditCardState extends State<AddCreditCard> {
                                               color: AppColor.primaryColor,
                                               fontSize: 13.0),
                                         ),
-                                        SizedBox(height: 4,),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
                                         Row(
                                             children: [
-
                                               Text(
                                                 "XXXX",
                                                 textAlign: TextAlign.end,
@@ -253,22 +295,22 @@ class _AddCreditCardState extends State<AddCreditCard> {
                                               ),
                                               Text(
                                                 "XXXX",
-
                                                 style: TextStyle(
-
                                                     fontFamily: "Sofia",
                                                     color:
                                                         AppColor.primaryColor,
                                                     fontSize: 20.0),
                                                 textAlign: TextAlign.end,
-                                              ),Text(
+                                              ),
+                                              Text(
                                                 "XXXX",
                                                 style: TextStyle(
                                                     fontFamily: "Sofia",
                                                     color:
                                                         AppColor.primaryColor,
                                                     fontSize: 20.0),
-                                              ),Text(
+                                              ),
+                                              Text(
                                                 "${cardNumber}",
                                                 style: TextStyle(
                                                     fontFamily: "Sofia",
@@ -276,7 +318,6 @@ class _AddCreditCardState extends State<AddCreditCard> {
                                                         AppColor.primaryColor,
                                                     fontSize: 20.0),
                                               ),
-
                                             ],
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween),
@@ -304,14 +345,15 @@ class _AddCreditCardState extends State<AddCreditCard> {
                                     ),
                                   )
                                 ],
-                              ):CreditCardWidget(
-                          cardNumber: cardNumber,
-                          expiryDate: expiryDate,
-                          cardHolderName: cardHolderName,
-                          cvvCode: cvvCode,
-                          showBackView: isCvvFocused,
-                          cardBgColor: AppColor.primaryColor,
-                        ),
+                              )
+                            : CreditCardWidget(
+                                cardNumber: cardNumber,
+                                expiryDate: expiryDate,
+                                cardHolderName: cardHolderName,
+                                cvvCode: cvvCode,
+                                showBackView: isCvvFocused,
+                                cardBgColor: AppColor.primaryColor,
+                              ),
                         Padding(
                           padding:
                               const EdgeInsets.only(left: 20.0, right: 10.0),
@@ -399,22 +441,34 @@ class _AddCreditCardState extends State<AddCreditCard> {
                                       if (snapshot.hasData &&
                                           snapshot.data != null &&
                                           snapshot.data != null &&
-                                          snapshot.data.data.length > 0) {
-                                        Navigator.of(context).push(
-                                            PageRouteBuilder(
-                                                pageBuilder: (_, __, ___) =>
-                                                    new BookingConfirmPage(),
-                                                transitionDuration:
-                                                    Duration(milliseconds: 600),
-                                                transitionsBuilder: (_,
-                                                    Animation<double> animation,
-                                                    __,
-                                                    Widget child) {
-                                                  return Opacity(
-                                                    opacity: animation.value,
-                                                    child: child,
-                                                  );
-                                                }));
+                                          snapshot.data.data.length > 0 &&
+                                          widget.isFor == "Booking") {
+                                        print("hotelID${widget.hotelID}");
+                                        print("roomID${widget.roomID}");
+                                        print("amount${widget.amount}");
+                                        print("phone${widget.phone}");
+                                        print(
+                                            "specialInstruction${widget.specialInstruction}");
+
+                                        print(
+                                            "checkInDate${DateFormat('dd-MM-yyyy').format(widget.checkInDate)}");
+                                        print(
+                                            "checkOutDate${DateFormat('dd-MM-yyyy').format(widget.checkOutDate)}");
+
+                                        doCreateBookingApiCall(
+                                            roomList: BookingRoomList(
+                                                hotelID: widget.hotelID,
+                                                roomID: widget.roomID,
+                                                checkInDate:
+                                                    "${DateFormat('dd-MM-yyyy').format(widget.checkInDate)}",
+                                                checkOutDate:
+                                                    "${DateFormat('dd-MM-yyyy').format(widget.checkOutDate)}",
+                                                rooms: widget.roomList,
+                                                amount:
+                                                    widget.amount.toString(),
+                                                phone: widget.phone,
+                                                special_instruction:
+                                                    widget.specialInstruction));
                                       } else {
                                         print(
                                             "cardHolderNAme${cardHolderName}");

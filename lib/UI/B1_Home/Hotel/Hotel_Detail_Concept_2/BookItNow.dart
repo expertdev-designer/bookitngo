@@ -16,9 +16,10 @@ class Bookitnow extends StatefulWidget {
       emailD,
       informationR,
       roomR,
-      idR;
+      idR,
+      descriptionD;
   DocumentSnapshot listItem;
-  List<String> photoD, serviceD, descriptionD, imageR;
+  List<String> photoD, serviceD, imageR;
   num ratingD, priceD, latLang1D, latLang2D, priceR;
 
   Bookitnow(

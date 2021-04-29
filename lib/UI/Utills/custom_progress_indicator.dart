@@ -23,25 +23,22 @@ class CommmonProgressIndicator extends StatelessWidget {
     //   },
     // );
     return isLoading
-        ? Opacity(
-            opacity: isLoading ? 1.0 : 0,
-            child: Container(
-                alignment: Alignment.center,
-                height: MediaQuery.of(context).size.height,
-                color: Colors.transparent,
-                child: isLoading
-                    ? Container(child: Center(
-                    child: ColorLoader5(
-                      dotOneColor: Colors.red,
-                      dotTwoColor: Colors.blueAccent,
-                      dotThreeColor: Colors.green,
-                      dotType: DotType.circle,
-                      dotIcon: Icon(Icons.adjust),
-                      duration: Duration(seconds: 1),
-                    )),
-                  decoration: BoxDecoration(color: Colors.transparent.withOpacity(0.5)),)
-                    : Container()),
-          )
+        ? Container(
+            alignment: Alignment.center,
+            height: MediaQuery.of(context).size.height,
+            color: Colors.transparent,
+            child: isLoading
+                ? Container(child: Center(
+                child: ColorLoader5(
+                  dotOneColor: Colors.red,
+                  dotTwoColor: Colors.blueAccent,
+                  dotThreeColor: Colors.green,
+                  dotType: DotType.circle,
+                  dotIcon: Icon(Icons.adjust),
+                  duration: Duration(seconds: 1),
+                )),
+              decoration: BoxDecoration(color: Colors.transparent.withOpacity(0.5)),)
+                : Container())
         : Container(
             height: 0.0,
             width: 0.0,

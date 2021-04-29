@@ -1,52 +1,28 @@
-import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/src/calendar.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/src/constant.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/src/customization/header_style.dart';
-import 'package:book_it/UI/B5_Profile/B5_ProfileScreen.dart';
 import 'package:book_it/UI/Utills/AppColors.dart';
-import 'package:book_it/main.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/AppStrings.dart';
+
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'MyExpansionCard.dart';
-import 'RoomDetail.dart';
-import 'calender.dart';
-import 'hotelDetail_concept_2.dart';
+import 'model/BookingRoomList.dart';
 import 'src/customization/day_style.dart';
 import 'src/customization/dayofweek_style.dart';
 
 // ignore: must_be_immutable
+
+// ignore: must_be_immutable
 class SelectCheckInOutDate extends StatefulWidget {
-  String imageD,
-      titleD,
-      locationD,
-      idD,
-      typeD,
-      userId,
-      nameD,
-      photoProfileD,
-      emailD;
-  List<String> photoD, serviceD, descriptionD;
-  num ratingD, priceD, latLang1D, latLang2D;
+  num adultCapacity, childCapacity;
 
   SelectCheckInOutDate({
-    this.imageD,
-    this.titleD,
-    this.priceD,
-    this.locationD,
-    this.idD,
-    this.photoD,
-    this.serviceD,
-    this.descriptionD,
-    this.userId,
-    this.typeD,
-    this.emailD,
-    this.nameD,
-    this.photoProfileD,
-    this.latLang1D,
-    this.latLang2D,
-    this.ratingD,
+    this.adultCapacity,
+    this.childCapacity,
   });
 
   @override
@@ -71,8 +47,22 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
   bool isCheckInTabSelected = true;
   bool isCheckOutTabSelected = false;
   bool isRoomTabSelected = false;
-  var checkInDate = DateTime.now();
-  var checkOutDate = DateTime.now();
+  num totalAdultCount = 0;
+  num totalChildCount = 0;
+
+  // var checkInDate = DateTime.now();
+  // var checkOutDate = DateTime.now();
+
+  @override
+  void initState() {
+    totalAdultCount = 0;
+    totalChildCount = 0;
+    AppStrings.selectedRoomList.forEach((element) {
+      totalAdultCount += element.adult;
+      totalChildCount += element.child;
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,11 +132,12 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
       color: Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Material(
-            child: InkWell(
+      child: Material(
+        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
               onTap: () {
                 setState(() {
                   isCheckInTabSelected = true;
@@ -169,9 +160,9 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
                     height: 4,
                   ),
                   Text(
-                    '${DateFormat('EEE, dd MMM').format(checkInDate)}',
+                    '${DateFormat('EEE, dd MMM').format(AppStrings.checkInDate)}',
                     style: TextStyle(
-                        color: Colors.black,
+                        color: AppColor.primaryColor,
                         fontFamily: "Sofia",
                         fontWeight: FontWeight.w400,
                         fontSize: 14.0),
@@ -179,83 +170,89 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
                 ],
               ),
             ),
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
-                isCheckInTabSelected = false;
-                isCheckOutTabSelected = true;
-                isRoomTabSelected = false;
-              });
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Check Out'.toUpperCase(),
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontFamily: "Sofia",
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12.0),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  // 'Mon, 25 Apr',
-                  '${DateFormat('EEE, dd MMM').format(checkOutDate)}',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Sofia",
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14.0),
-                ),
-              ],
+            InkWell(
+              onTap: () {
+                setState(() {
+                  isCheckInTabSelected = false;
+                  isCheckOutTabSelected = true;
+                  isRoomTabSelected = false;
+                });
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Check Out'.toUpperCase(),
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontFamily: "Sofia",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12.0),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    // 'Mon, 25 Apr',
+                    '${DateFormat('EEE, dd MMM').format(AppStrings.checkOutDate)}',
+                    style: TextStyle(
+                        color: AppColor.primaryColor,
+                        fontFamily: "Sofia",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14.0),
+                  ),
+                ],
+              ),
             ),
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
-                isCheckInTabSelected = false;
-                isCheckOutTabSelected = false;
-                isRoomTabSelected = true;
-              });
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '2 rooms'.toUpperCase(),
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontFamily: "Sofia",
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12.0),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.supervised_user_circle_rounded,
-                      size: 16,
-                    ),
-                    Text(
-                      '2 adults',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "Sofia",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14.0),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
-        ],
+            InkWell(
+              onTap: () {
+                setState(() {
+                  isCheckInTabSelected = false;
+                  isCheckOutTabSelected = false;
+                  isRoomTabSelected = true;
+                });
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    AppStrings.selectedRoomList != null &&
+                            AppStrings.selectedRoomList.length > 0
+                        ? "${AppStrings.selectedRoomList.length}\trooms"
+                        : ' room'.toUpperCase(),
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontFamily: "Sofia",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12.0),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/image/images/profile.svg',
+                        color: AppColor.primaryColor,
+                        width: 14,
+                        height: 14,
+                      ),
+                      Text(
+                        totalAdultCount>0&&totalChildCount==0?
+                        '\t${totalAdultCount} adult':"\t${totalAdultCount} adult\t ${totalChildCount}\tchildren",
+                        style: TextStyle(
+                            color: AppColor.primaryColor,
+                            fontFamily: "Sofia",
+                            fontWeight: FontWeight.w400,
+                            fontSize: 10.0),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -302,15 +299,6 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(
-            "S",
-            style: TextStyle(
-              color: Colors.black54,
-              fontSize: 14,
-              fontFamily: "Sofia",
-              fontWeight: FontWeight.w400,
-            ),
-          ),
           Text(
             "M",
             style: TextStyle(
@@ -364,7 +352,16 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
               fontFamily: "Sofia",
               fontWeight: FontWeight.w400,
             ),
-          )
+          ),
+          Text(
+            "S",
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 14,
+              fontFamily: "Sofia",
+              fontWeight: FontWeight.w400,
+            ),
+          ),
         ],
       ),
     );
@@ -375,10 +372,11 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
       margin: EdgeInsets.only(bottom: 100),
       child: Container(
           color: Colors.white,
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height * 0.7,
           margin: EdgeInsets.symmetric(vertical: 15),
           child: SimpleVerticalCalendar(
-            startDate: checkInDate,
+            startDate: AppStrings.checkInDate,
+
             numOfMonth: 6,
             headerStyle: HeaderStyle(
               titleTextStyle: TextStyle(
@@ -400,10 +398,11 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
             dayStyle: DayHeaderStyle(
               textColor: Colors.black87,
             ),
+            // dayOfWeek: ["S","M", "T", "W", "T", "F", "S",],
             onDateTap: (start, end) {
               print("StartDate$start");
               print(end);
-              checkInDate = start;
+              AppStrings.checkInDate = start;
               setState(() {});
             },
           )),
@@ -415,10 +414,10 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
       margin: EdgeInsets.only(bottom: 100),
       child: Container(
           color: Colors.white,
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height * 0.7,
           margin: EdgeInsets.symmetric(vertical: 15),
           child: SimpleVerticalCalendar(
-            startDate: checkOutDate,
+            startDate: AppStrings.checkOutDate,
             numOfMonth: 6,
             headerStyle: HeaderStyle(
               titleTextStyle: TextStyle(
@@ -440,10 +439,11 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
             dayStyle: DayHeaderStyle(
               textColor: Colors.black87,
             ),
+            // dayOfWeek: ["S","M", "T", "W", "T", "F", "S",],
             onDateTap: (start, end) {
               print("checkOutDate $start");
               print(end);
-              checkOutDate = start;
+              AppStrings.checkOutDate = start;
               setState(() {});
             },
           )),
@@ -452,193 +452,670 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
 
   _RoomAndGuestWidget() {
     return Container(
-      margin: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-                color: Color.fromRGBO(117, 117, 170, 0.17),
-                blurRadius: 10,
-                offset: Offset(0, 5))
-          ],
-          borderRadius: BorderRadius.circular(6)),
-      // elevation: 1,
-      // shape: RoundedRectangleBorder(
-      //   borderRadius: BorderRadius.circular(Dimens.ten),
-      // ),
-      child: MyExpansionCard(
-        initiallyExpanded: true,
-        // backgroundColor: Colors.black87,
-        margin: EdgeInsets.zero,
-        borderRadius: 6,
-        expandIcon: 'assets/image/images/location.svg',
-        collapseIcon: 'assets/image/images/profile.svg',
-        onExpansionChanged: (bool val) {
-          print(val);
-        },
-        title: Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        children: [
+          Column(
             children: [
-              Text(
-                "Room 1",
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 14,
-                  height: 1,
-                  fontFamily: "Sofia",
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                "1 Guest",
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 14,
-                  height: 1,
-                  fontFamily: "Sofia",
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              Visibility(
+                  visible: AppStrings.selectedRoomList != null &&
+                          AppStrings.selectedRoomList.length > 0
+                      ? true
+                      : false,
+                  child: selectedRoomListWidget()),
+              // Container(
+              //   margin: EdgeInsets.all(20),
+              //   decoration: BoxDecoration(
+              //       color: Colors.white,
+              //       boxShadow: [
+              //         BoxShadow(
+              //             color: Color.fromRGBO(117, 117, 170, 0.17),
+              //             blurRadius: 10,
+              //             offset: Offset(0, 5))
+              //       ],
+              //       borderRadius: BorderRadius.circular(6)),
+              //   child: MyExpansionCard(
+              //     initiallyExpanded: true,
+              //     // backgroundColor: Colors.black87,
+              //     margin: EdgeInsets.zero,
+              //     borderRadius: 6,
+              //     expandIcon: 'assets/image/images/location.svg',
+              //     collapseIcon: 'assets/image/images/profile.svg',
+              //     onExpansionChanged: (bool val) {
+              //       print(val);
+              //     },
+              //     title: Container(
+              //       child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Text(
+              //             "Room",
+              //             style: TextStyle(
+              //               color: Colors.black87,
+              //               fontSize: 14,
+              //               height: 1,
+              //               fontFamily: "Sofia",
+              //               fontWeight: FontWeight.w500,
+              //             ),
+              //           ),
+              //           Text(
+              //             " Guest",
+              //             style: TextStyle(
+              //               color: Colors.black87,
+              //               fontSize: 14,
+              //               height: 1,
+              //               fontFamily: "Sofia",
+              //               fontWeight: FontWeight.w500,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //     children: <Widget>[
+              //       Divider(),
+              //       Padding(
+              //         padding: const EdgeInsets.symmetric(
+              //             horizontal: 14, vertical: 8.0),
+              //         child: Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             Text(
+              //               "Adult",
+              //               style: TextStyle(
+              //                   height: 1.1,
+              //                   fontFamily: "Sofia",
+              //                   color: Colors.black,
+              //                   fontSize: 14.0),
+              //             ),
+              //             new Row(
+              //               mainAxisAlignment: MainAxisAlignment.end,
+              //               children: <Widget>[
+              //                 SizedBox(
+              //                   height: 30,
+              //                   width: 30,
+              //                   child: new FloatingActionButton(
+              //                     onPressed: minus,
+              //                     backgroundColor: AppColor.primaryColor,
+              //                     child: new Text(
+              //                       "﹣",
+              //                       style: TextStyle(
+              //                           height: 1.1,
+              //                           fontFamily: "Sofia",
+              //                           color: Colors.white,
+              //                           fontSize: 30.0),
+              //                     ),
+              //                   ),
+              //                 ),
+              //                 SizedBox(
+              //                   width: 20,
+              //                 ),
+              //                 new Text('$adult',
+              //                     style: new TextStyle(fontSize: 20.0)),
+              //                 SizedBox(
+              //                   width: 20,
+              //                 ),
+              //                 SizedBox(
+              //                   height: 30,
+              //                   width: 30,
+              //                   child: new FloatingActionButton(
+              //                     onPressed: add,
+              //                     child: new Icon(
+              //                       Icons.add,
+              //                       color: Colors.white,
+              //                     ),
+              //                     backgroundColor: AppColor.primaryColor,
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //       Padding(
+              //         padding: const EdgeInsets.symmetric(
+              //             horizontal: 14, vertical: 8.0),
+              //         child: Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             Flexible(
+              //               child: Text(
+              //                 "Travelling with children ? (0-13 years)",
+              //                 style: TextStyle(
+              //                     height: 1.1,
+              //                     fontFamily: "Sofia",
+              //                     color: Colors.black,
+              //                     fontSize: 14.0),
+              //               ),
+              //             ),
+              //             SizedBox(
+              //               width: 10,
+              //             ),
+              //             new Row(
+              //               mainAxisAlignment: MainAxisAlignment.end,
+              //               children: <Widget>[
+              //                 SizedBox(
+              //                   height: 30,
+              //                   width: 30,
+              //                   child: new FloatingActionButton(
+              //                     onPressed: minusChild,
+              //                     backgroundColor: AppColor.primaryColor,
+              //                     child: new Text(
+              //                       "﹣",
+              //                       style: TextStyle(
+              //                           height: 1.1,
+              //                           fontFamily: "Sofia",
+              //                           color: Colors.white,
+              //                           fontSize: 30.0),
+              //                     ),
+              //                   ),
+              //                 ),
+              //                 SizedBox(
+              //                   width: 20,
+              //                 ),
+              //                 new Text('$_child',
+              //                     style: new TextStyle(fontSize: 20.0)),
+              //                 SizedBox(
+              //                   width: 20,
+              //                 ),
+              //                 SizedBox(
+              //                   height: 30,
+              //                   width: 30,
+              //                   child: new FloatingActionButton(
+              //                     onPressed: addChild,
+              //                     child: new Icon(
+              //                       Icons.add,
+              //                       color: Colors.white,
+              //                     ),
+              //                     backgroundColor: AppColor.primaryColor,
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //       Container(
+              //         margin: EdgeInsets.only(top: 8.0),
+              //         height: 1,
+              //         color: Colors.grey.withOpacity(0.2),
+              //       ),
+              //       Row(
+              //         children: [
+              //           // Expanded(
+              //           //   child: FlatButton(
+              //           //       onPressed: () {},
+              //           //       child: Flexible(
+              //           //         child: Text(
+              //           //           "Delete Room",
+              //           //           style: TextStyle(
+              //           //               height: 1.1,
+              //           //               fontFamily: "Sofia",
+              //           //               color: AppColor.colorGreen,
+              //           //               fontSize: 15.0),
+              //           //         ),
+              //           //       )),
+              //           // ),
+              //           // Container(
+              //           //   color: Colors.grey.withOpacity(0.2),
+              //           //   width: 0.8,
+              //           //   height: 50,
+              //           // ),
+              //           Expanded(
+              //             child: FlatButton(
+              //                 onPressed: () {
+              //                   setState(() {
+              //                     AppStrings.selectedRoomList.add(
+              //                         SelectedRoomList(
+              //                             adult: adult, child: _child));
+              //                     totalAdultCount = 0;
+              //                     totalChildCount = 0;
+              //                     AppStrings.selectedRoomList
+              //                         .forEach((element) {
+              //                       totalAdultCount += element.adult;
+              //                       totalChildCount += element.child;
+              //                     });
+              //                     adult = 1;
+              //                     _child = 0;
+              //                   });
+              //                 },
+              //                 child: Flexible(
+              //                   child: Text(
+              //                     "Add Room",
+              //                     style: TextStyle(
+              //                         height: 1.1,
+              //                         fontFamily: "Sofia",
+              //                         color: AppColor.colorGreen,
+              //                         fontSize: 14.0),
+              //                   ),
+              //                 )),
+              //           )
+              //         ],
+              //       )
+              //     ],
+              //   ),
+              // ),
             ],
-          ),
-        ),
-        children: <Widget>[
-          Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Adult",
-                  style: TextStyle(
-                      height: 1.1,
-                      fontFamily: "Sofia",
-                      color: Colors.black,
-                      fontSize: 14.0),
-                ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: new FloatingActionButton(
-                        onPressed: minus,
-                        backgroundColor: AppColor.primaryColor,
-                        child: new Text(
-                          "﹣",
-                          style: TextStyle(
-                              height: 1.1,
-                              fontFamily: "Sofia",
-                              color: Colors.white,
-                              fontSize: 30.0),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    new Text('$_n', style: new TextStyle(fontSize: 20.0)),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: new FloatingActionButton(
-                        onPressed: add,
-                        child: new Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ),
-                        backgroundColor: AppColor.primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text(
-                    "Travelling with children ? (0-13 years)",
-                    style: TextStyle(
-                        height: 1.1,
-                        fontFamily: "Sofia",
-                        color: Colors.black,
-                        fontSize: 14.0),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: new FloatingActionButton(
-                        onPressed: minus,
-                        backgroundColor: AppColor.primaryColor,
-                        child: new Text(
-                          "﹣",
-                          style: TextStyle(
-                              height: 1.1,
-                              fontFamily: "Sofia",
-                              color: Colors.white,
-                              fontSize: 30.0),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    new Text('$_n', style: new TextStyle(fontSize: 20.0)),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: new FloatingActionButton(
-                        onPressed: add,
-                        child: new Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ),
-                        backgroundColor: AppColor.primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          )
         ],
       ),
     );
   }
 
-  int _n = 1;
+  Widget selectedRoomListWidget() {
+    return ListView.builder(
+        itemCount: AppStrings.selectedRoomList.length,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          num totalGuest = num.parse(
+                  AppStrings.selectedRoomList[index].child.toString()) +
+              num.parse(AppStrings.selectedRoomList[index].adult.toString());
+          return Container(
+            margin: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(117, 117, 170, 0.17),
+                      blurRadius: 10,
+                      offset: Offset(0, 5))
+                ],
+                borderRadius: BorderRadius.circular(6)),
+            child: MyExpansionCard(
+              initiallyExpanded: true,
+              // backgroundColor: Colors.black87,
+              margin: EdgeInsets.zero,
+              borderRadius: 6,
+              expandIcon: 'assets/image/images/location.svg',
+              collapseIcon: 'assets/image/images/profile.svg',
+              onExpansionChanged: (bool val) {
+                print(val);
+              },
+              title: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Room ${index + 1}",
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                        height: 1,
+                        fontFamily: "Sofia",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      "${totalGuest.toString()}\tGuest",
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                        height: 1,
+                        fontFamily: "Sofia",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              children: <Widget>[
+                Divider(),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Adult",
+                        style: TextStyle(
+                            height: 1.1,
+                            fontFamily: "Sofia",
+                            color: Colors.black,
+                            fontSize: 14.0),
+                      ),
+                      new Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: new FloatingActionButton(
+                              onPressed: () {
+                                removeRoomAdult(index);
+                              },
+                              backgroundColor: AppColor.primaryColor,
+                              child: new Text(
+                                "﹣",
+                                style: TextStyle(
+                                    height: 1.1,
+                                    fontFamily: "Sofia",
+                                    color: Colors.white,
+                                    fontSize: 30.0),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          new Text(
+                              '${AppStrings.selectedRoomList[index].adult}',
+                              style: new TextStyle(fontSize: 20.0)),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: new FloatingActionButton(
+                              onPressed: () {
+                                updateRoomAdult(index);
+                              },
+                              child: new Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                              backgroundColor: AppColor.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          "Travelling with children ? (0-13 years)",
+                          style: TextStyle(
+                              height: 1.1,
+                              fontFamily: "Sofia",
+                              color: Colors.black,
+                              fontSize: 14.0),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      new Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: new FloatingActionButton(
+                              onPressed: () {
+                                removeRoomChild(index);
+                              },
+                              backgroundColor: AppColor.primaryColor,
+                              child: new Text(
+                                "﹣",
+                                style: TextStyle(
+                                    height: 1.1,
+                                    fontFamily: "Sofia",
+                                    color: Colors.white,
+                                    fontSize: 30.0),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          new Text(
+                              '${AppStrings.selectedRoomList[index].child}',
+                              style: new TextStyle(fontSize: 20.0)),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: new FloatingActionButton(
+                              onPressed: () {
+                                updateRoomChild(index);
+                              },
+                              child: new Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                              backgroundColor: AppColor.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 8.0),
+                  height: 1,
+                  color: Colors.grey.withOpacity(0.2),
+                ),
+                Row(
+                  children: [
+                    Visibility(
+                      visible:
+                          index == AppStrings.selectedRoomList.length - 1 &&
+                              AppStrings.selectedRoomList.length > 1?true:false,
+                      child: Expanded(
+                        child: FlatButton(
+                            onPressed: () {
+                              setState(() {
+
+                                AppStrings.selectedRoomList.removeAt(index);
+                                totalAdultCount = 0;
+                                totalChildCount = 0;
+                                AppStrings.selectedRoomList.forEach((element) {
+                                  totalAdultCount += element.adult;
+                                  totalChildCount += element.child;
+                                });
+                              });
+                            },
+                            child: Flexible(
+                              child: Text(
+                                "Delete Room",
+                                style: TextStyle(
+                                    height: 1.1,
+                                    fontFamily: "Sofia",
+                                    color: AppColor.colorGreen,
+                                    fontSize: 15.0),
+                              ),
+                            )),
+                      ),
+                    ),
+                    Visibility(
+                      visible:
+                      index == AppStrings.selectedRoomList.length - 1 &&
+                          AppStrings.selectedRoomList.length > 1?true:false,
+                      child: Container(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 0.8,
+                        height: 50,
+                      ),
+                    ),
+                    Expanded(
+                      child: FlatButton(
+                          onPressed: () {
+                            setState(() {
+                              if (index ==
+                                  AppStrings.selectedRoomList.length - 1) {
+                                AppStrings.selectedRoomList.add(
+                                    SelectedRoomList(
+                                        adult: adult, child: _child));
+                                totalAdultCount = 0;
+                                totalChildCount = 0;
+                                AppStrings.selectedRoomList.forEach((element) {
+                                  totalAdultCount += element.adult;
+                                  totalChildCount += element.child;
+                                });
+                                adult = 1;
+                                _child = 0;
+                              } else {
+                                AppStrings.selectedRoomList.removeAt(index);
+                                totalAdultCount = 0;
+                                totalChildCount = 0;
+                                AppStrings.selectedRoomList.forEach((element) {
+                                  totalAdultCount += element.adult;
+                                  totalChildCount += element.child;
+                                });
+                              }
+                            });
+                          },
+                          child: Flexible(
+                            child: Text(
+                              index == AppStrings.selectedRoomList.length - 1
+                                  ? "Add Room"
+                                  : "Delete Room",
+                              style: TextStyle(
+                                  height: 1.1,
+                                  fontFamily: "Sofia",
+                                  color: AppColor.colorGreen,
+                                  fontSize: 15.0),
+                            ),
+                          )),
+                    ),
+                    // Container(
+                    //   color: Colors.grey.withOpacity(0.2),
+                    //   width: 0.8,
+                    //   height: 50,
+                    // ),
+                    // Expanded(
+                    //   child: FlatButton(
+                    //       onPressed: () {},
+                    //       child: Flexible(
+                    //         child: Text(
+                    //           "Add Room",
+                    //           style: TextStyle(
+                    //               height: 1.1,
+                    //               fontFamily: "Sofia",
+                    //               color: AppColor.colorGreen,
+                    //               fontSize: 14.0),
+                    //         ),
+                    //       )),
+                    // )
+                  ],
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  int adult = 1;
 
   void minus() {
     setState(() {
-      if (_n != 1) _n--;
+      if (adult != 0) adult--;
     });
   }
 
   void add() {
     setState(() {
-      _n++;
+      if (adult < widget.adultCapacity)
+        adult++;
+      else
+        showErrorDialog(context, "Select Adult",
+            "Only ${widget.adultCapacity}  adult are allowed in room");
     });
+  }
+
+  int _child = 0;
+
+  void minusChild() {
+    setState(() {
+      if (_child != 0) _child--;
+    });
+  }
+
+  void addChild() {
+    setState(() {
+      if (_child < widget.childCapacity)
+        _child++;
+      else {
+        showErrorDialog(context, "Select Children",
+            "Only ${widget.childCapacity}  children are allowed in room");
+      }
+    });
+  }
+
+  void updateRoomAdult(index) {
+    setState(() {
+      if (AppStrings.selectedRoomList[index].adult < widget.adultCapacity)
+        {
+          AppStrings.selectedRoomList[index].adult++;
+          totalAdultCount = 0;
+          totalChildCount = 0;
+          AppStrings.selectedRoomList.forEach((element) {
+            totalAdultCount += element.adult;
+            totalChildCount += element.child;
+          });
+        }
+
+      else {
+        showErrorDialog(context, "Select Children",
+            "Only ${widget.adultCapacity}  adult are allowed in room");
+      }
+    });
+  }
+
+  void removeRoomAdult(index) {
+    setState(() {
+      if (AppStrings.selectedRoomList[index].adult != 1) {
+        AppStrings.selectedRoomList[index].adult--;
+        totalAdultCount = 0;
+        totalChildCount = 0;
+        AppStrings.selectedRoomList.forEach((element) {
+          totalAdultCount += element.adult;
+          totalChildCount += element.child;
+        });
+      }
+    });
+  }
+
+  void updateRoomChild(index) {
+    setState(() {
+      if (AppStrings.selectedRoomList[index].child < widget.childCapacity) {
+        AppStrings.selectedRoomList[index].child++;
+        totalAdultCount = 0;
+        totalChildCount = 0;
+        AppStrings.selectedRoomList.forEach((element) {
+          totalAdultCount += element.adult;
+          totalChildCount += element.child;
+        });
+      } else {
+        showErrorDialog(context, "Select Children",
+            "Only ${widget.childCapacity}  children are allowed in room");
+      }
+    });
+  }
+
+  void removeRoomChild(index) {
+    setState(() {
+      if (AppStrings.selectedRoomList[index].child != 0) {
+        AppStrings.selectedRoomList[index].child--;
+        totalAdultCount = 0;
+        totalChildCount = 0;
+        AppStrings.selectedRoomList.forEach((element) {
+          totalAdultCount += element.adult;
+          totalChildCount += element.child;
+        });
+      }
+    });
+  }
+
+  void showErrorDialog(context, title, msg) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AppConstantHelper.showDialog(
+              context: context, title: title, msg: msg);
+        });
   }
 
   _applyButton() {
@@ -653,7 +1130,9 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
             borderRadius: BorderRadius.circular(5.0),
           ),
           padding: EdgeInsets.symmetric(vertical: 16),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           color: AppColor.primaryColor,
           splashColor: Colors.white12,
           child: Text(

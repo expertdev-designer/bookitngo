@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 class SearchTagResult extends StatefulWidget {
   String userID, type, data;
+
   SearchTagResult({this.userID, this.data, this.type});
 
   @override
@@ -29,7 +30,6 @@ class _SearchTagResultState extends State<SearchTagResult> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-
             Padding(
               padding: EdgeInsets.only(left: 5.0),
               child: StreamBuilder(
@@ -128,7 +128,7 @@ class cardList extends StatelessWidget {
                           latLang2D: latLang2,
                           locationD: location,
                           priceD: price,
-                          descriptionD: description,
+                          descriptionD: null,
                           photoD: photo,
                           ratingD: rating,
                           serviceD: service,
