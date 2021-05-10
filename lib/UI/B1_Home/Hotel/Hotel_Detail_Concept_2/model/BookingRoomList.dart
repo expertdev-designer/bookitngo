@@ -12,7 +12,7 @@ class BookingRoomList {
   // "phone": phone,
   // "special_instruction": specialInstruction
   String hotelID;
-  String roomID;
+  List<String> roomID;
   String checkInDate;
   String checkOutDate;
   List<SelectedRoomList> rooms;

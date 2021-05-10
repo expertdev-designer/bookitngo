@@ -42,33 +42,33 @@ class BookingHistoryResponse {
 }
 
 class BookingHistoryData {
-  List<Past> _current;
-  List<Past> _past;
+  List<Current> _current;
+  List<Current> _past;
 
-  BookingHistoryData({List<Null> current, List<Past> past}) {
+  BookingHistoryData({List<Current> current, List<Current> past}) {
     this._current = current;
     this._past = past;
   }
 
-  List<Null> get current => _current;
+  List<Current> get current => _current;
 
-  set current(List<Null> current) => _current = current;
+  set current(List<Current> current) => _current = current;
 
-  List<Past> get past => _past;
+  List<Current> get past => _past;
 
-  set past(List<Past> past) => _past = past;
+  set past(List<Current> past) => _past = past;
 
   BookingHistoryData.fromJson(Map<String, dynamic> json) {
     if (json['current'] != null) {
-      _current = new List<Null>();
+      _current = new List<Current>();
       json['current'].forEach((v) {
-        _current.add(new Past.fromJson(v));
+        _current.add(new Current.fromJson(v));
       });
     }
     if (json['past'] != null) {
-      _past = new List<Past>();
+      _past = new List<Current>();
       json['past'].forEach((v) {
-        _past.add(new Past.fromJson(v));
+        _past.add(new Current.fromJson(v));
       });
     }
   }
@@ -85,12 +85,13 @@ class BookingHistoryData {
   }
 }
 
-class Past {
+class Current {
+  List<String> _roomId;
+  List<Rooms> _rooms;
   String _sId;
   String _transactionId;
   String _cardId;
   String _hotelId;
-  String _roomId;
   String _checkIn;
   String _checkOut;
   int _adult;
@@ -107,12 +108,13 @@ class Past {
   HotelDetail _hotelDetail;
   RoomDetail _roomDetail;
 
-  Past(
-      {String sId,
+  Current(
+      {List<String> roomId,
+      List<Rooms> rooms,
+      String sId,
       String transactionId,
       String cardId,
       String hotelId,
-      String roomId,
       String checkIn,
       String checkOut,
       int adult,
@@ -128,11 +130,12 @@ class Past {
       int iV,
       HotelDetail hotelDetail,
       RoomDetail roomDetail}) {
+    this._roomId = roomId;
+    this._rooms = rooms;
     this._sId = sId;
     this._transactionId = transactionId;
     this._cardId = cardId;
     this._hotelId = hotelId;
-    this._roomId = roomId;
     this._checkIn = checkIn;
     this._checkOut = checkOut;
     this._adult = adult;
@@ -150,6 +153,14 @@ class Past {
     this._roomDetail = roomDetail;
   }
 
+  List<String> get roomId => _roomId;
+
+  set roomId(List<String> roomId) => _roomId = roomId;
+
+  List<Rooms> get rooms => _rooms;
+
+  set rooms(List<Rooms> rooms) => _rooms = rooms;
+
   String get sId => _sId;
 
   set sId(String sId) => _sId = sId;
@@ -165,10 +176,6 @@ class Past {
   String get hotelId => _hotelId;
 
   set hotelId(String hotelId) => _hotelId = hotelId;
-
-  String get roomId => _roomId;
-
-  set roomId(String roomId) => _roomId = roomId;
 
   String get checkIn => _checkIn;
 
@@ -231,12 +238,18 @@ class Past {
 
   set roomDetail(RoomDetail roomDetail) => _roomDetail = roomDetail;
 
-  Past.fromJson(Map<String, dynamic> json) {
+  Current.fromJson(Map<String, dynamic> json) {
+    _roomId = json['room_id'].cast<String>();
+    if (json['rooms'] != null) {
+      _rooms = new List<Rooms>();
+      json['rooms'].forEach((v) {
+        _rooms.add(new Rooms.fromJson(v));
+      });
+    }
     _sId = json['_id'];
     _transactionId = json['transaction_id'];
     _cardId = json['card_id'];
     _hotelId = json['hotel_id'];
-    _roomId = json['room_id'];
     _checkIn = json['check_in'];
     _checkOut = json['check_out'];
     _adult = json['adult'];
@@ -260,11 +273,14 @@ class Past {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['room_id'] = this._roomId;
+    if (this._rooms != null) {
+      data['rooms'] = this._rooms.map((v) => v.toJson()).toList();
+    }
     data['_id'] = this._sId;
     data['transaction_id'] = this._transactionId;
     data['card_id'] = this._cardId;
     data['hotel_id'] = this._hotelId;
-    data['room_id'] = this._roomId;
     data['check_in'] = this._checkIn;
     data['check_out'] = this._checkOut;
     data['adult'] = this._adult;
@@ -288,6 +304,36 @@ class Past {
   }
 }
 
+class Rooms {
+  int _adult;
+  int _child;
+
+  Rooms({int adult, int child}) {
+    this._adult = adult;
+    this._child = child;
+  }
+
+  int get adult => _adult;
+
+  set adult(int adult) => _adult = adult;
+
+  int get child => _child;
+
+  set child(int child) => _child = child;
+
+  Rooms.fromJson(Map<String, dynamic> json) {
+    _adult = json['adult'];
+    _child = json['child'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['adult'] = this._adult;
+    data['child'] = this._child;
+    return data;
+  }
+}
+
 class HotelDetail {
   List<String> _images;
   List<String> _amenities;
@@ -302,7 +348,7 @@ class HotelDetail {
   String _longitude;
   bool _isDeleted;
   bool _isFeatured;
-  int _rating;
+  num _rating;
   String _category;
   String _updatedAt;
   String _createdAt;
@@ -322,7 +368,7 @@ class HotelDetail {
       String longitude,
       bool isDeleted,
       bool isFeatured,
-      int rating,
+      num rating,
       String category,
       String updatedAt,
       String createdAt,
@@ -399,7 +445,7 @@ class HotelDetail {
 
   set isFeatured(bool isFeatured) => _isFeatured = isFeatured;
 
-  int get rating => _rating;
+  num get rating => _rating;
 
   set rating(int rating) => _rating = rating;
 

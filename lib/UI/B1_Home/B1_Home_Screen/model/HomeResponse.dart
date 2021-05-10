@@ -10,10 +10,15 @@ class HomeResponse {
   }
 
   bool get status => _status;
+
   set status(bool status) => _status = status;
+
   String get message => _message;
+
   set message(String message) => _message = message;
+
   HomeData get data => _data;
+
   set data(HomeData data) => _data = data;
 
   HomeResponse.fromJson(Map<String, dynamic> json) {
@@ -40,12 +45,11 @@ class HomeData {
   List<Categories> _categories;
   List<HotelData> _rooms;
 
-  HomeData(
-      {List<HotelData> featured,
-      List<HotelData> recommended,
-      List<Destinations> destinations,
-      List<Categories> categories,
-      List<HotelData> rooms}) {
+  HomeData({List<HotelData> featured,
+    List<HotelData> recommended,
+    List<Destinations> destinations,
+    List<Categories> categories,
+    List<HotelData> rooms}) {
     this._featured = featured;
     this._recommended = recommended;
     this._destinations = destinations;
@@ -54,14 +58,24 @@ class HomeData {
   }
 
   List<HotelData> get featured => _featured;
+
   set featured(List<HotelData> featured) => _featured = featured;
+
   List<HotelData> get recommended => _recommended;
+
   set recommended(List<HotelData> recommended) => _recommended = recommended;
+
   List<Destinations> get destinations => _destinations;
-  set destinations(List<Destinations> destinations) => _destinations = destinations;
+
+  set destinations(List<Destinations> destinations) =>
+      _destinations = destinations;
+
   List<Categories> get categories => _categories;
+
   set categories(List<Categories> categories) => _categories = categories;
+
   List<HotelData> get rooms => _rooms;
+
   set rooms(List<HotelData> rooms) => _rooms = rooms;
 
   HomeData.fromJson(Map<String, dynamic> json) {
@@ -130,33 +144,34 @@ class HotelData {
   String _country;
   String _latitude;
   String _longitude;
+  num _price;
   bool _isDeleted;
   bool _isFeatured;
-  int _rating;
+  num _rating;
   String _category;
   String _updatedAt;
   String _createdAt;
   int _iV;
 
-  HotelData(
-      {List<String> images,
-      List<String> amenities,
-      String sId,
-      String name,
-      String description,
-      String address,
-      String city,
-      String state,
-      String country,
-      String latitude,
-      String longitude,
-      bool isDeleted,
-      bool isFeatured,
-      int rating,
-      String category,
-      String updatedAt,
-      String createdAt,
-      int iV}) {
+  HotelData({List<String> images,
+    List<String> amenities,
+    String sId,
+    String name,
+    String description,
+    String address,
+    String city,
+    String state,
+    String country,
+    String latitude,
+    String longitude,
+    num price,
+    bool isDeleted,
+    bool isFeatured,
+    num rating,
+    String category,
+    String updatedAt,
+    String createdAt,
+    int iV}) {
     this._images = images;
     this._amenities = amenities;
     this._sId = sId;
@@ -168,6 +183,7 @@ class HotelData {
     this._country = country;
     this._latitude = latitude;
     this._longitude = longitude;
+    this._price = price;
     this._isDeleted = isDeleted;
     this._isFeatured = isFeatured;
     this._rating = rating;
@@ -178,40 +194,80 @@ class HotelData {
   }
 
   List<String> get images => _images;
+
   set images(List<String> images) => _images = images;
+
   List<String> get amenities => _amenities;
+
   set amenities(List<String> amenities) => _amenities = amenities;
+
   String get sId => _sId;
+
   set sId(String sId) => _sId = sId;
+
   String get name => _name;
+
   set name(String name) => _name = name;
+
   String get description => _description;
+
   set description(String description) => _description = description;
+
   String get address => _address;
+
   set address(String address) => _address = address;
+
   String get city => _city;
+
   set city(String city) => _city = city;
+
   String get state => _state;
+
   set state(String state) => _state = state;
+
   String get country => _country;
+
   set country(String country) => _country = country;
+
   String get latitude => _latitude;
+
   set latitude(String latitude) => _latitude = latitude;
+
   String get longitude => _longitude;
+
   set longitude(String longitude) => _longitude = longitude;
+
+
+  num get price => _price;
+
+  set price(num price) => _price = price;
+
   bool get isDeleted => _isDeleted;
+
   set isDeleted(bool isDeleted) => _isDeleted = isDeleted;
+
   bool get isFeatured => _isFeatured;
+
   set isFeatured(bool isFeatured) => _isFeatured = isFeatured;
-  int get rating => _rating;
+
+  num get rating => _rating;
+
   set rating(int rating) => _rating = rating;
+
   String get category => _category;
+
   set category(String category) => _category = category;
+
   String get updatedAt => _updatedAt;
+
   set updatedAt(String updatedAt) => _updatedAt = updatedAt;
+
   String get createdAt => _createdAt;
+
   set createdAt(String createdAt) => _createdAt = createdAt;
+
   int get iV => _iV;
+
   set iV(int iV) => _iV = iV;
 
   HotelData.fromJson(Map<String, dynamic> json) {
@@ -226,6 +282,7 @@ class HotelData {
     _country = json['country'];
     _latitude = json['latitude'];
     _longitude = json['longitude'];
+    _price = json['price'];
     _isDeleted = json['is_deleted'];
     _isFeatured = json['is_featured'];
     _rating = json['rating'];
@@ -248,6 +305,7 @@ class HotelData {
     data['country'] = this._country;
     data['latitude'] = this._latitude;
     data['longitude'] = this._longitude;
+    data['price'] = this._price;
     data['is_deleted'] = this._isDeleted;
     data['is_featured'] = this._isFeatured;
     data['rating'] = this._rating;
@@ -268,14 +326,13 @@ class Categories {
   String _createdAt;
   int _iV;
 
-  Categories(
-      {String sId,
-      String name,
-      String image,
-      bool isDeleted,
-      String updatedAt,
-      String createdAt,
-      int iV}) {
+  Categories({String sId,
+    String name,
+    String image,
+    bool isDeleted,
+    String updatedAt,
+    String createdAt,
+    int iV}) {
     this._sId = sId;
     this._name = name;
     this._image = image;
@@ -286,18 +343,31 @@ class Categories {
   }
 
   String get sId => _sId;
+
   set sId(String sId) => _sId = sId;
+
   String get name => _name;
+
   set name(String name) => _name = name;
+
   String get image => _image;
+
   set image(String image) => _image = image;
+
   bool get isDeleted => _isDeleted;
+
   set isDeleted(bool isDeleted) => _isDeleted = isDeleted;
+
   String get updatedAt => _updatedAt;
+
   set updatedAt(String updatedAt) => _updatedAt = updatedAt;
+
   String get createdAt => _createdAt;
+
   set createdAt(String createdAt) => _createdAt = createdAt;
+
   int get iV => _iV;
+
   set iV(int iV) => _iV = iV;
 
   Categories.fromJson(Map<String, dynamic> json) {
@@ -323,7 +393,6 @@ class Categories {
   }
 }
 
-
 class Destinations {
   List<String> _images;
   String _sId;
@@ -333,14 +402,13 @@ class Destinations {
   String _createdAt;
   int _iV;
 
-  Destinations(
-      {List<String> images,
-        String sId,
-        String name,
-        String description,
-        String updatedAt,
-        String createdAt,
-        int iV}) {
+  Destinations({List<String> images,
+    String sId,
+    String name,
+    String description,
+    String updatedAt,
+    String createdAt,
+    int iV}) {
     this._images = images;
     this._sId = sId;
     this._name = name;
@@ -351,18 +419,31 @@ class Destinations {
   }
 
   List<String> get images => _images;
+
   set images(List<String> images) => _images = images;
+
   String get sId => _sId;
+
   set sId(String sId) => _sId = sId;
+
   String get name => _name;
+
   set name(String name) => _name = name;
+
   String get description => _description;
+
   set description(String description) => _description = description;
+
   String get updatedAt => _updatedAt;
+
   set updatedAt(String updatedAt) => _updatedAt = updatedAt;
+
   String get createdAt => _createdAt;
+
   set createdAt(String createdAt) => _createdAt = createdAt;
+
   int get iV => _iV;
+
   set iV(int iV) => _iV = iV;
 
   Destinations.fromJson(Map<String, dynamic> json) {

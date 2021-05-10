@@ -50,9 +50,10 @@ class HotelByCategoryData {
   String _country;
   String _latitude;
   String _longitude;
+  num _price;
   bool _isDeleted;
   bool _isFeatured;
-  int _rating;
+  num _rating;
   String _category;
   String _updatedAt;
   String _createdAt;
@@ -70,9 +71,10 @@ class HotelByCategoryData {
       String country,
       String latitude,
       String longitude,
+       num  price,
       bool isDeleted,
       bool isFeatured,
-      int rating,
+      num rating,
       String category,
       String updatedAt,
       String createdAt,
@@ -88,6 +90,7 @@ class HotelByCategoryData {
     this._country = country;
     this._latitude = latitude;
     this._longitude = longitude;
+    this._price = price;
     this._isDeleted = isDeleted;
     this._isFeatured = isFeatured;
     this._rating = rating;
@@ -119,11 +122,13 @@ class HotelByCategoryData {
   set latitude(String latitude) => _latitude = latitude;
   String get longitude => _longitude;
   set longitude(String longitude) => _longitude = longitude;
+  num get price => _price;
+  set price(num price) => _price = price;
   bool get isDeleted => _isDeleted;
   set isDeleted(bool isDeleted) => _isDeleted = isDeleted;
   bool get isFeatured => _isFeatured;
   set isFeatured(bool isFeatured) => _isFeatured = isFeatured;
-  int get rating => _rating;
+  num get rating => _rating;
   set rating(int rating) => _rating = rating;
   String get category => _category;
   set category(String category) => _category = category;
@@ -146,6 +151,7 @@ class HotelByCategoryData {
     _country = json['country'];
     _latitude = json['latitude'];
     _longitude = json['longitude'];
+    _price = json['price'];
     _isDeleted = json['is_deleted'];
     _isFeatured = json['is_featured'];
     _rating = json['rating'];
@@ -168,6 +174,7 @@ class HotelByCategoryData {
     data['country'] = this._country;
     data['latitude'] = this._latitude;
     data['longitude'] = this._longitude;
+    data['price'] = this._price;
     data['is_deleted'] = this._isDeleted;
     data['is_featured'] = this._isFeatured;
     data['rating'] = this._rating;

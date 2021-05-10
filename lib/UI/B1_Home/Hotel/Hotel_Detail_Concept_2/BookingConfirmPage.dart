@@ -5,7 +5,6 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import 'model/CreateBookingResponse.dart';
 
 class BookingConfirmPage extends StatelessWidget {
@@ -76,8 +75,11 @@ class BookingConfirmPage extends StatelessWidget {
                     ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(
-                            AppStrings.imagePAth + bookingData.image,height: MediaQuery.of(context).size.width*0.5,
-                            width: MediaQuery.of(context).size.width,fit: BoxFit.fill,)),
+                          AppStrings.imagePAth + bookingData.image,
+                          height: MediaQuery.of(context).size.width * 0.5,
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.fill,
+                        )),
                     SizedBox(
                       height: 14.0,
                     ),
@@ -211,7 +213,7 @@ class BookingConfirmPage extends StatelessWidget {
                               fontSize: 16.0),
                         ),
                         Text(
-                          '${_parseDateStr(bookingData.checkOut)} | 11:00 AM',
+                          '${_parseDateStr(bookingData.checkOut).split(' ').first} | 11:00 AM',
                           style: TextStyle(
                               color: Colors.white,
                               fontFamily: "Sofia",
@@ -229,7 +231,8 @@ class BookingConfirmPage extends StatelessWidget {
             height: 10,
           ),
           Text(
-            '1 Day & 1 Night (1 room, 2 Guest)',
+            "${calculateRoomAndGuest(bookingData.rooms)}",
+            // '1 Day & 1 Night (1 room, 2 Guest)',
             style: TextStyle(
                 color: Colors.white,
                 fontFamily: "Sofia",
@@ -243,10 +246,20 @@ class BookingConfirmPage extends StatelessWidget {
 
   String _parseDateStr(String inputString) {
     DateFormat format = DateFormat("dd-MM-yyyy");
-   DateTime newDate =  format.parse(inputString);
+    DateTime newDate = format.parse(inputString);
 
-    print(DateFormat.yMMMMd().format(newDate)); // print
-    return newDate.toString();
+    print("Date *********${DateFormat.yMMMMd().format(newDate)}"); // print
+    return "${DateFormat.yMMMMd().format(newDate)}";
+  }
+
+  String calculateRoomAndGuest(List<Rooms> list) {
+    num totaladult=0, totalChild=0, totalGuest=0;
+    list.forEach((element) {
+      totaladult += element.adult;
+      totalChild += element.child;
+    });
+    totalGuest = totaladult + totalChild;
+    return "${list.length}\t room\t ${totalGuest}\t guest";
   }
 
   Widget okButton(BuildContext context) {

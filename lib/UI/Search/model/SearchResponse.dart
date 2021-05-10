@@ -1,10 +1,9 @@
-class HotelByLocationResponse {
+class SearchResponse {
   bool _status;
   String _message;
-  HotelByLocationData _data;
+  List<SearchData> _data;
 
-  HotelByLocationResponse(
-      {bool status, String message, HotelByLocationData data}) {
+  SearchResponse({bool status, String message, List<SearchData> data}) {
     this._status = status;
     this._message = message;
     this._data = data;
@@ -18,75 +17,38 @@ class HotelByLocationResponse {
 
   set message(String message) => _message = message;
 
-  HotelByLocationData get data => _data;
+  List<SearchData> get data => _data;
 
-  set data(HotelByLocationData data) => _data = data;
+  set data(List<SearchData> data) => _data = data;
 
-  HotelByLocationResponse.fromJson(Map<String, dynamic> json) {
+  SearchResponse.fromJson(Map<String, dynamic> json) {
     _status = json['status'];
     _message = json['message'];
-    _data = json['data'] != null
-        ? new HotelByLocationData.fromJson(json['data'])
-        : null;
+    if (_status) {
+      if (json['data'] != null) {
+        _data = new List<SearchData>();
+        json['data'].forEach((v) {
+          _data.add(new SearchData.fromJson(v));
+        });
+      }
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status'] = this._status;
     data['message'] = this._message;
-    if (this._data != null) {
-      data['data'] = this._data.toJson();
+    if (this._status) {
+      if (this._data != null) {
+        data['data'] = this._data.map((v) => v.toJson()).toList();
+      }
     }
+
     return data;
   }
 }
 
-class HotelByLocationData {
-  List<HotelLocationTopChoicesData> _top;
-  List<HotelLocationTopChoicesData> _all;
-
-  HotelByLocationData({List<HotelLocationTopChoicesData> top,
-    List<HotelLocationTopChoicesData> all}) {
-    this._top = top;
-    this._all = all;
-  }
-
-  List<HotelLocationTopChoicesData> get top => _top;
-
-  set top(List<HotelLocationTopChoicesData> top) => _top = top;
-
-  List<HotelLocationTopChoicesData> get all => _all;
-
-  set all(List<HotelLocationTopChoicesData> all) => _all = all;
-
-  HotelByLocationData.fromJson(Map<String, dynamic> json) {
-    if (json['top'] != null) {
-      _top = new List<HotelLocationTopChoicesData>();
-      json['top'].forEach((v) {
-        _top.add(new HotelLocationTopChoicesData.fromJson(v));
-      });
-    }
-    if (json['all'] != null) {
-      _all = new List<HotelLocationTopChoicesData>();
-      json['all'].forEach((v) {
-        _all.add(new HotelLocationTopChoicesData.fromJson(v));
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this._top != null) {
-      data['top'] = this._top.map((v) => v.toJson()).toList();
-    }
-    if (this._all != null) {
-      data['all'] = this._all.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
-}
-
-class HotelLocationTopChoicesData {
+class SearchData {
   List<String> _images;
   List<String> _amenities;
   String _sId;
@@ -98,33 +60,35 @@ class HotelLocationTopChoicesData {
   String _country;
   String _latitude;
   String _longitude;
-  num _price;
   bool _isDeleted;
   bool _isFeatured;
   num _rating;
+  num   _price;
   String _category;
   String _updatedAt;
   String _createdAt;
   int _iV;
 
-  HotelLocationTopChoicesData({List<String> images,
-    List<String> amenities,
-    String sId,
-    String name,
-    String description,
-    String address,
-    String city,
-    String state,
-    String country,
-    String latitude,
-    String longitude, num price,
-    bool isDeleted,
-    bool isFeatured,
-    num rating,
-    String category,
-    String updatedAt,
-    String createdAt,
-    int iV}) {
+  SearchData(
+      {List<String> images,
+      List<String> amenities,
+      String sId,
+      String name,
+      String description,
+      String address,
+      String city,
+      String state,
+      String country,
+      String latitude,
+      String longitude,
+      bool isDeleted,
+      bool isFeatured,
+      num rating,
+      num price,
+      String category,
+      String updatedAt,
+      String createdAt,
+      int iV}) {
     this._images = images;
     this._amenities = amenities;
     this._sId = sId;
@@ -136,10 +100,10 @@ class HotelLocationTopChoicesData {
     this._country = country;
     this._latitude = latitude;
     this._longitude = longitude;
-    this._price = price;
     this._isDeleted = isDeleted;
     this._isFeatured = isFeatured;
     this._rating = rating;
+    this._price = price;
     this._category = category;
     this._updatedAt = updatedAt;
     this._createdAt = createdAt;
@@ -190,10 +154,6 @@ class HotelLocationTopChoicesData {
 
   set longitude(String longitude) => _longitude = longitude;
 
-  num get price => _price;
-
-  set price(num price) => _price = price;
-
   bool get isDeleted => _isDeleted;
 
   set isDeleted(bool isDeleted) => _isDeleted = isDeleted;
@@ -204,7 +164,11 @@ class HotelLocationTopChoicesData {
 
   num get rating => _rating;
 
-  set rating(int rating) => _rating = rating;
+  set rating(num rating) => _rating = rating;
+
+ num get price => _price;
+
+  set price(num price) => _price = price;
 
   String get category => _category;
 
@@ -222,7 +186,7 @@ class HotelLocationTopChoicesData {
 
   set iV(int iV) => _iV = iV;
 
-  HotelLocationTopChoicesData.fromJson(Map<String, dynamic> json) {
+  SearchData.fromJson(Map<String, dynamic> json) {
     _images = json['images'].cast<String>();
     _amenities = json['amenities'].cast<String>();
     _sId = json['_id'];
@@ -234,10 +198,10 @@ class HotelLocationTopChoicesData {
     _country = json['country'];
     _latitude = json['latitude'];
     _longitude = json['longitude'];
-    _price = json['price'];
     _isDeleted = json['is_deleted'];
     _isFeatured = json['is_featured'];
     _rating = json['rating'];
+    _price = json['price'];
     _category = json['category'];
     _updatedAt = json['updated_at'];
     _createdAt = json['created_at'];
@@ -257,10 +221,10 @@ class HotelLocationTopChoicesData {
     data['country'] = this._country;
     data['latitude'] = this._latitude;
     data['longitude'] = this._longitude;
-    data['price'] = this._price;
     data['is_deleted'] = this._isDeleted;
     data['is_featured'] = this._isFeatured;
     data['rating'] = this._rating;
+    data['price'] = this._price;
     data['category'] = this._category;
     data['updated_at'] = this._updatedAt;
     data['created_at'] = this._createdAt;

@@ -1,17 +1,21 @@
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:book_it/DataSample/mapsModelData.dart';
 
-class maps extends StatefulWidget {
-  maps({Key key}) : super(key: key);
+import 'bloc/MapBloc.dart';
+
+class MapViewPage extends StatefulWidget {
+  MapViewPage({Key key}) : super(key: key);
 
   @override
-  _mapsState createState() => _mapsState();
+  _MapViewPageState createState() => _MapViewPageState();
 }
 
-class _mapsState extends State<maps> {
+class _MapViewPageState extends State<MapViewPage> {
   GoogleMapController _controller;
   BitmapDescriptor customIcon;
   bool isMapCreated = false;
@@ -19,11 +23,13 @@ class _mapsState extends State<maps> {
   List<Marker> allMarkers = [];
   PageController _pageController;
   int prevPage;
+  MapBloc mapBloc;
 
   @override
   void initState() {
-    // TODO: implement initState
+    mapBloc = MapBloc();
     super.initState();
+    getHotelListingForMap();
     setCustomMapPin();
 
     hotelLocation.forEach((element) {
@@ -39,6 +45,23 @@ class _mapsState extends State<maps> {
     });
     _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
       ..addListener(_onScroll);
+  }
+
+  void getHotelListingForMap() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        mapBloc.getHotelForMapView(context: context);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
   }
 
   void setCustomMapPin() async {
@@ -301,6 +324,14 @@ class _mapsState extends State<maps> {
             ),
           ],
         ),
+        StreamBuilder<bool>(
+          stream: mapBloc.progressStream,
+          builder: (context, snapshot) {
+            return Center(
+                child: CommmonProgressIndicator(
+                    snapshot.hasData ? snapshot.data : false));
+          },
+        )
       ],
     ));
   }

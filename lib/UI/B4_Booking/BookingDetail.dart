@@ -213,7 +213,7 @@ class _BookingDetailState extends State<BookingDetail> {
                   child: InkWell(
                     onTap: () {
                       Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => maps()));
+                          pageBuilder: (_, __, ___) => MapViewPage()));
                     },
                     child: Container(
                       height: 35.0,

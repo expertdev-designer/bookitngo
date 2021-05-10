@@ -70,13 +70,13 @@ class _RoomState extends State<Room> {
     fontSize: 12.5,
     fontWeight: FontWeight.w600,
   );
-
+  List<String> roomIds = [];
   GetRoomsAndBookNowBloc _getRoomsAndBookNowBloc;
   AppConstantHelper _appConstantHelper;
   num totalGuest = 0;
   num totalRoom = 0;
   num totalAmount = 0;
-  String selectedRoomID = "";
+  String selectedRoomType="";
   num selectedRoomPrice = 0;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController specialInstructionController =
@@ -90,15 +90,25 @@ class _RoomState extends State<Room> {
     getHotelRoomsListing();
     AppStrings.selectedRoomList.clear();
     AppStrings.checkInDate = DateTime.now();
-    AppStrings.checkOutDate = DateTime.now();
+    AppStrings.checkOutDate = DateTime.now().add(new Duration(days: 1));
     AppStrings.selectedRoomList.add(SelectedRoomList(adult: 1, child: 0));
     totalGuest = 0;
     AppStrings.selectedRoomList.forEach((element) {
       totalGuest += element.child + element.adult;
       print("totalGuest $totalGuest");
     });
-    selectedRoomPrice = widget.priceD;
+    // selectedRoomPrice = widget.priceD;
+    // selectedRoomPrice = 20;
     super.initState();
+  }
+
+  num calculateRoomPrice() {
+    var difference =
+        AppStrings.checkOutDate.difference(AppStrings.checkInDate).inDays;
+    print("Datedifference$difference");
+    difference = difference;
+    return (selectedRoomPrice * AppStrings.selectedRoomList.length) *
+        difference;
   }
 
   void getHotelRoomsListing() {
@@ -106,6 +116,34 @@ class _RoomState extends State<Room> {
       if (isConnected) {
         _getRoomsAndBookNowBloc.getHotelRoomsList(
             context: context, hotelId: widget.idD);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
+  }
+
+  void getAvailableRoomListing() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        _getRoomsAndBookNowBloc.checkRoomAvailability(
+            context: context,
+            hotelId: widget.idD,
+            checkIn: DateFormat("yyyy-MM-dd")
+                .format(AppStrings.checkInDate)
+                .split(" ")
+                .first,
+            checkOut: DateFormat("yyyy-MM-dd")
+                .format(AppStrings.checkOutDate)
+                .split(' ')
+                .first,
+            roomType: selectedRoomType);
       } else {
         showDialog(
             context: context,
@@ -141,80 +179,105 @@ class _RoomState extends State<Room> {
           SingleChildScrollView(
             child: Column(
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    hotelRoomSlider(),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20.0, right: 20.0, top: 20.0, bottom: 2.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Date of Travel and guests',
-                            style: TextStyle(
-                                fontFamily: "Sofia",
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16.0),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              selectCheckInCheckoutDate();
-                              // if (selectedRoomID.isNotEmpty) {
-                              //
-                              // } else {
-                              //   showDialog(
-                              //       context: context,
-                              //       builder: (BuildContext context) {
-                              //         return AppConstantHelper.showDialog(
-                              //             context: context,
-                              //             title: "Select room",
-                              //             msg:
-                              //             "Please select room first before selecting check in and checkout date and room guest");
-                              //       });
-                              // }
-                            },
+                StreamBuilder<HotelRoomListingResponse>(
+                    initialData: null,
+                    stream:
+                        _getRoomsAndBookNowBloc.getAvailableHotelRoomDataStream,
+                    builder: (context, snapshot) {
+                      // if( snapshot.hasData &&
+                      //     snapshot.data != null &&
+                      //     snapshot.data.data.length > 0)
+                      //   {
+                      //
+                      //     AppStrings.selectedRoomList.clear();
+                      //     AppStrings.selectedRoomList.add(SelectedRoomList(adult: 1, child: 0));
+                      //     totalGuest = 0;
+                      //     AppStrings.selectedRoomList.forEach((element) {
+                      //       totalGuest += element.child + element.adult;
+                      //       print("totalGuest $totalGuest");
+                      //     });
+                      //
+                      //   }else {
+                      //   isSelected=-1;
+                      // }
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          hotelRoomSlider(),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20.0,
+                                right: 20.0,
+                                top: 20.0,
+                                bottom: 2.0),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                /* Icon(
-                                  Icons.edit,
-                                  color: Color.fromRGBO(0, 186, 156, 1),
-                                ),*/
-                                SvgPicture.asset(
-                                  'assets/image/images/edit.svg',
-                                  width: 16,
-                                  height: 16,
-                                ),
-                                SizedBox(
-                                  width: 4.0,
-                                ),
                                 Text(
-                                  'Edit',
+                                  'Date of Travel and guests',
                                   style: TextStyle(
-                                      height: 1.2,
-                                      color: Color.fromRGBO(0, 186, 156, 1),
                                       fontFamily: "Sofia",
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w600,
                                       fontSize: 16.0),
                                 ),
+                                InkWell(
+                                  onTap: () {
+                                    if (selectedRoomType.isNotEmpty) {
+                                      selectCheckInCheckoutDate();
+                                    } else {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AppConstantHelper.showDialog(
+                                                context: context,
+                                                title: "Select room",
+                                                msg:
+                                                    "Please select room first before selecting check in and checkout date and room guest");
+                                          });
+                                    }
+                                  },
+                                  child: Row(
+                                    children: [
+                                      /* Icon(
+                                      Icons.edit,
+                                      color: Color.fromRGBO(0, 186, 156, 1),
+                                    ),*/
+                                      SvgPicture.asset(
+                                        'assets/image/images/edit.svg',
+                                        width: 16,
+                                        height: 16,
+                                      ),
+                                      SizedBox(
+                                        width: 4.0,
+                                      ),
+                                      Text(
+                                        'Edit',
+                                        style: TextStyle(
+                                            height: 1.2,
+                                            color:
+                                                Color.fromRGBO(0, 186, 156, 1),
+                                            fontFamily: "Sofia",
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16.0),
+                                      ),
+                                    ],
+                                  ),
+                                )
                               ],
                             ),
-                          )
+                          ),
+                          _checkInCheckOutWidget(),
+                          labelTextWidget("Phone Number"),
+                          _phoneNumberWidget(),
+                          labelTextWidget('Special Instruction'),
+                          _specialInstruction(),
+                          SizedBox(
+                            height: 20.0,
+                          ),
                         ],
-                      ),
-                    ),
-                    _checkInCheckOutWidget(),
-                    labelTextWidget("Phone Number"),
-                    _phoneNumberWidget(),
-                    labelTextWidget('Special Instruction'),
-                    _specialInstruction(),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                  ],
-                ),
+                      );
+                    }),
               ],
             ),
           ),
@@ -344,7 +407,9 @@ class _RoomState extends State<Room> {
         initialData: null,
         stream: _getRoomsAndBookNowBloc.getHotelRoomDataStream,
         builder: (context, snapshot) {
-          return Container(
+          return
+
+              /*Container(
             height: 300.0,
             child: Material(
               child: new Carousel(
@@ -358,230 +423,305 @@ class _RoomState extends State<Room> {
                 }).toList(),
               ),
             ),
-          );
+          );*/
 
-          /*Container(
-            margin: EdgeInsets.only(top: 20.0),
-            color: Colors.transparent,
-            height: MediaQuery
-                .of(context)
-                .size
-                .width * 0.64,
-            child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                primary: false,
-                itemCount: snapshot.hasData &&
-                    snapshot.data != null &&
-                    snapshot.data.data.length > 0
-                    ? snapshot.data.data.length
-                    : 0,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                        left: 15.0, right: 15.0, top: 0.0),
-                    child: InkWell(
-                      onTap: () {
-                      },
-                      child: Container(
-                        height: MediaQuery
-                            .of(context)
-                            .size
-                            .width * 0.4,
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width * 0.45,
-                        color: Colors.transparent,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Hero(
-                                tag:
-                                'hero-tag-room${snapshot.data.data[index].sId}',
-                                child: Material(
+              snapshot.hasData &&
+                      snapshot.data != null &&
+                      snapshot.data.data.length > 0
+                  ? Container(
+                      margin: EdgeInsets.only(top: 20.0),
+                      color: Colors.transparent,
+                      height: MediaQuery.of(context).size.width * 0.64,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          primary: false,
+                          itemCount: snapshot.hasData &&
+                                  snapshot.data != null &&
+                                  snapshot.data.data.length > 0
+                              ? snapshot.data.data.length
+                              : 0,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0, right: 15.0, top: 0.0),
+                              child: InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.4,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.45,
                                   color: Colors.transparent,
-                                  child: ClipRRect(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                    child: Container(
-                                      height:
-                                      MediaQuery
-                                          .of(context)
-                                          .size
-                                          .width *
-                                          0.4,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                          image: DecorationImage(
-                                              image: NetworkImage(
-                                                  AppStrings.imagePAth +
-                                                      snapshot.data.data[index]
-                                                          .images.first),
-                                              fit: BoxFit.cover),
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: Colors.black12
-                                                    .withOpacity(0.1),
-                                                blurRadius: 3.0,
-                                                spreadRadius: 1.0)
-                                          ]),
-                                      alignment: Alignment.topRight,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                              children: [
-                                                Row(
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Hero(
+                                          tag:
+                                              'hero-tag-room${snapshot.data.data[index].sId}',
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10.0)),
+                                              child: Container(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.4,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                                    image: DecorationImage(
+                                                        image: NetworkImage(
+                                                            AppStrings
+                                                                    .imagePAth +
+                                                                snapshot
+                                                                    .data
+                                                                    .data[index]
+                                                                    .images
+                                                                    .first),
+                                                        fit: BoxFit.cover),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                          color: Colors.black12
+                                                              .withOpacity(0.1),
+                                                          blurRadius: 3.0,
+                                                          spreadRadius: 1.0)
+                                                    ]),
+                                                alignment: Alignment.topRight,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
-                                                    Icon(
-                                                      Icons.star,
-                                                      color: Colors.yellow,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 4.0,
-                                                    ),
-                                                    Text(
-                                                      "${widget.ratingD}",
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontFamily: "Gotik",
-                                                        fontSize: 14.0,
-                                                        fontWeight:
-                                                        FontWeight.w600,
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.star,
+                                                                color: Colors
+                                                                    .yellow,
+                                                              ),
+                                                              SizedBox(
+                                                                width: 4.0,
+                                                              ),
+                                                              Text(
+                                                                "${widget.ratingD}",
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontFamily:
+                                                                      "Gotik",
+                                                                  fontSize:
+                                                                      14.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            ],
+                                                          )
+                                                        ],
                                                       ),
-                                                      overflow:
-                                                      TextOverflow.ellipsis,
+                                                    ),
+                                                    Container(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      color: Colors.black
+                                                          .withOpacity(0.4),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            "${snapshot.data.data[index].room_type}",
+                                                            style:
+                                                                _txtStyleTitle,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                          RichText(
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            text: TextSpan(
+                                                              text:
+                                                                  '\$${snapshot.data.data[index].price}',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      14.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontFamily:
+                                                                      "Gotik"),
+                                                              children: <
+                                                                  TextSpan>[
+                                                                TextSpan(
+                                                                    text:
+                                                                        '\n/per night',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            12.0,
+                                                                        color: Colors
+                                                                            .white70,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w400,
+                                                                        fontFamily:
+                                                                            "Gotik")),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
-                                                )
-                                              ],
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                          Container(
-                                            padding: EdgeInsets.all(8.0),
-                                            color:
-                                            Colors.black.withOpacity(0.4),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "${snapshot.data.data[index]
-                                                      .name}",
-                                                  style: _txtStyleTitle,
-                                                  overflow:
-                                                  TextOverflow.ellipsis,
-                                                ),
-                                                Text(
-                                                  "\$${snapshot.data.data[index]
-                                                      .price}",
-                                                  style: TextStyle(
-                                                      fontSize: 16.0,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                      FontWeight.w600,
-                                                      fontFamily: "Gotik"),
-                                                ),
-                                              ],
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                              'assets/image/images/location_blue.svg',
+                                              width: 16,
+                                              height: 16,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+                                            SizedBox(
+                                              width: 6,
+                                            ),
+                                            Text(
+                                              widget.locationD,
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: "Gotik",
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                        FlatButton(
+                                            color: index == isSelected
+                                                ? Color.fromRGBO(0, 186, 156, 1)
+                                                : Colors.white,
+                                            padding: EdgeInsets.zero,
+                                            shape: new RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                width: 1,
+                                                color: isSelected == index
+                                                    ? Colors.white
+                                                    : Color.fromRGBO(
+                                                        0, 186, 156, 1),
+                                              ),
+                                              borderRadius:
+                                                  new BorderRadius.circular(
+                                                3.0,
+                                              ),
+                                            ),
+                                            height: 25,
+                                            onPressed: () {
+                                              setState(() {
+                                                isSelected = index;
+                                                childCapacity = snapshot.data
+                                                    .data[index].childCapacity;
+                                                adultCapacity = snapshot.data
+                                                    .data[index].adultCapacity;
+                                                print(
+                                                    "isSelected${isSelected}");
+                                                selectedRoomType = snapshot
+                                                    .data.data[index].room_type;
+                                                selectedRoomPrice = num.parse(
+                                                    snapshot.data.data[index]
+                                                        .price);
+
+                                                AppStrings.selectedRoomList
+                                                    .clear();
+                                                AppStrings.selectedRoomList.add(
+                                                    SelectedRoomList(
+                                                        adult: 1, child: 0));
+                                                totalGuest = 0;
+                                                AppStrings.selectedRoomList
+                                                    .forEach((element) {
+                                                  totalGuest += element.child +
+                                                      element.adult;
+                                                  print(
+                                                      "totalGuest $totalGuest");
+                                                });
+                                                // getAvailableRoomListing();
+                                              });
+                                            },
+                                            child: Text(
+                                              "Select".toUpperCase(),
+                                              style: TextStyle(
+                                                color: index == isSelected
+                                                    ? Colors.white
+                                                    : Color.fromRGBO(
+                                                        0, 186, 156, 1),
+                                                fontFamily: "Gotik",
+                                                fontSize: 13.0,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ))
+                                      ]),
                                 ),
                               ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/image/images/location_blue.svg',
-                                    width: 16,
-                                    height: 16,
-                                  ),
-                                  SizedBox(
-                                    width: 6,
-                                  ),
-                                  Text(
-                                    widget.locationD,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: "Gotik",
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                              FlatButton(
-                                  color: index == isSelected
-                                      ? Color.fromRGBO(0, 186, 156, 1)
-                                      : Colors.white,
-                                  padding: EdgeInsets.zero,
-                                  shape: new RoundedRectangleBorder(
-                                    side: BorderSide(
-                                      width: 1,
-                                      color: isSelected == index
-                                          ? Colors.white
-                                          : Color.fromRGBO(0, 186, 156, 1),
-                                    ),
-                                    borderRadius: new BorderRadius.circular(
-                                      3.0,
-                                    ),
-                                  ),
-                                  height: 25,
-                                  onPressed: () {
-                                    setState(() {
-                                      isSelected = index;
-                                      childCapacity = snapshot
-                                          .data.data[index].childCapacity;
-                                      adultCapacity = snapshot
-                                          .data.data[index].adultCapacity;
-                                      print("isSelected${isSelected}");
-                                      selectedRoomID =
-                                          snapshot.data.data[index].sId;
-                                      selectedRoomPrice = num.parse(
-                                          snapshot.data.data[index].price);
-                                    });
-                                  },
-                                  child: Text(
-                                    "Select".toUpperCase(),
-                                    style: TextStyle(
-                                      color: index == isSelected
-                                          ? Colors.white
-                                          : Color.fromRGBO(0, 186, 156, 1),
-                                      fontFamily: "Gotik",
-                                      fontSize: 13.0,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ))
-                            ]),
-                      ),
-                    ),
-                  );
-                }),
-          )*/
-          ;
+                            );
+                          }),
+                    )
+                  : Container(
+                      height: 260.0,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: NetworkImage(
+                                  "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                    );
         });
   }
 
   _checkInCheckOutWidget() {
     return InkWell(
       onTap: () {
-        selectCheckInCheckoutDate();
+        if (selectedRoomType.isNotEmpty) {
+          selectCheckInCheckoutDate();
+        } else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AppConstantHelper.showDialog(
+                    context: context,
+                    title: "Select room",
+                    msg:
+                        "Please select room first before selecting check in and checkout date and room guest");
+              });
+        }
       },
       child: Container(
         margin: EdgeInsets.only(left: 20, right: 20, top: 14),
@@ -699,7 +839,7 @@ class _RoomState extends State<Room> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('\$${selectedRoomPrice}',
+                  Text('\$${calculateRoomPrice()}',
                       style: TextStyle(
                           fontFamily: "Sofia",
                           fontWeight: FontWeight.w600,
@@ -711,61 +851,94 @@ class _RoomState extends State<Room> {
                           fontSize: 16.0)),
                 ],
               ),
-              FlatButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(
-                      4.0,
-                    ),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  splashColor: Colors.grey,
-                  onPressed: () {
-                    if (AppStrings.selectedRoomList != null &&
-                        AppStrings.selectedRoomList.length > 0) {
-                      if (_formKey.currentState.validate()) {
-                        Navigator.of(context).push(PageRouteBuilder(
-                            pageBuilder: (_, __, ___) => new AddCreditCard(
-                                  isFor: "Booking",
-                                  hotelID: widget.idD,
-                                  roomID: selectedRoomID,
-                                  checkInDate: AppStrings.checkInDate,
-                                  checkOutDate: AppStrings.checkOutDate,
-                                  roomList: AppStrings.selectedRoomList,
-                                  amount: selectedRoomPrice.toString(),
-                                  phone: phoneNoController.text.toString(),
-                                  specialInstruction:
-                                      specialInstructionController.text
-                                          .toString(),
-                                ),
-                            // pageBuilder: (_, __, ___) => new BookingConfirmPage(),
-                            transitionDuration: Duration(milliseconds: 600),
-                            transitionsBuilder: (_, Animation<double> animation,
-                                __, Widget child) {
-                              return Opacity(
-                                opacity: animation.value,
-                                child: child,
-                              );
-                            }));
+              StreamBuilder<HotelRoomListingResponse>(
+                  initialData: null,
+                  stream: _getRoomsAndBookNowBloc.getHotelRoomDataStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData &&
+                        snapshot.data.data != null &&
+                        snapshot.data.data.length > 0) {
+                      roomIds.clear();
+                      for (int i = 0;
+                          i < AppStrings.selectedRoomList.length;
+                          i++) {
+                        roomIds.add(snapshot.data.data[i].sId);
                       }
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AppConstantHelper.showDialog(
-                                context: context,
-                                title: "Network Error",
-                                msg: "Please check your internet connection!");
-                          });
+                      print("roomIds${roomIds.length}");
                     }
-                  },
-                  color: AppColor.primaryColor,
-                  child: Text('Reserve',
-                      style: TextStyle(
-                          height: 1.0,
-                          color: Colors.white,
-                          fontFamily: "Sofia",
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.0)))
+                    return FlatButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(
+                            4.0,
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        splashColor: Colors.grey,
+                        onPressed: () {
+                          if (selectedRoomType.isNotEmpty) {
+                            if (AppStrings.selectedRoomList != null &&
+                                AppStrings.selectedRoomList.length > 0) {
+                              if (_formKey.currentState.validate()) {
+                                Navigator.of(context).push(PageRouteBuilder(
+                                    pageBuilder: (_, __, ___) =>
+                                        new AddCreditCard(
+                                          isFor: "Booking",
+                                          hotelID: widget.idD,
+                                          roomID: roomIds,
+                                          checkInDate: AppStrings.checkInDate,
+                                          checkOutDate: AppStrings.checkOutDate,
+                                          roomList: AppStrings.selectedRoomList,
+                                          amount: selectedRoomPrice.toString(),
+                                          phone:
+                                              phoneNoController.text.toString(),
+                                          specialInstruction:
+                                              specialInstructionController.text
+                                                  .toString(),
+                                        ),
+                                    // pageBuilder: (_, __, ___) => new BookingConfirmPage(),
+                                    transitionDuration:
+                                        Duration(milliseconds: 600),
+                                    transitionsBuilder: (_,
+                                        Animation<double> animation,
+                                        __,
+                                        Widget child) {
+                                      return Opacity(
+                                        opacity: animation.value,
+                                        child: child,
+                                      );
+                                    }));
+                              }
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AppConstantHelper.showDialog(
+                                        context: context,
+                                        title:
+                                            "Please select check in check out date and guest  ",
+                                        msg: "Select Check In Check Out Date ");
+                                  });
+                            }
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AppConstantHelper.showDialog(
+                                      context: context,
+                                      title: "Choose room",
+                                      msg: "Please choose room for booking");
+                                });
+                          }
+                        },
+                        color: AppColor.primaryColor,
+                        child: Text('Reserve',
+                            style: TextStyle(
+                                height: 1.0,
+                                color: Colors.white,
+                                fontFamily: "Sofia",
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16.0)));
+                  })
             ],
           ),
         )
@@ -779,6 +952,8 @@ class _RoomState extends State<Room> {
             pageBuilder: (_, __, ___) => new SelectCheckInOutDate(
                   adultCapacity: 2,
                   childCapacity: 2,
+                  hotelID: widget.idD,
+                  selectedRoomType: selectedRoomType,
                 ),
             transitionDuration: Duration(milliseconds: 600),
             transitionsBuilder:
@@ -793,8 +968,8 @@ class _RoomState extends State<Room> {
         if (AppStrings.selectedRoomList != null &&
             AppStrings.selectedRoomList.length > 0) {
           totalRoom = AppStrings.selectedRoomList.length;
-          selectedRoomPrice =
-              selectedRoomPrice * AppStrings.selectedRoomList.length;
+          // selectedRoomPrice =
+          //     selectedRoomPrice * AppStrings.selectedRoomList.length;
           print("TotalPrice $totalGuest");
           print("totalRoom ${AppStrings.selectedRoomList.length}");
           totalGuest = 0;
@@ -802,6 +977,7 @@ class _RoomState extends State<Room> {
             totalGuest += element.child + element.adult;
             print("totalGuest $totalGuest");
           });
+          getHotelRoomsListing();
 
           // totalGuest
         }

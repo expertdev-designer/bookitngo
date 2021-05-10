@@ -3,12 +3,19 @@ import 'dart:async';
 import 'package:book_it/Library/loader_animation/dot.dart';
 import 'package:book_it/Library/loader_animation/loader.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/Search/model/SearchResponse.dart';
 import 'package:book_it/UI/Search/searchBoxEmpty.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'SearchTagResult.dart';
+import 'bloc/SearchBloc.dart';
+
 class Search extends StatefulWidget {
   String userId;
+
   Search({this.userId});
 
   @override
@@ -20,6 +27,8 @@ class _SearchState extends State<Search> {
   String searchString;
 
   bool load = true;
+  SearchBloc searchBloc;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -29,7 +38,25 @@ class _SearchState extends State<Search> {
         load = false;
       });
     });
+    searchBloc = SearchBloc();
     _addNameController = TextEditingController();
+  }
+
+  void getSearchResultsFromServer(String text) {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        searchBloc.doSearchHotelsApiCall(context: context, searchText: text);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
   }
 
   @override
@@ -94,6 +121,7 @@ class _SearchState extends State<Search> {
                         onChanged: (value) {
                           setState(() {
                             searchString = value.toLowerCase();
+                            getSearchResultsFromServer(searchString);
                           });
                         },
                         decoration: InputDecoration(
@@ -114,230 +142,44 @@ class _SearchState extends State<Search> {
                 ),
               ),
             ),
-            StreamBuilder<QuerySnapshot>(
-              stream: (searchString == null || searchString.trim() == "")
-                  ? Firestore.instance.collection("hotel").snapshots()
-                  : Firestore.instance
-                      .collection("hotel")
-                      .where("searchIndex", arrayContains: searchString)
-                      .snapshots(),
-              builder: (context, snapshot) {
-
-                if (snapshot.hasError) return Text('Error: ${snapshot.error}');
-                if (searchString == null)
-                  return searchBoxEmpty(
-                    idUser: widget.userId,
-                  );
-                if (searchString.trim() == "")
-                  return searchBoxEmpty(
-                    idUser: widget.userId,
-                  );
-                if (snapshot.data.documents.isEmpty) return noItem();
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 110.0),
-                      child: Center(
-                          child: ColorLoader5(
-                        dotOneColor: Colors.red,
-                        dotTwoColor: Colors.blueAccent,
-                        dotThreeColor: Colors.green,
-                        dotType: DotType.circle,
-                        dotIcon: Icon(Icons.adjust),
-                        duration: Duration(seconds: 1),
-                      )),
-                    );
-                  default:
-
-                    return new Column(
-                        children: snapshot.data.documents
-                            .map((DocumentSnapshot document) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            left: 20.0, right: 20.0, top: 15.0, bottom: 5.0),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(PageRouteBuilder(
-                                pageBuilder: (_, __, ___) => new hotelDetail2(
-                                      titleD: document['title'],
-                                      idD: document['id'],
-                                      imageD: document['image'],
-                                      descriptionD:null,
-                                      userId: widget.userId,
-                                      ratingD: document['rating'],
-                                      latLang1D: document['latLang1'],
-                                      latLang2D: document['latLang2'],
-                                      locationD: document['location'],
-                                      priceD: document['price'],
-                                      typeD: document['type'],
-                                      photoD: List.from(document['photo']),
-                                      serviceD: List.from(document['service']),
-                                    ),
-                                transitionDuration:
-                                    Duration(milliseconds: 1000),
-                                transitionsBuilder: (_,
-                                    Animation<double> animation,
-                                    __,
-                                    Widget child) {
-                                  return Opacity(
-                                    opacity: animation.value,
-                                    child: child,
-                                  );
-                                }));
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black12.withOpacity(0.1),
-                                    blurRadius: 1.0,
-                                    spreadRadius: 1.0)
-                              ],
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                Hero(
-                                  tag: 'hero-tag-${document['id']}',
-                                  child: Material(
-                                    child: Container(
-                                      height: 180.0,
-                                      width: 120.0,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image:
-                                                NetworkImage(document['image']),
-                                            fit: BoxFit.cover),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 20.0, left: 20.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Container(
-                                        width: 174.0,
-                                        child: Text(
-                                          document['title'],
-                                          style: TextStyle(
-                                            fontFamily: "Sofia",
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 15.0,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          SizedBox(
-                                            width: 5.0,
-                                          ),
-                                          Container(
-                                            width: 150.0,
-                                            child: Text(
-                                              "\$ " +
-                                                  document['price'].toString() +
-                                                  "/Night",
-                                              style: TextStyle(
-                                                fontFamily: "Sofia",
-                                                fontSize: 16.0,
-                                                color: Colors.deepPurpleAccent,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 5.0,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.pin_drop,
-                                            size: 16.0,
-                                            color: Colors.black38,
-                                          ),
-                                          SizedBox(
-                                            width: 5.0,
-                                          ),
-                                          Container(
-                                            width: 150.0,
-                                            child: Text(
-                                              document['location'],
-                                              style: TextStyle(
-                                                fontFamily: "Sofia",
-                                                fontSize: 15.0,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 5.0,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.star,
-                                            size: 17.0,
-                                            color: Colors.yellow,
-                                          ),
-                                          SizedBox(
-                                            width: 5.0,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 15.0),
-                                            child: Text(
-                                              document['rating'].toString(),
-                                              style: TextStyle(
-                                                fontFamily: "Sans",
-                                                fontSize: 15.0,
-                                                color: Colors.yellow,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 10.0,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+            Stack(
+              children: [
+                StreamBuilder<SearchResponse>(
+                  stream: searchBloc.searchTagDataStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+                    if (searchString == null)
+                      return searchBoxEmpty(
+                        idUser: widget.userId,
                       );
-                    }).toList());
-                }
-              },
+                    if (searchString.trim() == "")
+                      return searchBoxEmpty(
+                        idUser: widget.userId,
+                      );
+                    if ( snapshot.hasData &&
+                        snapshot.data != null &&
+                        snapshot.data.data != null &&
+                        snapshot.data.data.length > 0)
+                      {
+                        return cardList(
+                          dataUser: widget.userId,
+                          list: snapshot.data.data,
+                        );
+                      }
+                      else
+                      return noItem();
+
+                  },
+                ),
+                StreamBuilder<bool>(
+                  stream: searchBloc.progressStream,
+                  builder: (context, snapshot) {
+                    return Center(
+                        child: CommmonProgressIndicator(
+                            snapshot.hasData ? snapshot.data : false));
+                  },
+                ),
+              ],
             )
           ],
         ),
@@ -370,7 +212,7 @@ class noItem extends StatelessWidget {
             ),
             Padding(padding: EdgeInsets.only(bottom: 10.0)),
             Text(
-              "No Matching Views ",
+              "No Matching Result Found ",
               style: TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 17.5,

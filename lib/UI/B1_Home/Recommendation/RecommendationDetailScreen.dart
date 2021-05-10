@@ -1,8 +1,10 @@
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/bloc/HomeBloc.dart';
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HotelHotelByCategoryResponse.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/B4_Booking/Booking.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -36,8 +38,7 @@ class _RecommendedDetailState extends State<RecommendedDetail> {
   void getRecommendedHotelList() {
     AppConstantHelper.checkConnectivity().then((isConnected) {
       if (isConnected) {
-        _homeBloc.getRecommendedHotelByCategory(
-            context: context);
+        _homeBloc.getRecommendedHotelByCategory(context: context);
       } else {
         showDialog(
             context: context,
@@ -86,14 +87,13 @@ class _RecommendedDetailState extends State<RecommendedDetail> {
               }
               return snapshot.hasData &&
                       snapshot.data != null &&
+                  snapshot.data.data != null &&
                       snapshot.data.data.length > 0
                   ? CardList(
                       dataUser: widget.categoryId,
                       list: snapshot.data.data,
                     )
-                  : Container(
-                      height: 10.0,
-                    );
+                  : noItem();
             },
           ),
         ),
@@ -106,23 +106,35 @@ class _RecommendedDetailState extends State<RecommendedDetail> {
     return Scaffold(
       appBar: _appBar,
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            /// Category
-            // _category,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                /// Category
+                // _category,
 
-            /// Top RecommendedDetail
-            /// _topRecommendedDetail,
-            SizedBox(
-              height: 20.0,
+                /// Top RecommendedDetail
+                /// _topRecommendedDetail,
+                SizedBox(
+                  height: 20.0,
+                ),
+
+                /// Recommended
+                _recommended,
+              ],
             ),
-
-            /// Recommended
-            _recommended,
-          ],
-        ),
+          ),
+          StreamBuilder<bool>(
+            stream: _homeBloc.progressStream,
+            builder: (context, snapshot) {
+              return Center(
+                  child: CommmonProgressIndicator(
+                      snapshot.hasData ? snapshot.data : false));
+            },
+          )
+        ],
       ),
     );
   }
@@ -385,7 +397,8 @@ class CardList extends StatelessWidget {
                               topRight: Radius.circular(10.0),
                               topLeft: Radius.circular(10.0)),
                           image: DecorationImage(
-                              image: NetworkImage(AppStrings.imagePAth+image), fit: BoxFit.cover),
+                              image: NetworkImage(AppStrings.imagePAth + image),
+                              fit: BoxFit.cover),
                         ),
                         alignment: Alignment.topRight,
                       ),

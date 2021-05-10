@@ -1,28 +1,34 @@
 class HotelRoomListingResponse {
   bool _status;
   String _message;
-  List<Data> _data;
+  List<GetRoomData> _data;
 
-  HotelRoomListingResponse({bool status, String message, List<Data> data}) {
+  HotelRoomListingResponse(
+      {bool status, String message, List<GetRoomData> data}) {
     this._status = status;
     this._message = message;
     this._data = data;
   }
 
   bool get status => _status;
+
   set status(bool status) => _status = status;
+
   String get message => _message;
+
   set message(String message) => _message = message;
-  List<Data> get data => _data;
-  set data(List<Data> data) => _data = data;
+
+  List<GetRoomData> get data => _data;
+
+  set data(List<GetRoomData> data) => _data = data;
 
   HotelRoomListingResponse.fromJson(Map<String, dynamic> json) {
     _status = json['status'];
     _message = json['message'];
     if (json['data'] != null) {
-      _data = new List<Data>();
+      _data = new List<GetRoomData>();
       json['data'].forEach((v) {
-        _data.add(new Data.fromJson(v));
+        _data.add(new GetRoomData.fromJson(v));
       });
     }
   }
@@ -38,26 +44,28 @@ class HotelRoomListingResponse {
   }
 }
 
-class Data {
+class GetRoomData {
   List<String> _images;
   String _sId;
   String _hotelId;
   String _name;
   String _description;
   String _price;
+  String _room_type;
   int _adultCapacity;
   int _childCapacity;
   String _updatedAt;
   String _createdAt;
   int _iV;
 
-  Data(
+  GetRoomData(
       {List<String> images,
       String sId,
       String hotelId,
       String name,
       String description,
       String price,
+      String room_type,
       int adultCapacity,
       int childCapacity,
       String updatedAt,
@@ -69,6 +77,7 @@ class Data {
     this._name = name;
     this._description = description;
     this._price = price;
+    this._room_type = room_type;
     this._adultCapacity = adultCapacity;
     this._childCapacity = childCapacity;
     this._updatedAt = updatedAt;
@@ -77,35 +86,61 @@ class Data {
   }
 
   List<String> get images => _images;
+
   set images(List<String> images) => _images = images;
+
   String get sId => _sId;
+
   set sId(String sId) => _sId = sId;
+
   String get hotelId => _hotelId;
+
   set hotelId(String hotelId) => _hotelId = hotelId;
+
   String get name => _name;
+
   set name(String name) => _name = name;
+
   String get description => _description;
+
   set description(String description) => _description = description;
+
   String get price => _price;
+
   set price(String price) => _price = price;
+
+  String get room_type => _room_type;
+
+  set room_type(String price) => _room_type = price;
+
   int get adultCapacity => _adultCapacity;
+
   set adultCapacity(int adultCapacity) => _adultCapacity = adultCapacity;
+
   int get childCapacity => _childCapacity;
+
   set childCapacity(int childCapacity) => _childCapacity = childCapacity;
+
   String get updatedAt => _updatedAt;
+
   set updatedAt(String updatedAt) => _updatedAt = updatedAt;
+
   String get createdAt => _createdAt;
+
   set createdAt(String createdAt) => _createdAt = createdAt;
+
   int get iV => _iV;
+
   set iV(int iV) => _iV = iV;
 
-  Data.fromJson(Map<String, dynamic> json) {
+  GetRoomData.fromJson(Map<String, dynamic> json) {
     _images = json['images'].cast<String>();
     _sId = json['_id'];
     _hotelId = json['hotel_id'];
     _name = json['name'];
     _description = json['description'];
     _price = json['price'];
+    _room_type = json['room_type'];
     _adultCapacity = json['adult_capacity'];
     _childCapacity = json['child_capacity'];
     _updatedAt = json['updated_at'];
@@ -121,6 +156,7 @@ class Data {
     data['name'] = this._name;
     data['description'] = this._description;
     data['price'] = this._price;
+    data['room_type'] = this._room_type;
     data['adult_capacity'] = this._adultCapacity;
     data['child_capacity'] = this._childCapacity;
     data['updated_at'] = this._updatedAt;

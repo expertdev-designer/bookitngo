@@ -21,7 +21,7 @@ class AddCreditCard extends StatefulWidget {
   // AddCreditCard(
   //     {this.name, this.photoProfile, this.uid, this.email, this.password});
   String hotelID;
-  String roomID;
+  List<String> roomID;
   var checkInDate;
   var checkOutDate;
   List<SelectedRoomList> roomList;
@@ -186,7 +186,6 @@ class _AddCreditCardState extends State<AddCreditCard> {
                           cartType = element.cardType;
                         } else {
                           cardNumber = "";
-
                           cardHolderName = "";
                           cvvCode = "";
                           cardID = "";
@@ -377,6 +376,12 @@ class _AddCreditCardState extends State<AddCreditCard> {
                                   if (cardID.isNotEmpty) {
                                     print("cardID ${cardID}");
                                     deleteCardApi(context, cardID.toString());
+                                    cardNumber = "";
+                                    cardHolderName = "";
+                                    cvvCode = "";
+                                    cardID = "";
+                                    cartType = "";
+                                    setState(() {});
                                   }
                                 },
                               ),

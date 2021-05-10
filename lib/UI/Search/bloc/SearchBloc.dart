@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HomeResponse.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/BookingRoomList.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/HotelRoomListingResponse.dart';
+import 'package:book_it/UI/B4_Booking/model/BookingHistoryResponse.dart';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
+import 'package:book_it/UI/Search/model/SearchResponse.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/network_helper/api_repository.dart';
@@ -12,45 +14,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../SelectCheckInOutDate.dart';
-
-class GetRoomsAndBookNowBloc {
+class SearchBloc {
   Stream get progressStream => progressController.stream;
 
   final BehaviorSubject progressController = BehaviorSubject<bool>();
 
   StreamSink get progressSink => progressController.sink;
 
-  Stream get getHotelRoomDataStream => getHotelRoomDataController.stream;
+  Stream get searchTagDataStream => searchTagDataController.stream;
 
-  final BehaviorSubject getHotelRoomDataController =
-      BehaviorSubject<HotelRoomListingResponse>();
+  final BehaviorSubject searchTagDataController =
+      BehaviorSubject<SearchResponse>();
 
-  StreamSink get getHotelRoomDataSink => getHotelRoomDataController.sink;
-
-  Stream get getAvailableHotelRoomDataStream => getAvailableHotelRoomDataController.stream;
-
-  final BehaviorSubject getAvailableHotelRoomDataController =
-      BehaviorSubject<HotelRoomListingResponse>();
-
-  StreamSink get getAvailableHotelRoomDataSink => getAvailableHotelRoomDataController.sink;
+  StreamSink get searchDataDataSink => searchTagDataController.sink;
 
   ApiRepository apiRepository = ApiRepository();
   AppConstantHelper helper = AppConstantHelper();
 
-//  Stream get progressStream => progressController.stream;
-
-  void getHotelRoomsList(
-      {BuildContext context, String hotelId, String checkIn, String checkOut}) {
+  void doSearchHotelsApiCall({BuildContext context, String searchText}) {
     progressSink.add(true);
-    apiRepository
-        .getRooms(hotelId: hotelId, checkIn: checkIn, checkOut: checkOut)
-        .then((onResponse) {
+    apiRepository.searchHotel(searchText: searchText).then((onResponse) {
       if (!onResponse.status) {
         print("Error From Server  " + onResponse.message);
-        showErrorDialog(context, "Error", onResponse.message);
+        searchDataDataSink.add(onResponse);
+        // showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
-        getHotelRoomDataSink.add(onResponse);
+        searchDataDataSink.add(onResponse);
       }
       progressSink.add(false);
     }).catchError((onError) {
@@ -60,25 +49,14 @@ class GetRoomsAndBookNowBloc {
     });
   }
 
-  void checkRoomAvailability(
-      {BuildContext context,
-      String hotelId,
-      String checkIn,
-      String checkOut,
-      String roomType}) {
+  void getSearchTag({BuildContext context}) {
     progressSink.add(true);
-    apiRepository
-        .checkRoomAvailability(
-            hotelId: hotelId,
-            checkIn: checkIn,
-            checkOut: checkOut,
-            roomtype: roomType)
-        .then((onResponse) {
+    apiRepository.getSearchTag().then((onResponse) {
       if (!onResponse.status) {
         print("Error From Server  " + onResponse.message);
-        showErrorDialog(context, "Error", onResponse.message);
+        // showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
-        getAvailableHotelRoomDataSink.add(onResponse);
+        searchDataDataSink.add(onResponse);
       }
       progressSink.add(false);
     }).catchError((onError) {
@@ -87,25 +65,6 @@ class GetRoomsAndBookNowBloc {
       showErrorDialog(context, "Error", onError.toString());
     });
   }
-
-  // void createBooking(
-  //     {BuildContext context, BookingRoomList roomList}) {
-  //   progressSink.add(true);
-  //   apiRepository
-  //       .bookHotelApi(roomList: roomList)
-  //       .then((onResponse) {
-  //     if (!onResponse.status) {
-  //       print("Error From Server  " + onResponse.message);
-  //       showErrorDialog(context, "Error", onResponse.message);
-  //     } else if (onResponse.status) {}
-  //     progressSink.add(false);
-  //   }).catchError((onError) {
-  //     progressSink.add(false);
-  //     print("On_Error" + onError.toString());
-  //     showErrorDialog(context, "Error", onError.toString());
-  //   });
-  // }
-
   void showErrorDialog(context, title, msg) {
     showDialog(
         context: context,

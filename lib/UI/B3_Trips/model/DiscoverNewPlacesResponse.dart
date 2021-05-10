@@ -104,9 +104,10 @@ class NewPlacesAndRecommended {
   String _country;
   String _latitude;
   String _longitude;
+  num _price;
   bool _isDeleted;
   bool _isFeatured;
-  int _rating;
+  num _rating;
   String _category;
   String _updatedAt;
   String _createdAt;
@@ -126,7 +127,8 @@ class NewPlacesAndRecommended {
       String longitude,
       bool isDeleted,
       bool isFeatured,
-      int rating,
+      num rating,
+      num price,
       String category,
       String updatedAt,
       String createdAt,
@@ -145,6 +147,7 @@ class NewPlacesAndRecommended {
     this._isDeleted = isDeleted;
     this._isFeatured = isFeatured;
     this._rating = rating;
+    this._price = price;
     this._category = category;
     this._updatedAt = updatedAt;
     this._createdAt = createdAt;
@@ -177,8 +180,10 @@ class NewPlacesAndRecommended {
   set isDeleted(bool isDeleted) => _isDeleted = isDeleted;
   bool get isFeatured => _isFeatured;
   set isFeatured(bool isFeatured) => _isFeatured = isFeatured;
-  int get rating => _rating;
+  num get rating => _rating;
   set rating(int rating) => _rating = rating;
+  num get price => _price;
+  set price(int price) => _price = price;
   String get category => _category;
   set category(String category) => _category = category;
   String get updatedAt => _updatedAt;
@@ -203,6 +208,7 @@ class NewPlacesAndRecommended {
     _isDeleted = json['is_deleted'];
     _isFeatured = json['is_featured'];
     _rating = json['rating'];
+    _price = json['price'];
     _category = json['category'];
     _updatedAt = json['updated_at'];
     _createdAt = json['created_at'];
@@ -225,6 +231,7 @@ class NewPlacesAndRecommended {
     data['is_deleted'] = this._isDeleted;
     data['is_featured'] = this._isFeatured;
     data['rating'] = this._rating;
+    data['price'] = this._price;
     data['category'] = this._category;
     data['updated_at'] = this._updatedAt;
     data['created_at'] = this._createdAt;

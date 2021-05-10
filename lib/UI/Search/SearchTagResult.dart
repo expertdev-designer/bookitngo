@@ -1,7 +1,14 @@
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/Search/model/SearchResponse.dart';
+import 'package:book_it/UI/Search/search.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
+import 'bloc/SearchBloc.dart';
 
 class SearchTagResult extends StatefulWidget {
   String userID, type, data;
@@ -13,6 +20,33 @@ class SearchTagResult extends StatefulWidget {
 }
 
 class _SearchTagResultState extends State<SearchTagResult> {
+  SearchBloc searchBloc;
+
+  @override
+  void initState() {
+    searchBloc = SearchBloc();
+    getSearchResultsFromServer();
+    super.initState();
+  }
+
+  void getSearchResultsFromServer() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        searchBloc.doSearchHotelsApiCall(
+            context: context, searchText: widget.data);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,46 +59,55 @@ class _SearchTagResultState extends State<SearchTagResult> {
           style: TextStyle(fontFamily: "Sofia"),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(left: 5.0),
-              child: StreamBuilder(
-                stream: Firestore.instance
-                    .collection("hotel")
-                    .where(widget.type, isEqualTo: widget.data)
-                    .snapshots(),
-                builder:
-                    (BuildContext ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (!snapshot.hasData) {
-                    return new Container(
-                      height: 190.0,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                    );
-                  }
-                  return snapshot.hasData
-                      ? new cardList(
-                          dataUser: widget.userID,
-                          list: snapshot.data.documents,
-                        )
-                      : Container(
-                          height: 10.0,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(left: 5.0),
+                  child: StreamBuilder<SearchResponse>(
+                    stream: searchBloc.searchTagDataStream,
+                    builder: (BuildContext ctx, snapshot) {
+                      if (!snapshot.hasData) {
+                        return new Container(
+                          height: 190.0,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: NetworkImage(
+                                      "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                         );
-                },
-              ),
+                      }
+                      return snapshot.hasData &&
+                              snapshot.data != null &&
+                              snapshot.data.data != null &&
+                              snapshot.data.data.length > 0
+                          ? new cardList(
+                              dataUser: widget.userID,
+                              list: snapshot.data.data,
+                            )
+                          : noItem();
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+              ],
             ),
-            SizedBox(
-              height: 20.0,
-            ),
-          ],
-        ),
+          ),
+          StreamBuilder<bool>(
+            stream: searchBloc.progressStream,
+            builder: (context, snapshot) {
+              return Center(
+                  child: CommmonProgressIndicator(
+                      snapshot.hasData ? snapshot.data : false));
+            },
+          )
+        ],
       ),
     );
   }
@@ -72,7 +115,7 @@ class _SearchTagResultState extends State<SearchTagResult> {
 
 class cardList extends StatelessWidget {
   String dataUser;
-  final List<DocumentSnapshot> list;
+  final List<SearchData> list;
 
   @override
   var _txtStyleTitle = TextStyle(
@@ -101,18 +144,18 @@ class cardList extends StatelessWidget {
         primary: false,
         itemCount: list.length,
         itemBuilder: (context, i) {
-          List<String> photo = List.from(list[i].data['photo']);
-          List<String> service = List.from(list[i].data['service']);
-          List<String> description = List.from(list[i].data['description']);
-          String title = list[i].data['title'].toString();
-          String type = list[i].data['type'].toString();
-          num rating = list[i].data['rating'];
-          String location = list[i].data['location'].toString();
-          String image = list[i].data['image'].toString();
-          String id = list[i].data['id'].toString();
-          num price = list[i].data['price'];
-          num latLang1 = list[i].data['latLang1'];
-          num latLang2 = list[i].data['latLang2'];
+          List<String> photo = List.from(list[i].images);
+          List<String> service = List.from(list[i].amenities);
+          String description = list[i].description;
+          String title = list[i].name.toString();
+          String type = list[i].name.toString();
+          num rating = list[i].rating;
+          String location = list[i].address.toString();
+          String image = list[i].images.first.toString();
+          String id = list[i].sId.toString();
+          num price = list[i].price;
+          num latLang1 = num.parse(list[i].latitude.toString());
+          num latLang2 = num.parse(list[i].longitude.toString());
 
           return Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
@@ -128,7 +171,7 @@ class cardList extends StatelessWidget {
                           latLang2D: latLang2,
                           locationD: location,
                           priceD: price,
-                          descriptionD: null,
+                          descriptionD: description,
                           photoD: photo,
                           ratingD: rating,
                           serviceD: service,
@@ -155,126 +198,131 @@ class cardList extends StatelessWidget {
                         spreadRadius: 1.0)
                   ],
                 ),
-                child: Row(
-                  children: <Widget>[
-                    Hero(
-                      tag: 'hero-tag-${id}',
-                      child: Material(
-                        child: Container(
-                          height: 180.0,
-                          width: 120.0,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: NetworkImage(image), fit: BoxFit.cover),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  child: Row(
+                    children: <Widget>[
+                      Hero(
+                        tag: 'hero-tag-${id}',
+                        child: Material(
+                          child: Container(
+                            height: 180.0,
+                            width: 120.0,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: NetworkImage(
+                                      AppStrings.imagePAth + image),
+                                  fit: BoxFit.cover),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0, left: 20.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            width: 174.0,
-                            child: Text(
-                              title,
-                              style: TextStyle(
-                                fontFamily: "Sofia",
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w700,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0, left: 20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              width: 174.0,
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                  fontFamily: "Sofia",
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 15.0,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              SizedBox(
-                                width: 5.0,
-                              ),
-                              Container(
-                                width: 150.0,
-                                child: Text(
-                                  "\$ " + price.toString() + "/Night",
-                                  style: TextStyle(
-                                    fontFamily: "Sofia",
-                                    fontSize: 16.0,
-                                    color: Colors.deepPurpleAccent,
-                                    fontWeight: FontWeight.w600,
+                            SizedBox(
+                              height: 15.0,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: 5.0,
+                                ),
+                                Container(
+                                  width: 150.0,
+                                  child: Text(
+                                    "\$ " + price.toString() + "/Night",
+                                    style: TextStyle(
+                                      fontFamily: "Sofia",
+                                      fontSize: 16.0,
+                                      color: Colors.deepPurpleAccent,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 5.0,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Icon(
-                                Icons.pin_drop,
-                                size: 16.0,
-                                color: Colors.black38,
-                              ),
-                              SizedBox(
-                                width: 5.0,
-                              ),
-                              Container(
-                                width: 150.0,
-                                child: Text(
-                                  location,
-                                  style: TextStyle(
-                                    fontFamily: "Sofia",
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w400,
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5.0,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.pin_drop,
+                                  size: 16.0,
+                                  color: Colors.black38,
+                                ),
+                                SizedBox(
+                                  width: 5.0,
+                                ),
+                                Container(
+                                  width: 150.0,
+                                  child: Text(
+                                    location,
+                                    style: TextStyle(
+                                      fontFamily: "Sofia",
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 5.0,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Icon(
-                                Icons.star,
-                                size: 17.0,
-                                color: Colors.yellow,
-                              ),
-                              SizedBox(
-                                width: 5.0,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 15.0),
-                                child: Text(
-                                  rating.toString(),
-                                  style: TextStyle(
-                                    fontFamily: "Sans",
-                                    fontSize: 15.0,
-                                    color: Colors.yellow,
-                                    fontWeight: FontWeight.w800,
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5.0,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.star,
+                                  size: 17.0,
+                                  color: Colors.yellow,
+                                ),
+                                SizedBox(
+                                  width: 5.0,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 15.0),
+                                  child: Text(
+                                    rating.toString(),
+                                    style: TextStyle(
+                                      fontFamily: "Sans",
+                                      fontSize: 15.0,
+                                      color: Colors.yellow,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          )
-                        ],
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

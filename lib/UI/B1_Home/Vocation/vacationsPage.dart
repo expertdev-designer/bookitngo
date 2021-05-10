@@ -11,16 +11,16 @@ import 'package:book_it/DataSample/travelModelData.dart';
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
 
-class Beaches extends StatefulWidget {
+class VacationPage extends StatefulWidget {
   String title, categoryId;
 
-  Beaches({this.title, this.categoryId});
+  VacationPage({this.title, this.categoryId});
 
   @override
-  _BeachesState createState() => _BeachesState();
+  _VacationPageState createState() => _VacationPageState();
 }
 
-class _BeachesState extends State<Beaches> {
+class _VacationPageState extends State<VacationPage> {
   HomeBloc _homeBloc;
   AppConstantHelper _appConstantHelper;
 
@@ -352,7 +352,7 @@ class CardList extends StatelessWidget {
           String location = list[i].address.toString();
           String image = list[i].images.first;
           String id = list[i].sId.toString();
-          num price = 110;
+          num price = list[i].price;
           num latLang1 = num.parse(list[i].latitude);
           num latLang2 = num.parse(list[i].longitude);
 

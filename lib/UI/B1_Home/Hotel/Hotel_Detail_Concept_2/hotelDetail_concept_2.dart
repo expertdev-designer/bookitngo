@@ -5,6 +5,7 @@ import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/Gallery.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating/flutter_rating.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:like_button/like_button.dart';
@@ -65,8 +66,6 @@ class _hotelDetail2State extends State<hotelDetail2> {
 
   String _nama, _photoProfile, _email;
 
-
-
   String _book = "Book Now";
 
   final Set<Marker> _markers = {};
@@ -87,8 +86,6 @@ class _hotelDetail2State extends State<hotelDetail2> {
 
   @override
   Widget build(BuildContext context) {
-
-
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
 
@@ -130,7 +127,7 @@ class _hotelDetail2State extends State<hotelDetail2> {
                   child: InkWell(
                     onTap: () {
                       Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => maps()));
+                          pageBuilder: (_, __, ___) => MapViewPage()));
                     },
                     child: Container(
                       height: 35.0,
@@ -301,7 +298,6 @@ class _hotelDetail2State extends State<hotelDetail2> {
                                 ))
                             .toList()),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.only(
                         top: 40.0, left: 20.0, right: 20.0, bottom: 10.0),
@@ -356,7 +352,8 @@ class _hotelDetail2State extends State<hotelDetail2> {
                               width: MediaQuery.of(context).size.width / 3,
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: NetworkImage(AppStrings.imagePAth+widget.photoD[0]),
+                                      image: NetworkImage(AppStrings.imagePAth +
+                                          widget.photoD[0]),
                                       fit: BoxFit.cover)),
                             ),
                             Container(
@@ -364,7 +361,8 @@ class _hotelDetail2State extends State<hotelDetail2> {
                               width: MediaQuery.of(context).size.width / 3,
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: NetworkImage(AppStrings.imagePAth+widget.photoD[1]),
+                                      image: NetworkImage(AppStrings.imagePAth +
+                                          widget.photoD[1]),
                                       fit: BoxFit.cover)),
                             ),
                             Container(
@@ -372,7 +370,8 @@ class _hotelDetail2State extends State<hotelDetail2> {
                               width: MediaQuery.of(context).size.width / 3,
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: NetworkImage(AppStrings.imagePAth+widget.photoD[2]),
+                                      image: NetworkImage(AppStrings.imagePAth +
+                                          widget.photoD[2]),
                                       fit: BoxFit.cover)),
                             ),
                           ],
@@ -586,7 +585,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
               decoration: new BoxDecoration(
                 image: new DecorationImage(
                   fit: BoxFit.cover,
-                  image: new NetworkImage(AppStrings.imagePAth+img),
+                  image: new NetworkImage(AppStrings.imagePAth + img),
                 ),
                 shape: BoxShape.rectangle,
               ),
@@ -620,7 +619,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     color: Colors.white.withOpacity(0.85)),
-                child: Column(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -644,27 +643,6 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                                           fontSize: 27.0),
                                       overflow: TextOverflow.clip,
                                     )),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 13.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        "\$ " + price.toString(),
-                                        style: TextStyle(
-                                            fontSize: 25.0,
-                                            color: Color(0xFF09314F),
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: "Gotik"),
-                                      ),
-                                      Text("/per night",
-                                          style: _txtStyleSub.copyWith(
-                                              fontSize: 11.0))
-                                    ],
-                                  ),
-                                ),
                               ],
                             ),
                           ),
@@ -678,38 +656,15 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.star,
-                                          color: Color(0xFF09314F),
-                                          size: 22.0,
-                                        ),
-                                        Icon(
-                                          Icons.star,
-                                          color: Color(0xFF09314F),
-                                          size: 22.0,
-                                        ),
-                                        Icon(
-                                          Icons.star,
-                                          color: Color(0xFF09314F),
-                                          size: 22.0,
-                                        ),
-                                        Icon(
-                                          Icons.star,
-                                          color: Color(0xFF09314F),
-                                          size: 22.0,
-                                        ),
-                                        Icon(
-                                          Icons.star_half,
-                                          color: Color(0xFF09314F),
-                                          size: 22.0,
-                                        ),
-                                      ],
+                                    StarRating(
+                                      color: Color(0xFF09314F),
+                                      starCount: 5,
+                                      size: 20,
+                                      rating: double.parse(ratting.toString()),
                                     ),
                                     // ratingbar(starRating: ratting,color: Colors.deepPurpleAccent,),
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 10.0),
+                                      padding: const EdgeInsets.only(top: 0.0),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -740,6 +695,33 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                               ],
                             ),
                           )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 13.0, top: 16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "Starting at",
+                            style: TextStyle(
+                                fontSize: 14.0,
+                                color: Color(0xFF09314F),
+                                fontWeight: FontWeight.w500,
+                                fontFamily: "Gotik"),
+                          ),
+                          Text(
+                            "\$ " + price.toString(),
+                            style: TextStyle(
+                                fontSize: 25.0,
+                                color: Color(0xFF09314F),
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "Gotik"),
+                          ),
+                          Text("/per night",
+                              style: _txtStyleSub.copyWith(fontSize: 11.0))
                         ],
                       ),
                     ),

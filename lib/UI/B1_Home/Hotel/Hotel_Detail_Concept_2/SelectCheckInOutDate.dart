@@ -1,15 +1,19 @@
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/HotelRoomListingResponse.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/src/calendar.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/src/constant.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/src/customization/header_style.dart';
 import 'package:book_it/UI/Utills/AppColors.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:paged_vertical_calendar/paged_vertical_calendar.dart';
 
 import 'MyExpansionCard.dart';
+import 'bloc/GetRoomsAndBookNowBloc.dart';
 import 'model/BookingRoomList.dart';
 import 'src/customization/day_style.dart';
 import 'src/customization/dayofweek_style.dart';
@@ -19,11 +23,9 @@ import 'src/customization/dayofweek_style.dart';
 // ignore: must_be_immutable
 class SelectCheckInOutDate extends StatefulWidget {
   num adultCapacity, childCapacity;
+  String hotelID; String selectedRoomType;
 
-  SelectCheckInOutDate({
-    this.adultCapacity,
-    this.childCapacity,
-  });
+  SelectCheckInOutDate({this.adultCapacity, this.childCapacity, this.hotelID,this.selectedRoomType});
 
   @override
   _SelectCheckInOutDateState createState() => _SelectCheckInOutDateState();
@@ -49,24 +51,71 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
   bool isRoomTabSelected = false;
   num totalAdultCount = 0;
   num totalChildCount = 0;
+  num availableChildCount = 0;
+  num availableAdultCount = 0;
+  num availableRoomCount = 0;
+  DateTime start = DateTime.now();
+  DateTime end;
+
+  DateTime checkoutDate = DateTime.now();
+  DateTime checkoutend;
 
   // var checkInDate = DateTime.now();
   // var checkOutDate = DateTime.now();
+  GetRoomsAndBookNowBloc _getRoomsAndBookNowBloc;
+  AppConstantHelper _appConstantHelper;
 
   @override
   void initState() {
+    _appConstantHelper = AppConstantHelper();
+    _getRoomsAndBookNowBloc = GetRoomsAndBookNowBloc();
     totalAdultCount = 0;
     totalChildCount = 0;
     AppStrings.selectedRoomList.forEach((element) {
       totalAdultCount += element.adult;
       totalChildCount += element.child;
     });
+    getAvailableHotelRoomsListing();
     super.initState();
+  }
+
+  void getAvailableHotelRoomsListing() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        var difference =
+            AppStrings.checkOutDate.difference(AppStrings.checkInDate).inDays;
+        print("Datedifference$difference");
+        if (difference <= -1) {
+          showErrorDialog(context, "Select Date",
+              "Please select check Out date after check In Date");
+        } else {
+          _getRoomsAndBookNowBloc.checkRoomAvailability(
+              context: context,
+              hotelId: widget.hotelID,
+              checkIn: DateFormat("yyyy-MM-dd")
+                  .format(AppStrings.checkInDate)
+                  .split(" ")
+                  .first,
+              checkOut: DateFormat("yyyy-MM-dd")
+                  .format(AppStrings.checkOutDate)
+                  .split(' ')
+                  .first,roomType: widget.selectedRoomType);
+        }
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    String _nama, _photoProfile, _email;
 
     var _appBar = PreferredSize(
       preferredSize: Size.fromHeight(45.0),
@@ -93,24 +142,50 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                tabBarWidget(),
-                tabBarIndicator(),
-                _weekDaysWidget(),
-                isCheckInTabSelected
-                    ? _CheckInCalender()
-                    : isCheckOutTabSelected
-                        ? _CheckOutCalender()
-                        : isRoomTabSelected
-                            ? _RoomAndGuestWidget()
-                            : _CheckInCalender()
-              ],
-            ),
+            child: StreamBuilder<HotelRoomListingResponse>(
+                initialData: null,
+                stream: _getRoomsAndBookNowBloc.getAvailableHotelRoomDataStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData &&
+                      snapshot.data.data != null &&
+                      snapshot.data.data.length > 0) {
+                    availableAdultCount = num.parse(
+                        snapshot.data.data[0].adultCapacity.toString());
+                    availableChildCount = num.parse(
+                        snapshot.data.data[0].childCapacity.toString());
+                    availableRoomCount = snapshot.data.data.length;
+
+                    print("availableAdultCount${availableAdultCount}");
+                    print("availableChildCount${availableChildCount}");
+                    print("availableRoomCount${availableRoomCount}");
+                  }
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      tabBarWidget(),
+                      tabBarIndicator(),
+                      _weekDaysWidget(),
+                      isCheckInTabSelected
+                          ? _CheckInCalender()
+                          : isCheckOutTabSelected
+                              ? _CheckOutCalender()
+                              : isRoomTabSelected
+                                  ? _RoomAndGuestWidget()
+                                  : _CheckInCalender()
+                    ],
+                  );
+                }),
           ),
-          _applyButton()
+          _applyButton(),
+          StreamBuilder<bool>(
+            stream: _getRoomsAndBookNowBloc.progressStream,
+            builder: (context, snapshot) {
+              return Center(
+                  child: CommmonProgressIndicator(
+                      snapshot.hasData ? snapshot.data : false));
+            },
+          )
         ],
       ),
     );
@@ -238,8 +313,9 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
                         height: 14,
                       ),
                       Text(
-                        totalAdultCount>0&&totalChildCount==0?
-                        '\t${totalAdultCount} adult':"\t${totalAdultCount} adult\t ${totalChildCount}\tchildren",
+                        totalAdultCount > 0 && totalChildCount == 0
+                            ? '\t${totalAdultCount} adult'
+                            : "\t${totalAdultCount} adult\t ${totalChildCount}\tchildren",
                         style: TextStyle(
                             color: AppColor.primaryColor,
                             fontFamily: "Sofia",
@@ -368,15 +444,68 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
   }
 
   _CheckInCalender() {
+    /// method to check wether a day is in the selected range
+    /// used for highlighting those day
+    bool isInRange(DateTime date) {
+      // if start is null, no date has been selected yet
+      if (start == null) return false;
+      // if only end is null only the start should be highlighted
+      if (end == null) return date == start;
+      // if both start and end aren't null check if date false in the range
+      return ((date == start));
+    }
+
     return Container(
       margin: EdgeInsets.only(bottom: 100),
       child: Container(
           color: Colors.white,
           height: MediaQuery.of(context).size.height * 0.7,
           margin: EdgeInsets.symmetric(vertical: 15),
-          child: SimpleVerticalCalendar(
-            startDate: AppStrings.checkInDate,
+          child: PagedVerticalCalendar(
+            addAutomaticKeepAlives: true,
+            startDate: DateTime.now(),
+            dayBuilder: (context, date) {
+              // update the days color based on if it's selected or not
+              final color = isInRange(date) ? Colors.black : Colors.transparent;
+              return Container(
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color,
+                ),
+                child: Center(
+                  child: Text(
+                    DateFormat('d').format(date),
+                    style: TextStyle(
+                      color: isInRange(date) ? Colors.white : Colors.black87,
+                      fontSize: isInRange(date) ?16:13,
+                      fontFamily: "Sofia",
+                      fontWeight: FontWeight.w400,),
+                  ),
+                ),
+              );
+            },
+            onDayPressed: (date) {
+              setState(() {
+                // if start is null, assign this date to start
 
+                print("StartDate$date");
+                var difference =
+                    AppStrings.checkOutDate.difference(date).inDays;
+                print("Datedifference$difference");
+                if(difference<=0)
+                {
+                  showErrorDialog(context, "Select Check In Date",
+                      "Please select check In date before check Out Date");
+                }else{
+                  start = date;
+                  AppStrings.checkInDate = start;
+                }
+              });
+            },
+          )
+          /*SimpleVerticalCalendar(
+            // startDate: AppStrings.checkInDate,
             numOfMonth: 6,
             headerStyle: HeaderStyle(
               titleTextStyle: TextStyle(
@@ -402,21 +531,83 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
             onDateTap: (start, end) {
               print("StartDate$start");
               print(end);
-              AppStrings.checkInDate = start;
-              setState(() {});
+
+              setState(() {
+                var difference =
+                    AppStrings.checkOutDate.difference(start).inDays;
+                print("Datedifference$difference");
+                if(difference<=0)
+                {
+                  showErrorDialog(context, "Select Check In Date",
+                      "Please select check In date before check Out Date");
+                }else{
+                  AppStrings.checkInDate = start;
+                }
+              });
             },
-          )),
+          )*/
+          ),
     );
   }
 
   _CheckOutCalender() {
+
+    bool isInRange(DateTime date) {
+      // if start is null, no date has been selected yet
+      if (checkoutDate == null) return false;
+      // if only end is null only the start should be highlighted
+      if (checkoutend == null) return date == checkoutDate;
+      // if both start and end aren't null check if date false in the range
+      return ((date == checkoutDate));
+    }
     return Container(
       margin: EdgeInsets.only(bottom: 100),
       child: Container(
           color: Colors.white,
           height: MediaQuery.of(context).size.height * 0.7,
           margin: EdgeInsets.symmetric(vertical: 15),
-          child: SimpleVerticalCalendar(
+          child: PagedVerticalCalendar(
+            addAutomaticKeepAlives: true,
+            startDate: DateTime.now(),
+            dayBuilder: (context, date) {
+              // update the days color based on if it's selected or not
+              final color = isInRange(date) ? Colors.black : Colors.transparent;
+              return Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color,
+                ),
+                child: Center(
+                  child: Text(
+                    DateFormat('d').format(date),
+                    style: TextStyle(
+                        color: isInRange(date) ? Colors.white : Colors.black87,
+                      fontSize: isInRange(date) ?16:13,
+                      fontFamily: "Sofia",
+                      fontWeight: FontWeight.w400,),
+                  ),
+                ),
+              );
+            },
+            onDayPressed: (date) {
+              setState(() {
+
+                final difference =
+                    date.difference(AppStrings.checkInDate).inHours;
+                print("Datedifference$difference");
+                if (difference <= 0) {
+                  showErrorDialog(context, "Select Check In Date",
+                      "Please select check out date after check in Date");
+                } else {
+                  print("checkOutDate $date");
+                  checkoutDate = date;
+                  AppStrings.checkOutDate = checkoutDate;
+                  getAvailableHotelRoomsListing();
+                }
+              });
+            },
+          )
+        /*SimpleVerticalCalendar(
             startDate: AppStrings.checkOutDate,
             numOfMonth: 6,
             headerStyle: HeaderStyle(
@@ -443,10 +634,22 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
             onDateTap: (start, end) {
               print("checkOutDate $start");
               print(end);
-              AppStrings.checkOutDate = start;
-              setState(() {});
+
+              final difference =
+                  start.difference(AppStrings.checkInDate).inHours;
+              print("Datedifference$difference");
+
+              setState(() {
+                if (difference <= 0) {
+                  showErrorDialog(context, "Select Check In Date",
+                      "Please select check out date after check in Date");
+                } else {
+                  AppStrings.checkOutDate = start;
+                  getHotelRoomsListing();
+                }
+              });
             },
-          )),
+          )*/),
     );
   }
 
@@ -902,12 +1105,13 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
                     Visibility(
                       visible:
                           index == AppStrings.selectedRoomList.length - 1 &&
-                              AppStrings.selectedRoomList.length > 1?true:false,
+                                  AppStrings.selectedRoomList.length > 1
+                              ? true
+                              : false,
                       child: Expanded(
                         child: FlatButton(
                             onPressed: () {
                               setState(() {
-
                                 AppStrings.selectedRoomList.removeAt(index);
                                 totalAdultCount = 0;
                                 totalChildCount = 0;
@@ -917,22 +1121,22 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
                                 });
                               });
                             },
-                            child: Flexible(
-                              child: Text(
-                                "Delete Room",
-                                style: TextStyle(
-                                    height: 1.1,
-                                    fontFamily: "Sofia",
-                                    color: AppColor.colorGreen,
-                                    fontSize: 15.0),
-                              ),
+                            child: Text(
+                              "Delete Room",
+                              style: TextStyle(
+                                  height: 1.1,
+                                  fontFamily: "Sofia",
+                                  color: AppColor.colorGreen,
+                                  fontSize: 15.0),
                             )),
                       ),
                     ),
                     Visibility(
                       visible:
-                      index == AppStrings.selectedRoomList.length - 1 &&
-                          AppStrings.selectedRoomList.length > 1?true:false,
+                          index == AppStrings.selectedRoomList.length - 1 &&
+                                  AppStrings.selectedRoomList.length > 1
+                              ? true
+                              : false,
                       child: Container(
                         color: Colors.grey.withOpacity(0.2),
                         width: 0.8,
@@ -945,15 +1149,27 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
                             setState(() {
                               if (index ==
                                   AppStrings.selectedRoomList.length - 1) {
-                                AppStrings.selectedRoomList.add(
-                                    SelectedRoomList(
-                                        adult: adult, child: _child));
-                                totalAdultCount = 0;
-                                totalChildCount = 0;
-                                AppStrings.selectedRoomList.forEach((element) {
-                                  totalAdultCount += element.adult;
-                                  totalChildCount += element.child;
-                                });
+                                if (AppStrings.selectedRoomList.length ==
+                                        availableRoomCount ||
+                                    AppStrings.selectedRoomList.length >
+                                        availableRoomCount) {
+                                  showErrorDialog(context, "Add Room",
+                                      "Sorry, Only ${availableRoomCount} rooms are available for booking");
+                                } else {
+                                  AppStrings.selectedRoomList
+                                      .add(SelectedRoomList(
+                                    adult: adult,
+                                    child: _child,
+                                  ));
+                                  totalAdultCount = 0;
+                                  totalChildCount = 0;
+                                  AppStrings.selectedRoomList
+                                      .forEach((element) {
+                                    totalAdultCount += element.adult;
+                                    totalChildCount += element.child;
+                                  });
+                                }
+
                                 adult = 1;
                                 _child = 0;
                               } else {
@@ -967,17 +1183,15 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
                               }
                             });
                           },
-                          child: Flexible(
-                            child: Text(
-                              index == AppStrings.selectedRoomList.length - 1
-                                  ? "Add Room"
-                                  : "Delete Room",
-                              style: TextStyle(
-                                  height: 1.1,
-                                  fontFamily: "Sofia",
-                                  color: AppColor.colorGreen,
-                                  fontSize: 15.0),
-                            ),
+                          child: Text(
+                            index == AppStrings.selectedRoomList.length - 1
+                                ? "Add Room"
+                                : "Delete Room",
+                            style: TextStyle(
+                                height: 1.1,
+                                fontFamily: "Sofia",
+                                color: AppColor.colorGreen,
+                                fontSize: 15.0),
                           )),
                     ),
                     // Container(
@@ -1017,11 +1231,11 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
 
   void add() {
     setState(() {
-      if (adult < widget.adultCapacity)
+      if (adult < availableAdultCount)
         adult++;
       else
         showErrorDialog(context, "Select Adult",
-            "Only ${widget.adultCapacity}  adult are allowed in room");
+            "Only ${availableAdultCount}  adult are allowed in room");
     });
   }
 
@@ -1035,29 +1249,26 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
 
   void addChild() {
     setState(() {
-      if (_child < widget.childCapacity)
+      if (_child < availableChildCount)
         _child++;
       else {
         showErrorDialog(context, "Select Children",
-            "Only ${widget.childCapacity}  children are allowed in room");
+            "Only ${availableChildCount}  children are allowed in room");
       }
     });
   }
 
   void updateRoomAdult(index) {
     setState(() {
-      if (AppStrings.selectedRoomList[index].adult < widget.adultCapacity)
-        {
-          AppStrings.selectedRoomList[index].adult++;
-          totalAdultCount = 0;
-          totalChildCount = 0;
-          AppStrings.selectedRoomList.forEach((element) {
-            totalAdultCount += element.adult;
-            totalChildCount += element.child;
-          });
-        }
-
-      else {
+      if (AppStrings.selectedRoomList[index].adult < widget.adultCapacity) {
+        AppStrings.selectedRoomList[index].adult++;
+        totalAdultCount = 0;
+        totalChildCount = 0;
+        AppStrings.selectedRoomList.forEach((element) {
+          totalAdultCount += element.adult;
+          totalChildCount += element.child;
+        });
+      } else {
         showErrorDialog(context, "Select Children",
             "Only ${widget.adultCapacity}  adult are allowed in room");
       }

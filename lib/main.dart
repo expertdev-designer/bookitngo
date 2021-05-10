@@ -10,6 +10,7 @@ import 'package:book_it/UI/IntroApps/OnBoarding.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Home.dart';
 import 'UI/B1_Home/Hotel/Hotel_Detail_Concept_2/BookItNow.dart';
 import 'UI/Bottom_Nav_Bar/bottomNavBar.dart';
 import 'UI/IntroApps/Login.dart';
@@ -18,6 +19,7 @@ import 'UI/IntroApps/travelSelection.dart';
 void main() {
   HttpOverrides.global = new MyHttpOverrides();
 
+  // runApp(Home());
   runApp(splash());
 }
 

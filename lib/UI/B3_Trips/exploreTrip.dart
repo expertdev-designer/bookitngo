@@ -504,7 +504,7 @@ class recommendedCardList extends StatelessWidget {
           String location = list[i].address.toString();
           String image = list[i].images.first;
           String id = list[i].sId.toString();
-          num price = 20;
+          num price = list[i].price;
           num latLang1 = num.parse(list[i].latitude);
           num latLang2 = num.parse(list[i].longitude);
 
@@ -669,7 +669,7 @@ class card extends StatelessWidget {
           String location = list[i].address.toString();
           String image = list[i].images.first;
           String id = list[i].sId.toString();
-          num price = 20;
+          num price = list[i].price;
           num latLang1 = num.parse(list[i].latitude);
           num latLang2 = num.parse(list[i].longitude);
 
