@@ -1,5 +1,5 @@
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
-import 'package:book_it/UI/B1_Home/Destination/Anaheim.dart';
+import 'package:book_it/UI/B1_Home/Destination/populardestination.dart';
 import 'package:book_it/UI/B1_Home/Recommendation/RecommendationDetailScreen.dart';
 import 'package:book_it/UI/B1_Home/Vocation/vacationsPage.dart';
 import 'package:book_it/UI/B4_Booking/Booking.dart';
@@ -324,15 +324,28 @@ class _HomeState extends State<Home> {
                       dataUser: widget.userID,
                       list: _recommended,
                     ),
-                  )
-                : Container(
+                  ): Container(
+              height: 190.0,
+
+              child: Center(
+                child: Text(
+                  "No Recommendation found for you ",
+                  style: TextStyle(
+                      fontFamily: "Sofia",
+                      fontSize: 20.0,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500),
+                ),
+              ),
+            )
+               /* : Container(
                     height: 260.0,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             image: NetworkImage(
                                 "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                  ),
+                  ),*/
           ),
         ],
       ),

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:book_it/UI/B1_Home/Destination/Anaheim.dart';
+import 'package:book_it/UI/B1_Home/Destination/populardestination.dart';
 import 'package:book_it/UI/B3_Trips/bloc/DiscoverNewPlacesBloc.dart';
 import 'package:book_it/UI/B3_Trips/model/DiscoverNewPlacesResponse.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
@@ -92,7 +92,7 @@ class _exploreTripState extends State<exploreTrip> {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             image: NetworkImage(
-                                "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
+                                " dehttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
                             fit: BoxFit.cover)),
                   );
                 }
@@ -167,7 +167,7 @@ class _exploreTripState extends State<exploreTrip> {
                                       decoration: BoxDecoration(
                                           image: DecorationImage(
                                               image: NetworkImage(
-                                                  "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
+                                                  "jkghttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
                                               fit: BoxFit.cover)),
                                     );
                                   }
@@ -269,7 +269,7 @@ class _exploreTripState extends State<exploreTrip> {
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                     image: NetworkImage(
-                                        "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                                        "hjgkjhhttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                           );
                         }
                         return snapshot.hasData &&
@@ -327,7 +327,7 @@ class _exploreTripState extends State<exploreTrip> {
                               decoration: BoxDecoration(
                                   image: DecorationImage(
                                       image: NetworkImage(
-                                          "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                                          "hjdghttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                             );
                           }
                           return snapshot.hasData &&
@@ -345,8 +345,8 @@ class _exploreTripState extends State<exploreTrip> {
                                     itemCount: snapshot.data.data
                                                 .topDestinations.length >
                                             0
-                                        ? snapshot.data.data
-                                        .topDestinations.length
+                                        ? snapshot
+                                            .data.data.topDestinations.length
                                         : 0,
                                     itemBuilder: (BuildContext context, index) {
                                       return InkWell(
@@ -355,9 +355,19 @@ class _exploreTripState extends State<exploreTrip> {
                                               PageRouteBuilder(
                                                   pageBuilder: (_, __, ___) =>
                                                       new PopularDestination(
-                                                        title: '${snapshot.data.data.topDestinations[index].name}',
-                                                        userId: snapshot.data.data.topDestinations[index].sId,
-                                                        destinations: snapshot.data.data.topDestinations[index],
+                                                        title:
+                                                            '${snapshot.data.data.topDestinations[index].name}',
+                                                        userId: snapshot
+                                                            .data
+                                                            .data
+                                                            .topDestinations[
+                                                                index]
+                                                            .sId,
+                                                        destinations: snapshot
+                                                                .data
+                                                                .data
+                                                                .topDestinations[
+                                                            index],
                                                       ),
                                                   transitionDuration: Duration(
                                                       milliseconds: 600),
@@ -373,11 +383,15 @@ class _exploreTripState extends State<exploreTrip> {
                                                   }));
                                         },
                                         child: cardCountry(
-                                          colorBottom: Color(Random().nextInt(0xffffffff)),
-                                          colorTop: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+                                          colorBottom: Color(
+                                              Random().nextInt(0xffffffff)),
+                                          colorTop: Colors.primaries[Random()
+                                              .nextInt(
+                                                  Colors.primaries.length)],
                                           image:
                                               "assets/image/icon/amerika.png",
-                                          title: "${snapshot.data.data.topDestinations[index].name}",
+                                          title:
+                                              "${snapshot.data.data.topDestinations[index].name}",
                                         ),
                                       );
                                     },
@@ -410,8 +424,7 @@ class _exploreTripState extends State<exploreTrip> {
                     padding: EdgeInsets.only(left: 5.0),
                     child: StreamBuilder<DiscoverNewPlacesResponse>(
                       initialData: null,
-                      stream:
-                      discoverNewPlacesBloc.discoverNewPlacesDataStream,
+                      stream: discoverNewPlacesBloc.discoverNewPlacesDataStream,
                       builder: (BuildContext ctx, snapshot) {
                         if (!snapshot.hasData) {
                           return new Container(
@@ -420,26 +433,26 @@ class _exploreTripState extends State<exploreTrip> {
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                     image: NetworkImage(
-                                        "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                                        "hjfghhttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                           );
                         }
-                         return snapshot.hasData &&
-                            snapshot.data != null &&
-                            snapshot.data.data != null &&
-                            snapshot.data.data.recommended != null &&
-                            snapshot.data.data.recommended.length > 0
+                        return snapshot.hasData &&
+                                snapshot.data != null &&
+                                snapshot.data.data != null &&
+                                snapshot.data.data.recommended != null &&
+                                snapshot.data.data.recommended.length > 0
                             ? new recommendedCardList(
                                 dataUser: widget.userId,
                                 list: snapshot.data.data.recommended,
                               )
                             : Container(
-                           height: 190.0,
-                           width: MediaQuery.of(context).size.width,
-                           decoration: BoxDecoration(
-                               image: DecorationImage(
-                                   image: NetworkImage(
-                                       "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                         );
+                                height: 190.0,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: NetworkImage(
+                                            "ytuyghttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                              );
                       },
                     ),
                   ),
@@ -560,7 +573,8 @@ class recommendedCardList extends StatelessWidget {
                               topRight: Radius.circular(10.0),
                               topLeft: Radius.circular(10.0)),
                           image: DecorationImage(
-                              image: NetworkImage(AppStrings.imagePAth+image), fit: BoxFit.cover),
+                              image: NetworkImage(AppStrings.imagePAth + image),
+                              fit: BoxFit.cover),
                         ),
                         alignment: Alignment.topRight,
                       ),
@@ -835,7 +849,6 @@ class cardCountry extends StatelessWidget {
                   // end: Alignment.bottomRight),
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter),
-
             ),
             child: Padding(
               padding: const EdgeInsets.only(right: 4.0),

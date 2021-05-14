@@ -41,9 +41,9 @@ class CategoryBloc {
 
 //  Stream get progressStream => progressController.stream;
 
-  void getCategory({BuildContext context}) {
+  void getCategory({BuildContext context,String token}) {
     progressSink.add(true);
-    apiRepository.getCategories().then((onResponse) {
+    apiRepository.getCategories(token).then((onResponse) {
       if (!onResponse.status) {
         print("Error From Server  " + onResponse.message);
         showErrorDialog(context, "Login Error", onResponse.message);

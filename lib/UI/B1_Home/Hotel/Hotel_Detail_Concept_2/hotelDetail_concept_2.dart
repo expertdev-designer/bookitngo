@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/BookItNow.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/Gallery.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/HotelMapListingResponse.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/reviewsDetail2.d
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Room.dart';
+import 'bloc/MapBloc.dart';
 import 'maps.dart';
 
 class hotelDetail2 extends StatefulWidget {
@@ -69,6 +72,7 @@ class _hotelDetail2State extends State<hotelDetail2> {
   String _book = "Book Now";
 
   final Set<Marker> _markers = {};
+  MapBloc mapBloc;
 
   void initState() {
     // _getData();
@@ -81,7 +85,26 @@ class _hotelDetail2State extends State<hotelDetail2> {
         icon: BitmapDescriptor.defaultMarker,
       ),
     );
+    mapBloc = MapBloc();
     super.initState();
+    getHotelListingForMap();
+  }
+
+  void getHotelListingForMap() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        mapBloc.getHotelForMapView(context: context);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
   }
 
   @override
@@ -124,25 +147,38 @@ class _hotelDetail2State extends State<hotelDetail2> {
                 padding: const EdgeInsets.only(top: 135.0, right: 60.0),
                 child: Align(
                   alignment: Alignment.bottomRight,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => MapViewPage()));
-                    },
-                    child: Container(
-                      height: 35.0,
-                      width: 95.0,
-                      decoration: BoxDecoration(
-                          color: Colors.black12.withOpacity(0.5),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(30.0))),
-                      child: Center(
-                        child: Text("See Map",
-                            style: TextStyle(
-                                color: Colors.white, fontFamily: "Sofia")),
-                      ),
-                    ),
-                  ),
+                  child: StreamBuilder<HotelMapListingResponse>(
+                      initialData: null,
+                      stream: mapBloc.hotelMapDataStream,
+                      builder: (context, snapshot) {
+                        return InkWell(
+                          onTap: () {
+                            if (snapshot.hasData &&
+                                snapshot.data != null &&
+                                snapshot.data.data != null &&
+                                snapshot.data.data.length > 0) {
+                              Navigator.of(context).push(PageRouteBuilder(
+                                  pageBuilder: (_, __, ___) => MapViewPage(
+                                        hotelmapData: snapshot.data.data,
+                                      )));
+                            }
+                          },
+                          child: Container(
+                            height: 35.0,
+                            width: 95.0,
+                            decoration: BoxDecoration(
+                                color: Colors.black12.withOpacity(0.5),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30.0))),
+                            child: Center(
+                              child: Text("See Map",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: "Sofia")),
+                            ),
+                          ),
+                        );
+                      }),
                 ),
               )
             ],
@@ -562,9 +598,12 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
         ),
         Align(
           alignment: Alignment.center,
-          child: Image.asset(
-            "assets/image/logo/logo.png",
-            height: (expandedHeight / 40) - (shrinkOffset / 40) + 24,
+          child: Padding(
+            padding: EdgeInsets.only(top: 20),
+            child: Image.asset(
+              "assets/image/logo/logo.png",
+              height: (expandedHeight / 40) - (shrinkOffset / 40) + 24,
+            ),
           ),
 
           // Text(
@@ -618,13 +657,13 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                 width: double.infinity,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    color: Colors.white.withOpacity(0.85)),
+                    color: Colors.white.withOpacity(0.90)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
+                      padding: const EdgeInsets.only(top: 18.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -639,9 +678,10 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                                     width: 210.0,
                                     child: Text(
                                       title,
+                                      maxLines: 2,
                                       style: _txtStyleTitle.copyWith(
-                                          fontSize: 27.0),
-                                      overflow: TextOverflow.clip,
+                                          fontSize: 22.0),
+                                      overflow: TextOverflow.ellipsis,
                                     )),
                               ],
                             ),
@@ -664,7 +704,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                                     ),
                                     // ratingbar(starRating: ratting,color: Colors.deepPurpleAccent,),
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 0.0),
+                                      padding: const EdgeInsets.only(top: 8.0),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -699,7 +739,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 13.0, top: 16.0),
+                      padding: const EdgeInsets.only(right: 13.0, top: 22.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,

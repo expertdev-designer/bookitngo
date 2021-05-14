@@ -53,12 +53,12 @@ class HotelMapData {
   bool _isDeleted;
   bool _isFeatured;
   int _cancelSetting;
-  int _rating;
+  var _rating;
   String _category;
   String _updatedAt;
   String _createdAt;
   int _iV;
-  int _price;
+  num _price;
 
   HotelMapData(
       {List<String> images,
@@ -75,12 +75,12 @@ class HotelMapData {
       bool isDeleted,
       bool isFeatured,
       int cancelSetting,
-      int rating,
+      var rating,
       String category,
       String updatedAt,
       String createdAt,
       int iV,
-      int price}) {
+      num price}) {
     this._images = images;
     this._amenities = amenities;
     this._sId = sId;
@@ -131,8 +131,8 @@ class HotelMapData {
   set isFeatured(bool isFeatured) => _isFeatured = isFeatured;
   int get cancelSetting => _cancelSetting;
   set cancelSetting(int cancelSetting) => _cancelSetting = cancelSetting;
-  int get rating => _rating;
-  set rating(int rating) => _rating = rating;
+  num get rating => _rating;
+  set rating(num rating) => _rating = rating;
   String get category => _category;
   set category(String category) => _category = category;
   String get updatedAt => _updatedAt;
@@ -141,8 +141,8 @@ class HotelMapData {
   set createdAt(String createdAt) => _createdAt = createdAt;
   int get iV => _iV;
   set iV(int iV) => _iV = iV;
-  int get price => _price;
-  set price(int price) => _price = price;
+  num get price => _price;
+  set price(num price) => _price = price;
 
   HotelMapData.fromJson(Map<String, dynamic> json) {
     _images = json['images'].cast<String>();

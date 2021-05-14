@@ -91,7 +91,7 @@ class _VacationPageState extends State<VacationPage> {
                       image: DecorationImage(
                           fit: BoxFit.cover,
                           image: NetworkImage(
-                            "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc",
+                            " hjsd https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc",
                           ))),
                 );
               }
@@ -103,8 +103,18 @@ class _VacationPageState extends State<VacationPage> {
                       list: snapshot.data.data,
                     )
                   : Container(
-                      height: 10.0,
-                    );
+                height: 190.0,
+                child: Center(
+                  child: Text(
+                    "Not have item",
+                    style: TextStyle(
+                        fontFamily: "Sofia",
+                        fontSize: 20.0,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+              );
             },
           ),
         ),

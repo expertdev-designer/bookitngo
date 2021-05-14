@@ -81,13 +81,13 @@ class _RecommendedDetailState extends State<RecommendedDetail> {
                       image: DecorationImage(
                           fit: BoxFit.cover,
                           image: NetworkImage(
-                            "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc",
+                            " shjdfgweh https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc",
                           ))),
                 );
               }
               return snapshot.hasData &&
                       snapshot.data != null &&
-                  snapshot.data.data != null &&
+                      snapshot.data.data != null &&
                       snapshot.data.data.length > 0
                   ? CardList(
                       dataUser: widget.categoryId,
@@ -341,7 +341,7 @@ class CardList extends StatelessWidget {
           String location = list[i].address.toString();
           String image = list[i].images.first.toString();
           String id = list[i].sId.toString();
-          num price = 100;
+          num price = list[i].price;
           num latLang1 = num.parse(list[i].latitude);
           num latLang2 = num.parse(list[i].longitude);
 

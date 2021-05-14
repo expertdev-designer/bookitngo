@@ -50,7 +50,7 @@ class _mainSelectionState extends State<mainSelection> {
   void getCategoryList() {
     AppConstantHelper.checkConnectivity().then((isConnected) {
       if (isConnected) {
-        _categoryBloc.getCategory(context: context);
+        _categoryBloc.getCategory(context: context,token: widget.userID);
       } else {
         showDialog(
             context: context,

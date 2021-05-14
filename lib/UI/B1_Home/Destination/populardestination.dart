@@ -156,7 +156,7 @@ class _PopularDestinationState extends State<PopularDestination> {
                           decoration: BoxDecoration(
                               image: DecorationImage(
                                   image: NetworkImage(
-                                      "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
+                                      " hsd https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
                                   fit: BoxFit.cover)),
                         ),
                 ),
@@ -222,7 +222,7 @@ class _PopularDestinationState extends State<PopularDestination> {
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           image: NetworkImage(
-                              "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                              " fadf https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                 );
               }
               return snapshot.hasData &&
@@ -235,7 +235,16 @@ class _PopularDestinationState extends State<PopularDestination> {
                       list: snapshot.data.data.top,
                     )
                   : Container(
-                      height: 10.0,
+                      child: Center(
+                        child: Text(
+                          "Not have item",
+                          style: TextStyle(
+                              fontFamily: "Sofia",
+                              fontSize: 20.0,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
                     );
             },
           ),
@@ -275,7 +284,7 @@ class _PopularDestinationState extends State<PopularDestination> {
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           image: NetworkImage(
-                              "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                              "  fe https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                 );
               }
               return snapshot.hasData &&
@@ -288,7 +297,17 @@ class _PopularDestinationState extends State<PopularDestination> {
                       list: snapshot.data.data.all,
                     )
                   : Container(
-                      height: 10.0,
+                      height: 300,
+                      child: Center(
+                        child: Text(
+                          "Not have item",
+                          style: TextStyle(
+                              fontFamily: "Sofia",
+                              fontSize: 20.0,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
                     );
             },
           ),
@@ -645,104 +664,6 @@ class CardList extends StatelessWidget {
           );
         });
   }
-}
-
-Widget _card(String image, title, location, ratting) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          height: 220.0,
-          width: 160.0,
-          decoration: BoxDecoration(
-              image:
-                  DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
-              color: Colors.black12,
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              boxShadow: [
-                BoxShadow(
-                    blurRadius: 5.0,
-                    color: Colors.black12.withOpacity(0.1),
-                    spreadRadius: 2.0)
-              ]),
-        ),
-        SizedBox(
-          height: 5.0,
-        ),
-        Text(
-          title,
-          style: TextStyle(
-              fontFamily: "Sofia",
-              fontWeight: FontWeight.w600,
-              fontSize: 17.0,
-              color: Colors.black87),
-        ),
-        SizedBox(
-          height: 2.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Icon(
-              Icons.location_on,
-              size: 18.0,
-              color: Colors.black12,
-            ),
-            Text(
-              location,
-              style: TextStyle(
-                  fontFamily: "Sofia",
-                  fontWeight: FontWeight.w500,
-                  fontSize: 15.0,
-                  color: Colors.black26),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.star,
-              size: 18.0,
-              color: Colors.yellow,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 3.0),
-              child: Text(
-                ratting,
-                style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontFamily: "Sofia",
-                    fontSize: 13.0),
-              ),
-            ),
-            SizedBox(
-              width: 35.0,
-            ),
-            Container(
-              height: 27.0,
-              width: 82.0,
-              decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              child: Center(
-                child: Text("Discount 15%",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10.0)),
-              ),
-            )
-          ],
-        ),
-      ],
-    ),
-  );
 }
 
 class cardCountry extends StatelessWidget {

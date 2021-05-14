@@ -54,6 +54,7 @@ class HotelByCategoryData {
   bool _isDeleted;
   bool _isFeatured;
   num _rating;
+
   String _category;
   String _updatedAt;
   String _createdAt;

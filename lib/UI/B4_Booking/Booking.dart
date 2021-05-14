@@ -185,9 +185,7 @@ class _BookingScreenState extends State<BookingScreen> {
               if (!snapshot.hasData) {
                 return cardHeaderLoading(context);
               } else if (snapshot.hasData &&
-                  snapshot.data.data != null &&
-                  snapshot.data.data.current != null &&
-                  snapshot.data.data.current.length > 0)
+                  snapshot.data.data != null)
                 return Container(
                   child: ListView(
                     children: <Widget>[

@@ -25,7 +25,7 @@ class MapBloc {
   Stream get hotelMapDataStream => hotelMapDataController.stream;
 
   final BehaviorSubject hotelMapDataController =
-      // ignore: close_sinks
+      // ignore: close_sinks, close_sinks
       BehaviorSubject<HotelMapListingResponse>();
 
   StreamSink get hotelMapDataSink => hotelMapDataController.sink;
@@ -35,15 +35,13 @@ class MapBloc {
 
 //  Stream get progressStream => progressController.stream;
 
-  void getHotelForMapView(
-      {BuildContext context}) {
+  void getHotelForMapView({BuildContext context}) {
     progressSink.add(true);
     apiRepository.getHotelMap().then((onResponse) {
       if (!onResponse.status) {
         print("Error From Server  " + onResponse.message);
         showErrorDialog(context, "Error", onResponse.message);
-      } else if (onResponse.status)
-      {
+      } else if (onResponse.status) {
         hotelMapDataSink.add(onResponse);
       }
       progressSink.add(false);

@@ -4,8 +4,6 @@ import 'package:book_it/UI/Utills/AppColors.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
-import 'package:carousel_pro/carousel_pro.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -701,7 +699,7 @@ class _RoomState extends State<Room> {
                       decoration: BoxDecoration(
                           image: DecorationImage(
                               image: NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                                  " jbfbhttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                     );
         });
   }

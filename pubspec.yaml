@@ -167,9 +167,9 @@ flutter:
   assets:
     - assets/credentials.json
     - assets/map_style/map_style.txt
-    - assets/image/onBoardingImage/onBoarding1.png
-    - assets/image/onBoardingImage/onBoarding2.png
-    - assets/image/onBoardingImage/onBoarding3.png
+#    - assets/image/onBoardingImage/onBoarding1.png
+#    - assets/image/onBoardingImage/onBoarding2.png
+#    - assets/image/onBoardingImage/onBoarding3.png
     - assets/image/icon/fbIcon.png
     - assets/image/icon/googleIcon.png
     - assets/image/icon/amerika.png
@@ -182,19 +182,19 @@ flutter:
     - assets/image/icon/twitterIcon.png
     - assets/image/icon/food.png
     - assets/image/images/GirlProfile.png
-#    - assets/image/homeImage/experience.png
-#    - assets/image/homeImage/home.png
-#    - assets/image/homeImage/hotel.png
-#    - assets/image/homeImage/travel.png
+    #    - assets/image/homeImage/experience.png
+    #    - assets/image/homeImage/home.png
+    #    - assets/image/homeImage/hotel.png
+    #    - assets/image/homeImage/travel.png
     - assets/image/images/bannerProfile.png
     - assets/image/images/map.png
     - assets/image/images/search.png
     - assets/image/illustration/message.png
     - assets/image/illustration/girlcallcenter.png
     - assets/image/destinationPopuler/destination1.png
-#    - assets/image/destinationPopuler/destination4.jpg
-#    - assets/image/destinationPopuler/destination5.jpg
-#    - assets/image/destinationPopuler/populer2.png
+    #    - assets/image/destinationPopuler/destination4.jpg
+    #    - assets/image/destinationPopuler/destination5.jpg
+    #    - assets/image/destinationPopuler/populer2.png
     - assets/image/destinationPopuler/tripBackground.png
     - assets/image/illustration/social.png
     - assets/image/illustration/noMessage.png
@@ -244,6 +244,9 @@ flutter:
     - assets/image/icon/heart.svg
     - assets/image/icon/home.svg
     - assets/image/icon/profile.svg
+    - assets/image/onBoardingImage/B1.png
+    - assets/image/onBoardingImage/G1.png
+    - assets/image/onBoardingImage/N1.png
 
 
   # To add assets to your application, add an assets section, like this:

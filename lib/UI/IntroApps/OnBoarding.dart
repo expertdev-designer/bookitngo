@@ -38,7 +38,8 @@ final pages = [
           textAlign: TextAlign.center,
           style: _fontDescriptionStyle),
       mainImage: Image.asset(
-        'assets/image/onBoardingImage/onBoarding1.png',
+        // 'assets/image/onBoardingImage/onBoarding1.png',
+        'assets/image/onBoardingImage/B1.png',
         height: 285.0,
         width: 285.0,
         alignment: Alignment.center,
@@ -56,7 +57,8 @@ final pages = [
           textAlign: TextAlign.center,
           style: _fontDescriptionStyle),
       mainImage: Image.asset(
-        'assets/image/onBoardingImage/onBoarding2.png',
+        // 'assets/image/onBoardingImage/onBoarding2.png',
+        'assets/image/onBoardingImage/N1.png',
         height: 285.0,
         width: 285.0,
         alignment: Alignment.center,
@@ -74,7 +76,7 @@ final pages = [
           textAlign: TextAlign.center,
           style: _fontDescriptionStyle),
       mainImage: Image.asset(
-        'assets/image/onBoardingImage/onBoarding3.png',
+        'assets/image/onBoardingImage/G1.png',
         height: 285.0,
         width: 285.0,
         alignment: Alignment.center,

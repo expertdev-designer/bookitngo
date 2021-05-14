@@ -123,8 +123,14 @@ class ApiRepository {
 
   /*................... get Category api ..........*/
 
-  Future<CategoriesResponse> getCategories() async {
-    getDioOptions(_dio);
+  Future<CategoriesResponse> getCategories(String token) async {
+    _dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
+      // Do something before request is sent
+      if (token != null) {
+        options.headers["x-access-token"] = token;
+      }
+    }));
     var response = await _dio.post(base_url + ApiEndPoints.getCategory);
     print("getCategoryResponse" + response.toString());
     Map<String, dynamic> data = jsonDecode(response.toString());

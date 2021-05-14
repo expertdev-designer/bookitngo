@@ -1252,7 +1252,7 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
       if (_child < availableChildCount)
         _child++;
       else {
-        showErrorDialog(context, "Select Children",
+        showErrorDialog(context, "Add Children",
             "Only ${availableChildCount}  children are allowed in room");
       }
     });
@@ -1269,7 +1269,7 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
           totalChildCount += element.child;
         });
       } else {
-        showErrorDialog(context, "Select Children",
+        showErrorDialog(context, "Add Adult",
             "Only ${widget.adultCapacity}  adult are allowed in room");
       }
     });
@@ -1300,7 +1300,7 @@ class _SelectCheckInOutDateState extends State<SelectCheckInOutDate> {
           totalChildCount += element.child;
         });
       } else {
-        showErrorDialog(context, "Select Children",
+        showErrorDialog(context, "Add Children",
             "Only ${widget.childCapacity}  children are allowed in room");
       }
     });
