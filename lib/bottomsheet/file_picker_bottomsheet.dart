@@ -38,7 +38,7 @@ void filePickerBottomSheet(context, AppConstantHelper helper,Function(File) onFi
             children: [
               new ListTile(
                   leading: new Icon(Icons.camera_alt,color: AppColor.primaryColor,),
-                  title: new Text('Add Photo From Camera Roll',
+                  title: new Text('Use Camera ',
                     style: TextStyle(
 
                       fontSize: 16.0,
@@ -56,7 +56,7 @@ void filePickerBottomSheet(context, AppConstantHelper helper,Function(File) onFi
               Divider(),
               new ListTile(
                 leading: new Icon(Icons.image,color: AppColor.primaryColor),
-                title: new Text('Add Photo From Gallery',
+                title: new Text("Open Gallery",
                   style: TextStyle(
 
                     fontSize: 16.0,

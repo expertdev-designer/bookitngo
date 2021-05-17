@@ -1,5 +1,6 @@
 import 'package:book_it/UI/B5_Profile/bloc/CallCenterBloc.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class _callCenterState extends State<callCenter> {
   TextEditingController problem = new TextEditingController();
   CallCenterBloc _callCenterBloc;
   AppConstantHelper _appConstantHelper;
+  bool autoValidate=false;
 
   void addData() {
     Firestore.instance.runTransaction((Transaction transaction) async {
@@ -56,6 +58,7 @@ class _callCenterState extends State<callCenter> {
     _callCenterBloc = CallCenterBloc();
     _appConstantHelper = AppConstantHelper();
     _appConstantHelper.setContext(context);
+    email.text=AppStrings.userEmail;
   }
 
   @override
@@ -65,7 +68,8 @@ class _callCenterState extends State<callCenter> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0.0,
-        title: Text("Call Center"),
+        title: Text("Call Center", style: TextStyle(
+            fontFamily: "Sofia", fontWeight: FontWeight.w800, fontSize: 22.0),),
       ),
       body: Padding(
         padding: EdgeInsets.only(right: 12.0, left: 12.0, top: 15.0),
@@ -73,13 +77,13 @@ class _callCenterState extends State<callCenter> {
           children: [
             ListView(
               children: <Widget>[
-                Text(
-                  "Call Center",
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15.0),
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
+                // Text(
+                //   "Call Center",
+                //   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15.0),
+                // ),
+                // SizedBox(
+                //   height: 10.0,
+                // ),
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -128,6 +132,13 @@ class _callCenterState extends State<callCenter> {
                                   return 'Please input your name';
                                 }
                               },
+                              autovalidate: autoValidate,
+                              onChanged: (val)
+                              {
+                                setState(() {
+
+                                });
+                              },
                               onSaved: (input) => _name = input,
                               controller: nama,
                               keyboardType: TextInputType.text,
@@ -137,11 +148,18 @@ class _callCenterState extends State<callCenter> {
                                   fontSize: 16.0,
                                   color: Colors.black),
                               decoration: InputDecoration(
+                               // filled: true,
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         width: 0.5,
                                         color:
-                                            Colors.black12.withOpacity(0.01))),
+                                        Colors.black12.withOpacity(0.01))),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        width: 0.5,
+                                        color:
+                                        Colors.black12.withOpacity(0.01))),
+
                                 contentPadding: EdgeInsets.all(13.0),
                                 hintText: "Input your name",
                                 hintStyle: TextStyle(
@@ -173,6 +191,8 @@ class _callCenterState extends State<callCenter> {
                                   fontSize: 16.0,
                                   color: Colors.black),
                               decoration: InputDecoration(
+                                filled: true,
+                                enabled: false,
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         width: 0.5,
@@ -187,7 +207,7 @@ class _callCenterState extends State<callCenter> {
                             SizedBox(
                               height: 20.0,
                             ),
-                            Text("Detail Problem",
+                            Text("Description",
                                 style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 15.0)),
@@ -200,8 +220,15 @@ class _callCenterState extends State<callCenter> {
                               child: TextFormField(
                                 validator: (input) {
                                   if (input.isEmpty) {
-                                    return 'Please input your problem';
+                                    return 'Please enter the problem that you are facing on this app.';
                                   }
+                                },
+                                autovalidate: autoValidate,
+                                onChanged: (val)
+                                {
+                                  setState(() {
+
+                                  });
                                 },
                                 maxLines: 10,
                                 onSaved: (input) => _problem = input,
@@ -218,15 +245,17 @@ class _callCenterState extends State<callCenter> {
                                           width: 0.5,
                                           color: Colors.black12
                                               .withOpacity(0.01))),
+
+
                                   contentPadding: EdgeInsets.all(13.0),
-                                  hintText: "Input your problem",
+                                  hintText: "Please explain the problem that you are facing on this app.",
                                   hintStyle: TextStyle(
                                       fontFamily: "Sans", fontSize: 15.0),
                                 ),
                               ),
                             ),
                             SizedBox(
-                              height: 20.0,
+                              height: 40.0,
                             ),
                             InkWell(
                               onTap: () {
@@ -237,24 +266,9 @@ class _callCenterState extends State<callCenter> {
                                   setState(() {});
                                   // addData();
                                   callCenterUpdateProblemApi();
-                                } else {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text("Error"),
-                                          content: Text(
-                                              "Please input your information"),
-                                          actions: <Widget>[
-                                            FlatButton(
-                                              child: Text("Close"),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            )
-                                          ],
-                                        );
-                                      });
+                                }else {
+                                  autoValidate=true;
+
                                 }
                               },
                               child: Container(
@@ -266,7 +280,7 @@ class _callCenterState extends State<callCenter> {
                                         Radius.circular(40.0))),
                                 child: Center(
                                   child: Text(
-                                    "Input Data",
+                                    "Submit",
                                     style: TextStyle(
                                         fontFamily: "Popins",
                                         color: Colors.white,

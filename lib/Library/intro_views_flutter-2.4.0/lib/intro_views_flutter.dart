@@ -2,6 +2,7 @@ library intro_views_flutter;
 
 import 'dart:async';
 
+import 'package:book_it/UI/IntroApps/onBoardingVideo.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/Library/intro_views_flutter-2.4.0/lib/Animation_Gesture/animated_page_dragger.dart';
 import 'package:book_it/Library/intro_views_flutter-2.4.0/lib/Animation_Gesture/page_dragger.dart';
@@ -140,8 +141,8 @@ class _IntroViewsFlutterState extends State<IntroViewsFlutter>
           if (slidePercent > 0.5) {
             animatedPageDragger = AnimatedPageDragger(
               slideDirection: slideDirection,
-              transitionGoal:
-                  TransitionGoal.open, //we have to animate the open page reveal
+              transitionGoal: TransitionGoal.open,
+              //we have to animate the open page reveal
               slidePercent: slidePercent,
               slideUpdateStream: slideUpdateStream,
               vsync: this,
@@ -149,8 +150,8 @@ class _IntroViewsFlutterState extends State<IntroViewsFlutter>
           } else {
             animatedPageDragger = AnimatedPageDragger(
               slideDirection: slideDirection,
-              transitionGoal:
-                  TransitionGoal.close, //we have to close the page reveal
+              transitionGoal: TransitionGoal.close,
+              //we have to close the page reveal
               slidePercent: slidePercent,
               slideUpdateStream: slideUpdateStream,
               vsync: this,
@@ -236,21 +237,24 @@ class _IntroViewsFlutterState extends State<IntroViewsFlutter>
             textStyle: textStyle,
             acitvePageIndex: activePageIndex,
             totalPages: pages.length,
-            onPressedDoneButton: widget
-                .onTapDoneButton, //void Callback to be executed after pressing done button
+            onPressedDoneButton: widget.onTapDoneButton,
+            //void Callback to be executed after pressing done button
             slidePercent: slidePercent,
             slideDirection: slideDirection,
             onPressedSkipButton: () {
               //method executed on pressing skip button
-              setState(() {
-                activePageIndex = pages.length - 1;
-                nextPageIndex = activePageIndex;
-                // after skip pressed invoke function
-                // this can be used for analytics/page transition
-                if (widget.onTapSkipButton != null) {
-                  widget.onTapSkipButton();
-                }
-              });
+              // setState(() {
+              //   activePageIndex = pages.length - 1;
+              //   nextPageIndex = activePageIndex;
+              //   // after skip pressed invoke function
+              //   // this can be used for analytics/page transition
+              //   if (widget.onTapSkipButton != null) {
+              //     widget.onTapSkipButton();
+              //   }
+              // });
+
+              Navigator.of(context).pushReplacement(PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => new introVideo()));
             },
             showSkipButton: widget.showSkipButton,
             doneText: widget.doneText,

@@ -36,17 +36,17 @@ class CallCenterBloc {
         .then((onResponse) {
       if (!onResponse.status) {
         print("Error From Server  " + onResponse.message);
-        showErrorDialog(context, "Call Center Error", onResponse.message);
+        showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
         successSink.add(true);
-        showErrorDialog(context, "Call Center", onResponse.message);
+        showErrorDialog(context, "Success", onResponse.message);
       }
       progressSink.add(false);
     }).catchError((onError) {
       progressSink.add(false);
       print("On_Error" + onError.toString());
 
-      showErrorDialog(context, "Call Center Error", onError.toString());
+      showErrorDialog(context, "Error", onError.toString());
     });
   }
 
@@ -122,7 +122,7 @@ class CallCenterBloc {
               child: Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Text(
-              "Succes",
+              "Success",
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22.0),
             ),
           )),
@@ -130,7 +130,7 @@ class CallCenterBloc {
               child: Padding(
             padding: const EdgeInsets.only(top: 30.0, bottom: 40.0),
             child: Text(
-              "Update Profile Succes",
+              "Update Profile Success",
               style: TextStyle(fontSize: 17.0),
             ),
           )),

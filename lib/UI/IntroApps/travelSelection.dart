@@ -50,7 +50,7 @@ class _mainSelectionState extends State<mainSelection> {
   void getCategoryList() {
     AppConstantHelper.checkConnectivity().then((isConnected) {
       if (isConnected) {
-        _categoryBloc.getCategory(context: context,token: widget.userID);
+        _categoryBloc.getCategory(context: context, token: widget.userID);
       } else {
         showDialog(
             context: context,
@@ -344,33 +344,33 @@ class _mainSelectionState extends State<mainSelection> {
                     5.5,
                     ids != null && ids.length > 0
                         ? InkWell(
-                      onTap: () {
-                        saveCategoryList();
-                      },
-                      child: Container(
-                        height: 55.0,
-                        width: double.infinity,
-                        margin: EdgeInsets.only(
-                            left: 20.0, right: 20.0, top: 0.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: LinearGradient(colors: [
-                              Color(0xFF647DEE),
-                              Color(0xFF7F53AC)
-                            ])),
-                        child: Center(
-                          child: Text(
-                            "Next",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: "Sofia",
-                                fontWeight: FontWeight.w500,
-                                fontSize: 19.5,
-                                letterSpacing: 1.2),
-                          ),
-                        ),
-                      ),
-                    )
+                            onTap: () {
+                              saveCategoryList();
+                            },
+                            child: Container(
+                              height: 55.0,
+                              width: double.infinity,
+                              margin: EdgeInsets.only(
+                                  left: 20.0, right: 20.0, top: 0.0),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  gradient: LinearGradient(colors: [
+                                    Color(0xFF647DEE),
+                                    Color(0xFF7F53AC)
+                                  ])),
+                              child: Center(
+                                child: Text(
+                                  "Next",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: "Sofia",
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 19.5,
+                                      letterSpacing: 1.2),
+                                ),
+                              ),
+                            ),
+                          )
                         : Container(
                             height: 55.0,
                             width: double.infinity,

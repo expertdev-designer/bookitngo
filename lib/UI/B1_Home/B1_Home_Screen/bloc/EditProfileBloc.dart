@@ -109,7 +109,7 @@ class EditProfileBloc {
       child: SimpleDialog(
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Padding(
                   padding: EdgeInsets.only(left: 10.0),
@@ -138,7 +138,7 @@ class EditProfileBloc {
               child: Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Text(
-              "Succes",
+              "Success",
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22.0),
             ),
           )),
@@ -146,7 +146,7 @@ class EditProfileBloc {
               child: Padding(
             padding: const EdgeInsets.only(top: 30.0, bottom: 40.0),
             child: Text(
-              "Profile Updated",
+              "Your profile is updated successfully.",
               style: TextStyle(fontSize: 17.0),
             ),
           )),

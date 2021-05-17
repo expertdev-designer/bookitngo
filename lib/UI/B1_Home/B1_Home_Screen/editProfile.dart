@@ -85,10 +85,8 @@ class _updateProfileState extends State<updateProfile> {
             child: Icon(Icons.arrow_back)),
         elevation: 0.0,
         title: Text("Edit Profile",
-            style: TextStyle(
-              fontFamily: "Poppins",
-              fontSize: 17.0,
-            )),
+          style: TextStyle(
+              fontFamily: "Sofia", fontWeight: FontWeight.w800, fontSize: 22.0),),
         centerTitle: true,
       ),
       body: Stack(
@@ -118,8 +116,8 @@ class _updateProfileState extends State<updateProfile> {
                                   boxShadow: [
                                     BoxShadow(
                                         color: Colors.black12.withOpacity(0.1),
-                                        blurRadius: 10.0,
-                                        spreadRadius: 4.0)
+                                        blurRadius: 2.0,
+                                        spreadRadius: 2.0)
                                   ]),
                               child: snapshot.hasData && !snapshot.data
                                   ? Stack(
@@ -197,7 +195,7 @@ class _updateProfileState extends State<updateProfile> {
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                   child: Container(
-                    height: 50.0,
+
                     width: double.infinity,
                     decoration: BoxDecoration(
                         boxShadow: [
@@ -209,7 +207,7 @@ class _updateProfileState extends State<updateProfile> {
                         borderRadius: BorderRadius.all(Radius.circular(40.0))),
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                        padding: const EdgeInsets.only(left: 20.0, right: 20.0,top: 4,bottom: 4),
                         child: Theme(
                           data: ThemeData(
                             highlightColor: Colors.white,
@@ -223,14 +221,14 @@ class _updateProfileState extends State<updateProfile> {
                                 controller: nameController,
                                 validator: (val) {
                                   if (val.isEmpty) {
-                                    return "Please input your name";
+                                    return "Please enter your full name";
                                   } else
                                     return null;
                                 },
                                 decoration: InputDecoration(
-                                  hintText: 'Name',
-                                  hintStyle: TextStyle(
-                                      color: Colors.black54, fontFamily: "Sofia"),
+                                  labelText: 'Full name',
+                                  labelStyle: TextStyle(
+                                      color: Colors.black54, fontFamily: "Sofia",height:1.0),
                                   enabledBorder: new UnderlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Colors.white,

@@ -27,6 +27,8 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
   var tap = 0;
 
   bool isLoading = false;
+  bool autoValidation = false;
+  bool _isHidden = false;
 
   final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
   String _email, _pass, _email2, _pass2, _name, _id;
@@ -34,7 +36,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
   TextEditingController loginEmailController = new TextEditingController();
   TextEditingController loginPasswordController = new TextEditingController();
 
-  CategoryBloc _loginBloc;
+  LoginBloc _loginBloc;
   AppConstantHelper _appConstantHelper;
 
   @override
@@ -50,7 +52,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
               });
             }
           });
-    _loginBloc = CategoryBloc();
+    _loginBloc = LoginBloc();
     _appConstantHelper = AppConstantHelper();
     _appConstantHelper.setContext(context);
     super.initState();
@@ -152,7 +154,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                               FadeAnimation(
                                   1.2,
                                   Text(
-                                    "Log In",
+                                    "Sign In",
                                     style: TextStyle(
                                         fontFamily: "Sofia",
                                         fontWeight: FontWeight.w800,
@@ -187,20 +189,38 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                                                           Colors.grey[200]))),
                                           child: TextFormField(
                                             validator: (input) {
+                                              Pattern pattern =
+                                                  r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+                                                  r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+                                                  r"{0,253}[a-zA-Z0-9])?)*$";
+                                              RegExp regex =
+                                              new RegExp(pattern);
                                               if (input.isEmpty) {
-                                                return 'Please typle an email';
-                                              }
+                                                return 'Please enter your Email';
+                                              } else if (!regex
+                                                  .hasMatch(input) ||
+                                                  input == null)
+                                                return 'Please enter a valid Email';
+                                              else
+                                                return null;
+                                            },
+                                            autovalidate: autoValidation,
+                                            onChanged: (value)
+                                            {
+                                              setState(() {
+
+                                              });
                                             },
                                             onSaved: (input) => _email = input,
                                             controller: loginEmailController,
                                             decoration: InputDecoration(
                                                 border: InputBorder.none,
-                                                hintText: "Email",
+                                                labelText: "Email",
                                                 icon: Icon(
                                                   Icons.email,
                                                   color: Colors.black12,
                                                 ),
-                                                hintStyle: TextStyle(
+                                                labelStyle: TextStyle(
                                                     color: Colors.grey,
                                                     fontFamily: "sofia")),
                                           ),
@@ -208,24 +228,39 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                                         Container(
                                           padding: EdgeInsets.all(10),
                                           child: TextFormField(
+
                                             validator: (input) {
                                               if (input.isEmpty) {
-                                                return 'Please typle an password';
+                                                return 'Please enter your Password';
                                               }
+                                              if (input.length < 5) {
+                                                return 'Minimum of 5 characters allowed';
+                                              }else return null;
+                                            },
+                                            autovalidate: autoValidation,
+                                            onChanged: (value)
+                                            {
+                                              setState(() {
+
+                                              });
                                             },
                                             onSaved: (input) => _pass = input,
                                             controller: loginPasswordController,
-                                            obscureText: true,
+                                            obscureText: _isHidden,
                                             decoration: InputDecoration(
                                                 border: InputBorder.none,
-                                                hintText: "Password",
+                                                labelText: "Password",
                                                 icon: Icon(
                                                   Icons.vpn_key,
                                                   color: Colors.black12,
                                                 ),
-                                                hintStyle: TextStyle(
+                                                labelStyle: TextStyle(
                                                     color: Colors.grey,
-                                                    fontFamily: "sofia")),
+                                                    fontFamily: "sofia"),
+                                              suffix: InkWell(
+                                                onTap: _togglePasswordView,
+                                                child: Icon( !_isHidden?Icons.visibility:Icons.visibility_off,color: Colors.black12,),
+                                              ),),
                                           ),
                                         )
                                       ],
@@ -316,7 +351,10 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                             if (_registerFormKey.currentState.validate()) {
                               await callLoginApi(loginEmailController.text,
                                   loginPasswordController.text);
+                            }else{
+                              autoValidation = true;
                             }
+                            return false;
                             // SharedPreferences prefs;
                             // prefs =
                             //     await SharedPreferences.getInstance();
@@ -435,4 +473,11 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
       ),
     );
   }
+
+  void _togglePasswordView() {
+    setState(() {
+      _isHidden = !_isHidden;
+    });
+  }
+
 }

@@ -22,7 +22,7 @@ class _ForgotPasswordState extends State<ForgotPassword>
   @override
   //Animation Declaration
   AnimationController sanimationController;
-
+  bool autoValidation=false;
   var tap = 0;
 
   bool isLoading = false;
@@ -31,7 +31,7 @@ class _ForgotPasswordState extends State<ForgotPassword>
   String _email, _email2, _pass2, _name, _id;
 
   TextEditingController loginEmailController = new TextEditingController();
-  CategoryBloc _loginBloc;
+  LoginBloc _loginBloc;
   AppConstantHelper _appConstantHelper;
 
   @override
@@ -47,7 +47,7 @@ class _ForgotPasswordState extends State<ForgotPassword>
               });
             }
           });
-    _loginBloc = CategoryBloc();
+    _loginBloc = LoginBloc();
     _appConstantHelper = AppConstantHelper();
     _appConstantHelper.setContext(context);
     super.initState();
@@ -212,24 +212,25 @@ class _ForgotPasswordState extends State<ForgotPassword>
                                               RegExp regex =
                                                   new RegExp(pattern);
                                               if (input.isEmpty) {
-                                                return 'Please type an email';
+                                                return 'Please enter an email';
                                               } else if (!regex
                                                       .hasMatch(input) ||
                                                   input == null)
-                                                return 'Please enter a valid email address';
+                                                return 'Please enter a valid email';
                                               else
                                                 return null;
                                             },
                                             onSaved: (input) => _email = input,
+                                            autovalidate: autoValidation,
                                             controller: loginEmailController,
                                             decoration: InputDecoration(
                                                 border: InputBorder.none,
-                                                hintText: "Email",
+                                                labelText: "Email",
                                                 icon: Icon(
                                                   Icons.email,
                                                   color: Colors.black12,
                                                 ),
-                                                hintStyle: TextStyle(
+                                                labelStyle: TextStyle(
                                                     color: Colors.grey,
                                                     fontFamily: "sofia")),
                                           ),
@@ -332,6 +333,10 @@ class _ForgotPasswordState extends State<ForgotPassword>
                                     }
                                   }*/
                             }
+                            else{
+                              autoValidation = true;
+                            }
+                            return false;
                           },
                           child: Container(
                             height: 55.0,
@@ -358,14 +363,14 @@ class _ForgotPasswordState extends State<ForgotPassword>
               ],
             ),
           ),
-            StreamBuilder<bool>(
-              stream: _loginBloc.progressStream,
-              builder: (context, snapshot) {
-                return Center(
-                    child: CommmonProgressIndicator(
-                        snapshot.hasData ? snapshot.data : false));
-              },
-            )
+          StreamBuilder<bool>(
+            stream: _loginBloc.progressStream,
+            builder: (context, snapshot) {
+              return Center(
+                  child: CommmonProgressIndicator(
+                      snapshot.hasData ? snapshot.data : false));
+            },
+          )
         ],
       ),
     );

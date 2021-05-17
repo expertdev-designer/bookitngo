@@ -10,7 +10,7 @@ import 'package:rxdart/rxdart.dart';
 
 import '../travelSelection.dart';
 
-class CategoryBloc {
+class LoginBloc {
   Stream get progressStream => progressController.stream;
 
   final BehaviorSubject progressController = BehaviorSubject<bool>();
@@ -29,7 +29,7 @@ class CategoryBloc {
         .then((onResponse) {
       if (!onResponse.status) {
         print("Error From Server  " + onResponse.message);
-        showErrorDialog(context, "Login Error", onResponse.message);
+        showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
         setLocalStorage(onResponse.data);
         Navigator.of(context).pushReplacement(PageRouteBuilder(
@@ -54,7 +54,7 @@ class CategoryBloc {
         .then((onResponse) {
       if (!onResponse.status) {
         print("Error From Server  " + onResponse.message);
-        showErrorDialog(context, "Forgot Password Error", onResponse.message);
+        showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
         print("Register" + onResponse.message);
         showErrorDialog(context, "Forgot Password", onResponse.message);
@@ -64,7 +64,7 @@ class CategoryBloc {
     }).catchError((onError) {
       progressSink.add(false);
       print("On_Error" + onError.toString());
-      showErrorDialog(context, "Forgot Password Error", onError.toString());
+      showErrorDialog(context, "Error", onError.toString());
     });
   }
 
@@ -80,10 +80,11 @@ class CategoryBloc {
         .then((onResponse) {
       if (!onResponse.status) {
         print("Error From Server  " + onResponse.message);
-        showErrorDialog(context, "Register Error", onResponse.message);
+        showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
         print("Register" + onResponse.message);
-        showErrorDialog(context, "User Registered", onResponse.message);
+        showErrorDialog(context, "Congratulations!!!",
+            "Thanks for creating the account with us. We have sent you a mail on your registered email account. Please follow the steps in the mail to complete the sign up process.");
       }
       progressSink.add(false);
     }).catchError((onError) {

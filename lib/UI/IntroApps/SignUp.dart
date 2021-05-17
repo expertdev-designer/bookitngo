@@ -23,6 +23,8 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
   //Animation Declaration
   AnimationController sanimationController;
   bool isLoading = false;
+  bool autoValidation = false;
+  bool _isHidden = false;
   final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
   String _email, _pass, _pass2, _name;
   var profilePicUrl;
@@ -35,7 +37,7 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
 
   var tap = 0;
 
-  CategoryBloc _loginBloc;
+  LoginBloc _loginBloc;
   AppConstantHelper _appConstantHelper;
 
   @override
@@ -51,7 +53,7 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
               });
             }
           });
-    _loginBloc = CategoryBloc();
+    _loginBloc = LoginBloc();
     _appConstantHelper = AppConstantHelper();
     _appConstantHelper.setContext(context);
     super.initState();
@@ -191,21 +193,27 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                                       color:
                                                           Colors.grey[200]))),
                                           child: TextFormField(
+                                            autovalidate: autoValidation,
                                             validator: (input) {
                                               if (input.isEmpty) {
-                                                return 'Please input your name';
+                                                return 'Please enter your Full Name';
                                               }
                                             },
+                                            onChanged: (value) {
+                                              setState(() {});
+                                            },
+                                            textInputAction:
+                                                TextInputAction.next,
                                             onSaved: (input) => _name = input,
                                             controller: signupNameController,
                                             decoration: InputDecoration(
                                                 border: InputBorder.none,
-                                                hintText: "User Name",
+                                                labelText: "Full Name",
                                                 icon: Icon(
                                                   Icons.person,
                                                   color: Colors.black12,
                                                 ),
-                                                hintStyle: TextStyle(
+                                                labelStyle: TextStyle(
                                                     color: Colors.grey,
                                                     fontFamily: "sofia")),
                                           ),
@@ -218,6 +226,7 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                                       color:
                                                           Colors.grey[200]))),
                                           child: TextFormField(
+                                            autovalidate: autoValidation,
                                             validator: (input) {
                                               Pattern pattern =
                                                   r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
@@ -226,24 +235,29 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                               RegExp regex =
                                                   new RegExp(pattern);
                                               if (input.isEmpty) {
-                                                return 'Please input your email';
+                                                return 'Please enter your Email';
                                               } else if (!regex
                                                       .hasMatch(input) ||
                                                   input == null)
-                                                return 'Please input a valid email address';
+                                                return 'Please enter a valid Email';
                                               else
                                                 return null;
                                             },
+                                            onChanged: (value) {
+                                              setState(() {});
+                                            },
+                                            textInputAction:
+                                                TextInputAction.next,
                                             onSaved: (input) => _email = input,
                                             controller: signupEmailController,
                                             decoration: InputDecoration(
                                                 border: InputBorder.none,
-                                                hintText: "Email",
+                                                labelText: "Email",
                                                 icon: Icon(
                                                   Icons.email,
                                                   color: Colors.black12,
                                                 ),
-                                                hintStyle: TextStyle(
+                                                labelStyle: TextStyle(
                                                     color: Colors.grey,
                                                     fontFamily: "sofia")),
                                           ),
@@ -251,28 +265,38 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                         Container(
                                           padding: EdgeInsets.all(10),
                                           child: TextFormField(
+                                            autovalidate: autoValidation,
                                             controller:
                                                 signupPasswordController,
                                             validator: (input) {
                                               if (input.isEmpty) {
-                                                return 'Please input your password';
+                                                return 'Please enter your Password';
                                               }
-                                              if (input.length < 8) {
-                                                return 'Input more 8 character';
+                                              if (input.length < 5) {
+                                                return 'Minimum of 5 characters allowed';
                                               }
                                             },
+                                            onChanged: (value) {
+                                              setState(() {});
+                                            },
                                             onSaved: (input) => _pass = input,
-                                            obscureText: true,
+                                            obscureText: _isHidden,
+                                            textInputAction:
+                                                TextInputAction.done,
                                             decoration: InputDecoration(
                                                 border: InputBorder.none,
-                                                hintText: "Password",
+                                                labelText: "Password",
                                                 icon: Icon(
                                                   Icons.vpn_key,
                                                   color: Colors.black12,
                                                 ),
-                                                hintStyle: TextStyle(
+                                                labelStyle: TextStyle(
                                                     color: Colors.grey,
-                                                    fontFamily: "sofia")),
+                                                    fontFamily: "sofia"),
+                                                suffix: InkWell(
+                                                  onTap: _togglePasswordView,
+                                                  child: Icon( !_isHidden?Icons.visibility:Icons.visibility_off,color: Colors.black12,),
+                                                )),
                                           ),
                                         )
                                       ],
@@ -302,7 +326,7 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                                 }));
                                       },
                                       child: Text(
-                                        "Existing Account? Log In",
+                                        "Existing Account? Sign In",
                                         style: TextStyle(
                                             color: Colors.black38,
                                             fontFamily: "Sofia",
@@ -379,7 +403,11 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                 print(_email);
                                 print(_pass);
                               }*/
+                            } else {
+                              // Activate autovalidation
+                              autoValidation = true;
                             }
+                            return false;
                             /*else {
                               showDialog(
                                   context: context,
@@ -420,6 +448,9 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                             ),
                           ),
                         )),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.2,
+                    ),
                   ],
                 ),
               ],
@@ -436,5 +467,12 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+
+  void _togglePasswordView() {
+    setState(() {
+      _isHidden = !_isHidden;
+    });
   }
 }

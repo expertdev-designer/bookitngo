@@ -15,6 +15,9 @@ import 'package:flutter_credit_card/credit_card_widget.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
+import 'BookitCreditCardWidget.dart';
+import 'MyCreditCardForm.dart';
+
 class AddCreditCard extends StatefulWidget {
   // String name, password, photoProfile, uid, email;
   //
@@ -54,8 +57,13 @@ class _AddCreditCardState extends State<AddCreditCard> {
   String cvvCode = '';
   String cardID = '';
   String cartType = '';
+  String cvvValidationMessage;
+  String dateValidationMessage;
+  String numberValidationMessage;
+  String cardHolderValidationMessage;
   bool isCvvFocused = false;
   PaymentBloc _paymentBloc;
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
   String _error;
   AppConstantHelper _appConstantHelper;
   final stripePublishableKeyTest =
@@ -153,6 +161,7 @@ class _AddCreditCardState extends State<AddCreditCard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
@@ -165,245 +174,249 @@ class _AddCreditCardState extends State<AddCreditCard> {
       ),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 5.0, left: 0.0, right: 0.0),
-            child: SafeArea(
-              child: StreamBuilder<PaymentCardResponse>(
-                  initialData: null,
-                  stream: _paymentBloc.cardDataStream,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData &&
-                        snapshot.data != null &&
-                        snapshot.data != null &&
-                        snapshot.data.data.length > 0) {
-                      snapshot.data.data.forEach((element) {
-                        if (element.isDeleted == false) {
-                          cardNumber = "" + element.cardNumber;
-                          print("cardNumber${cardNumber}");
-                          cardHolderName = element.cardHolderName;
-                          expiryDate = element.expDate;
-                          cardID = element.sId;
-                          cartType = element.cardType;
-                        } else {
-                          cardNumber = "";
-                          cardHolderName = "";
-                          cvvCode = "";
-                          cardID = "";
-                          cartType = "";
-                        }
-                      });
-                    }
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(left: 20.0, right: 10.0),
-                          child: Visibility(
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 5.0, left: 0.0, right: 0.0),
+              child: SafeArea(
+                child: StreamBuilder<PaymentCardResponse>(
+                    initialData: null,
+                    stream: _paymentBloc.cardDataStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData &&
+                          snapshot.data != null &&
+                          snapshot.data != null &&
+                          snapshot.data.data.length > 0) {
+                        snapshot.data.data.forEach((element) {
+                          if (element.isDeleted == false) {
+                            cardNumber = "" + element.cardNumber;
+                            print("cardNumber${cardNumber}");
+                            cardHolderName = element.cardHolderName;
+                            expiryDate = element.expDate;
+                            cardID = element.sId;
+                            cartType = element.cardType;
+                          } else {
+                            cardNumber = "";
+                            cardHolderName = "";
+                            cvvCode = "";
+                            cardID = "";
+                            cartType = "";
+                          }
+                        });
+                      }
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 20.0, right: 10.0),
+                            child: Visibility(
+                              visible: snapshot.hasData &&
+                                      snapshot.data != null &&
+                                      snapshot.data != null &&
+                                      snapshot.data.data.length > 0
+                                  ? false
+                                  : true,
+                              child: Text(
+                                "Enter your credit card details",
+                                style: TextStyle(
+                                    fontFamily: "Sofia",
+                                    color: Colors.black26,
+                                    fontSize: 18.0),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 0.0,
+                          ),
+                          snapshot.hasData &&
+                                  snapshot.data != null &&
+                                  snapshot.data != null &&
+                                  snapshot.data.data.length > 0
+                              ? Stack(
+                                  children: [
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.50,
+                                      width: MediaQuery.of(context).size.width,
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                      ),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Color.fromRGBO(
+                                                    83, 67, 194, 0.14),
+                                                blurRadius: 10,
+                                                offset: Offset(0, 2)),
+                                          ]),
+                                      child: SvgPicture.asset(
+                                          'assets/image/images/card_bg.svg'),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 45.0, vertical: 20.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Align(
+                                            // assets/images/master_card.svg
+                                            child: cartType == 'Visa'
+                                                ? Image.asset(
+                                                    'assets/image/images/visa.png')
+                                                : cartType == 'MasterCard'
+                                                    ? SvgPicture.asset(
+                                                        'assets/image/images/master_card.svg',
+                                                        width: 30,
+                                                        height: 30,
+                                                      )
+                                                    : Image.asset(
+                                                        'assets/image/images/visa.png'),
+                                            alignment: Alignment.topRight,
+                                          ),
+                                          Text(
+                                            "CARD NUMBER",
+                                            style: TextStyle(
+                                                fontFamily: "Sofia",
+                                                color: AppColor.primaryColor,
+                                                fontSize: 13.0),
+                                          ),
+                                          SizedBox(
+                                            height: 4,
+                                          ),
+                                          Row(
+                                              children: [
+                                                Text(
+                                                  "XXXX",
+                                                  textAlign: TextAlign.end,
+                                                  style: TextStyle(
+                                                      fontFamily: "Sofia",
+                                                      color:
+                                                          AppColor.primaryColor,
+                                                      fontSize: 20.0),
+                                                ),
+                                                Text(
+                                                  "XXXX",
+                                                  style: TextStyle(
+                                                      fontFamily: "Sofia",
+                                                      color:
+                                                          AppColor.primaryColor,
+                                                      fontSize: 20.0),
+                                                  textAlign: TextAlign.end,
+                                                ),
+                                                Text(
+                                                  "XXXX",
+                                                  style: TextStyle(
+                                                      fontFamily: "Sofia",
+                                                      color:
+                                                          AppColor.primaryColor,
+                                                      fontSize: 20.0),
+                                                ),
+                                                Text(
+                                                  "${cardNumber}",
+                                                  style: TextStyle(
+                                                      fontFamily: "Sofia",
+                                                      color:
+                                                          AppColor.primaryColor,
+                                                      fontSize: 20.0),
+                                                ),
+                                              ],
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.016,
+                                          ),
+                                          Text(
+                                            "Exp Date",
+                                            style: TextStyle(
+                                                fontFamily: "Sofia",
+                                                color: AppColor.primaryColor,
+                                                fontSize: 13.0),
+                                          ),
+                                          Text(
+                                            "${expiryDate}",
+                                            style: TextStyle(
+                                                fontFamily: "Sofia",
+                                                color: AppColor.primaryColor,
+                                                fontSize: 18.0),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                )
+                              : BookITCreditCardWidget(
+                                  cardNumber: cardNumber,
+                                  expiryDate: expiryDate,
+                                  cardHolderName: cardHolderName,
+                                  cvvCode: cvvCode,
+                                  showBackView: isCvvFocused,
+                                  cardBgColor: AppColor.primaryColor,
+                                ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 20.0, right: 10.0),
+                            child: Visibility(
+                              visible: snapshot.hasData &&
+                                      snapshot.data != null &&
+                                      snapshot.data != null &&
+                                      snapshot.data.data.length > 0
+                                  ? true
+                                  : false,
+                              child: Center(
+                                child: FlatButton(
+                                  child: Text(
+                                    "Delete Card",
+                                    style: TextStyle(
+                                        fontFamily: "Sofia",
+                                        color: AppColor.primaryColor,
+                                        fontSize: 18.0),
+                                  ),
+                                  onPressed: () {
+                                    if (cardID.isNotEmpty) {
+                                      print("cardID ${cardID}");
+                                      deleteCardApi(context, cardID.toString());
+                                      cardNumber = "";
+                                      cardHolderName = "";
+                                      cvvCode = "";
+                                      cardID = "";
+                                      cartType = "";
+                                      setState(() {});
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                          Visibility(
                             visible: snapshot.hasData &&
                                     snapshot.data != null &&
                                     snapshot.data != null &&
                                     snapshot.data.data.length > 0
                                 ? false
                                 : true,
-                            child: Text(
-                              "Enter your credit card details",
-                              style: TextStyle(
-                                  fontFamily: "Sofia",
-                                  color: Colors.black26,
-                                  fontSize: 18.0),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 0.0,
-                        ),
-                        snapshot.hasData &&
-                                snapshot.data != null &&
-                                snapshot.data != null &&
-                                snapshot.data.data.length > 0
-                            ? Stack(
-                                children: [
-                                  Container(
-                                    height: MediaQuery.of(context).size.width *
-                                        0.50,
-                                    width: MediaQuery.of(context).size.width,
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                    ),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color: Color.fromRGBO(
-                                                  83, 67, 194, 0.14),
-                                              blurRadius: 10,
-                                              offset: Offset(0, 2)),
-                                        ]),
-                                    child: SvgPicture.asset(
-                                        'assets/image/images/card_bg.svg'),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 45.0, vertical: 20.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Align(
-                                          // assets/images/master_card.svg
-                                          child: cartType == 'Visa'
-                                              ? Image.asset(
-                                                  'assets/image/images/visa.png')
-                                              : cartType == 'MasterCard'
-                                                  ? SvgPicture.asset(
-                                                      'assets/image/images/master_card.svg',
-                                                      width: 30,
-                                                      height: 30,
-                                                    )
-                                                  : Image.asset(
-                                                      'assets/image/images/visa.png'),
-                                          alignment: Alignment.topRight,
-                                        ),
-                                        Text(
-                                          "CARD NUMBER",
-                                          style: TextStyle(
-                                              fontFamily: "Sofia",
-                                              color: AppColor.primaryColor,
-                                              fontSize: 13.0),
-                                        ),
-                                        SizedBox(
-                                          height: 4,
-                                        ),
-                                        Row(
-                                            children: [
-                                              Text(
-                                                "XXXX",
-                                                textAlign: TextAlign.end,
-                                                style: TextStyle(
-                                                    fontFamily: "Sofia",
-                                                    color:
-                                                        AppColor.primaryColor,
-                                                    fontSize: 20.0),
-                                              ),
-                                              Text(
-                                                "XXXX",
-                                                style: TextStyle(
-                                                    fontFamily: "Sofia",
-                                                    color:
-                                                        AppColor.primaryColor,
-                                                    fontSize: 20.0),
-                                                textAlign: TextAlign.end,
-                                              ),
-                                              Text(
-                                                "XXXX",
-                                                style: TextStyle(
-                                                    fontFamily: "Sofia",
-                                                    color:
-                                                        AppColor.primaryColor,
-                                                    fontSize: 20.0),
-                                              ),
-                                              Text(
-                                                "${cardNumber}",
-                                                style: TextStyle(
-                                                    fontFamily: "Sofia",
-                                                    color:
-                                                        AppColor.primaryColor,
-                                                    fontSize: 20.0),
-                                              ),
-                                            ],
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween),
-                                        SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.016,
-                                        ),
-                                        Text(
-                                          "Exp Date",
-                                          style: TextStyle(
-                                              fontFamily: "Sofia",
-                                              color: AppColor.primaryColor,
-                                              fontSize: 13.0),
-                                        ),
-                                        Text(
-                                          "${expiryDate}",
-                                          style: TextStyle(
-                                              fontFamily: "Sofia",
-                                              color: AppColor.primaryColor,
-                                              fontSize: 18.0),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              )
-                            : CreditCardWidget(
-                                cardNumber: cardNumber,
-                                expiryDate: expiryDate,
-                                cardHolderName: cardHolderName,
-                                cvvCode: cvvCode,
-                                showBackView: isCvvFocused,
-                                cardBgColor: AppColor.primaryColor,
-                              ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(left: 20.0, right: 10.0),
-                          child: Visibility(
-                            visible: snapshot.hasData &&
-                                    snapshot.data != null &&
-                                    snapshot.data != null &&
-                                    snapshot.data.data.length > 0
-                                ? true
-                                : false,
-                            child: Center(
-                              child: FlatButton(
-                                child: Text(
-                                  "Delete Card",
-                                  style: TextStyle(
-                                      fontFamily: "Sofia",
-                                      color: AppColor.primaryColor,
-                                      fontSize: 18.0),
-                                ),
-                                onPressed: () {
-                                  if (cardID.isNotEmpty) {
-                                    print("cardID ${cardID}");
-                                    deleteCardApi(context, cardID.toString());
-                                    cardNumber = "";
-                                    cardHolderName = "";
-                                    cvvCode = "";
-                                    cardID = "";
-                                    cartType = "";
-                                    setState(() {});
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: snapshot.hasData &&
-                                  snapshot.data != null &&
-                                  snapshot.data != null &&
-                                  snapshot.data.data.length > 0
-                              ? false
-                              : true,
-                          child: SingleChildScrollView(
-                            child: CreditCardForm(
+                            child: BookItCreditCardForm(
+                              formKey: _form,
                               cursorColor: AppColor.primaryColor,
                               onCreditCardModelChange: onCreditCardModelChange,
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Column(
+                          SizedBox(
+                            height: 100,
+                          ),
+                          Column(
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -480,7 +493,7 @@ class _AddCreditCardState extends State<AddCreditCard> {
                                         print("cardNumber${cardNumber}");
                                         print("cardExpiry${expiryDate}");
                                         print("cardCVV${cvvCode}");
-                                        if (validate(context)) {
+                                        if (_form.currentState.validate()) {
                                           int month, year;
                                           var split = expiryDate
                                               .split(new RegExp(r'(\/)'));
@@ -490,6 +503,7 @@ class _AddCreditCardState extends State<AddCreditCard> {
                                           year = int.parse(split[1]);
                                           print("month${month}");
                                           print("month${year}");
+                                          _paymentBloc.progressSink.add(true);
                                           StripePayment.createTokenWithCard(
                                             CreditCard(
                                                 name: cardHolderName,
@@ -544,11 +558,11 @@ class _AddCreditCardState extends State<AddCreditCard> {
                               ),
                             ],
                             mainAxisAlignment: MainAxisAlignment.end,
-                          ),
-                        )
-                      ],
-                    );
-                  }),
+                          )
+                        ],
+                      );
+                    }),
+              ),
             ),
           ),
           StreamBuilder<bool>(
@@ -587,7 +601,10 @@ class _AddCreditCardState extends State<AddCreditCard> {
   void setError(dynamic error) {
     // Utils.showErrorSnackBar(message: error.toString(), context: context);
     setState(() {
+      _paymentBloc.progressSink.add(false);
       _error = error.toString();
+      print(_error);
+      showErrorDialog(context, "Error", "${_error.split(",")[1]}");
     });
   }
 
