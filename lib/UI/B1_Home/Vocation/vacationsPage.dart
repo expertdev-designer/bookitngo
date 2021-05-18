@@ -4,12 +4,10 @@ import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_conc
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
-import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:book_it/DataSample/travelModelData.dart';
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
-import 'package:book_it/UI/B1_Home/B1_Home_Screen/B1_Home_Screen.dart';
+import 'package:flutter_svg/svg.dart';
 
 class VacationPage extends StatefulWidget {
   String title, categoryId;
@@ -67,54 +65,62 @@ class _VacationPageState extends State<VacationPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 22.0),
-          child: Text(
-            "Hotels around ${widget.title + "s"} :",
-            style: TextStyle(
-                fontFamily: "Sofia",
-                fontSize: 20.0,
-                fontWeight: FontWeight.w700),
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.only(left: 22.0),
+        //   child: Text(
+        //     "Hotels around ${widget.title + "s"} :",
+        //     style: TextStyle(
+        //         fontFamily: "Sofia",
+        //         fontSize: 20.0,
+        //         fontWeight: FontWeight.w700),
+        //   ),
+        // ),
+        Image.asset(
+            "assets/image/destinationPopuler/vacations_placeholder.svg"),
         Padding(
           padding: EdgeInsets.only(left: 5.0),
           child: StreamBuilder<HotelByCategoryResponse>(
             stream: _homeBloc.hotelByCategoryDataStream,
             builder: (BuildContext ctx, snapshot) {
-              if (!snapshot.hasData) {
-                return new Container(
-                  height: 190.0,
-                  margin: EdgeInsets.all(20),
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                            " hjsd https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc",
-                          ))),
-                );
-              }
-              return snapshot.hasData &&
-                      snapshot.data != null &&
-                      snapshot.data.data.length > 0
+              // if (!snapshot.hasData) {
+              //   return new Container(
+              //     padding: EdgeInsets.symmetric(horizontal: 50.0),
+              //     height: MediaQuery.of(context).size.height * 0.8,
+              //     alignment: Alignment.center,
+              //
+              //   );
+              // }
+
+              return snapshot.hasData && snapshot.data != null
                   ? CardList(
                       dataUser: widget.categoryId,
                       list: snapshot.data.data,
                     )
                   : Container(
-                height: 190.0,
-                child: Center(
-                  child: Text(
-                    "Not have item",
-                    style: TextStyle(
-                        fontFamily: "Sofia",
-                        fontSize: 20.0,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
-              );
+                      padding: EdgeInsets.symmetric(horizontal: 60.0),
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      alignment: Alignment.center,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            "assets/image/destinationPopuler/vacation.png",
+                          ),
+
+                          Text(
+                            "No data found",
+                            style: TextStyle(
+                                fontFamily: "Sofia",
+                                fontSize: 20.0,
+                                height: 4.0,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    );
+
             },
           ),
         ),
@@ -347,161 +353,190 @@ class CardList extends StatelessWidget {
   });
 
   Widget build(BuildContext context) {
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        primary: false,
-        itemCount: list.length,
-        itemBuilder: (context, i) {
-          List<String> photo = List.from(list[i].images);
-          List<String> service = List.from(list[i].amenities);
-          String description = list[i].description;
-          String title = list[i].name.toString();
-          String type = list[i].name.toString();
-          num rating = num.parse(list[i].rating.toString());
-          String location = list[i].address.toString();
-          String image = list[i].images.first;
-          String id = list[i].sId.toString();
-          num price = list[i].price;
-          num latLang1 = num.parse(list[i].latitude);
-          num latLang2 = num.parse(list[i].longitude);
+    return list != null && list.length > 0
+        ? ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            primary: false,
+            itemCount: list.length,
+            itemBuilder: (context, i) {
+              List<String> photo = List.from(list[i].images);
+              List<String> service = List.from(list[i].amenities);
+              String description = list[i].description;
+              String title = list[i].name.toString();
+              String type = list[i].name.toString();
+              num rating = num.parse(list[i].rating.toString());
+              String location = list[i].address.toString();
+              String image = list[i].images.first;
+              String id = list[i].sId.toString();
+              num price = list[i].price;
+              num latLang1 = num.parse(list[i].latitude);
+              num latLang2 = num.parse(list[i].longitude);
 
-          return Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).push(PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => new hotelDetail2(
-                          userId: dataUser,
-                          titleD: title,
-                          idD: id,
-                          imageD: image,
-                          latLang1D: latLang1,
-                          latLang2D: latLang2,
-                          locationD: location,
-                          priceD: price,
-                          descriptionD: description,
-                          photoD: photo,
-                          ratingD: rating,
-                          serviceD: service,
-                          typeD: type,
+              return Padding(
+                padding:
+                    const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new hotelDetail2(
+                              userId: dataUser,
+                              titleD: title,
+                              idD: id,
+                              imageD: image,
+                              latLang1D: latLang1,
+                              latLang2D: latLang2,
+                              locationD: location,
+                              priceD: price,
+                              descriptionD: description,
+                              photoD: photo,
+                              ratingD: rating,
+                              serviceD: service,
+                              typeD: type,
+                            ),
+                        transitionDuration: Duration(milliseconds: 600),
+                        transitionsBuilder:
+                            (_, Animation<double> animation, __, Widget child) {
+                          return Opacity(
+                            opacity: animation.value,
+                            child: child,
+                          );
+                        }));
+                  },
+                  child: Container(
+                    height: 250.0,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black12.withOpacity(0.1),
+                              blurRadius: 3.0,
+                              spreadRadius: 1.0)
+                        ]),
+                    child: Column(children: [
+                      Hero(
+                        tag: 'hero-tag-${id}',
+                        child: Material(
+                          child: Container(
+                            height: 165.0,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(10.0),
+                                  topLeft: Radius.circular(10.0)),
+                              image: DecorationImage(
+                                  image: NetworkImage(
+                                      AppStrings.imagePAth + image),
+                                  fit: BoxFit.cover),
+                            ),
+                            alignment: Alignment.topRight,
+                          ),
                         ),
-                    transitionDuration: Duration(milliseconds: 600),
-                    transitionsBuilder:
-                        (_, Animation<double> animation, __, Widget child) {
-                      return Opacity(
-                        opacity: animation.value,
-                        child: child,
-                      );
-                    }));
-              },
-              child: Container(
-                height: 250.0,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black12.withOpacity(0.1),
-                          blurRadius: 3.0,
-                          spreadRadius: 1.0)
-                    ]),
-                child: Column(children: [
-                  Hero(
-                    tag: 'hero-tag-${id}',
-                    child: Material(
-                      child: Container(
-                        height: 165.0,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10.0),
-                              topLeft: Radius.circular(10.0)),
-                          image: DecorationImage(
-                              image: NetworkImage(AppStrings.imagePAth + image),
-                              fit: BoxFit.cover),
-                        ),
-                        alignment: Alignment.topRight,
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                  width: 220.0,
-                                  child: Text(
-                                    title,
-                                    style: _txtStyleTitle,
-                                    overflow: TextOverflow.ellipsis,
-                                  )),
-                              Padding(padding: EdgeInsets.only(top: 5.0)),
-                              Row(
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(left: 15.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  ratingbar(
-                                    starRating: double.parse(rating.toString()),
-                                    color: Colors.blueAccent,
+                                  Container(
+                                      width: 220.0,
+                                      child: Text(
+                                        title,
+                                        style: _txtStyleTitle,
+                                        overflow: TextOverflow.ellipsis,
+                                      )),
+                                  Padding(padding: EdgeInsets.only(top: 5.0)),
+                                  Row(
+                                    children: <Widget>[
+                                      ratingbar(
+                                        starRating:
+                                            double.parse(rating.toString()),
+                                        color: Colors.blueAccent,
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.only(left: 5.0)),
+                                      Text(
+                                        "(" + rating.toString() + ")",
+                                        style: _txtStyleSub,
+                                      )
+                                    ],
                                   ),
-                                  Padding(padding: EdgeInsets.only(left: 5.0)),
-                                  Text(
-                                    "(" + rating.toString() + ")",
-                                    style: _txtStyleSub,
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4.9),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.location_on,
+                                          size: 16.0,
+                                          color: Colors.black26,
+                                        ),
+                                        Padding(
+                                            padding: EdgeInsets.only(top: 3.0)),
+                                        Text(location, style: _txtStyleSub)
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4.9),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.location_on,
-                                      size: 16.0,
-                                      color: Colors.black26,
-                                    ),
-                                    Padding(padding: EdgeInsets.only(top: 3.0)),
-                                    Text(location, style: _txtStyleSub)
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 13.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "\$" + price.toString(),
-                                style: TextStyle(
-                                    fontSize: 25.0,
-                                    color: Colors.blueAccent,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "Gotik"),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 13.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    "\$" + price.toString(),
+                                    style: TextStyle(
+                                        fontSize: 25.0,
+                                        color: Colors.blueAccent,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: "Gotik"),
+                                  ),
+                                  Text("per night",
+                                      style:
+                                          _txtStyleSub.copyWith(fontSize: 11.0))
+                                ],
                               ),
-                              Text("per night",
-                                  style: _txtStyleSub.copyWith(fontSize: 11.0))
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                ]),
-              ),
+                      )
+                    ]),
+                  ),
+                ),
+              );
+            })
+        : Container(
+            height: MediaQuery.of(context).size.height - 120,
+            alignment: Alignment.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                    "assets/image/destinationPopuler/vacations_placeholder.svg"),
+                Text(
+                  "No data found",
+                  style: TextStyle(
+                      fontFamily: "Sofia",
+                      fontSize: 20.0,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500),
+                ),
+              ],
             ),
           );
-        });
   }
 }
 

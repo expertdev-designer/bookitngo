@@ -18,24 +18,16 @@ class _callCenterState extends State<callCenter> {
   TextEditingController problem = new TextEditingController();
   CallCenterBloc _callCenterBloc;
   AppConstantHelper _appConstantHelper;
-  bool autoValidate=false;
-
-  void addData() {
-    Firestore.instance.runTransaction((Transaction transaction) async {
-      Firestore.instance.collection("Laporan").add({
-        "Name": _name,
-        "Email": _email,
-        "Detail Problem": _problem,
-      });
-    });
-    Navigator.pop(context);
-  }
+  bool autoValidate = false;
 
   void callCenterUpdateProblemApi() {
     AppConstantHelper.checkConnectivity().then((isConnected) {
       if (isConnected) {
         _callCenterBloc.callCenter(
-            context: context, username: _name, email: _email, detail: _problem);
+            context: context,
+            username: nama.text,
+            email: email.text,
+            detail: problem.text);
       } else {
         showDialog(
             context: context,
@@ -49,7 +41,6 @@ class _callCenterState extends State<callCenter> {
     });
   }
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -58,7 +49,7 @@ class _callCenterState extends State<callCenter> {
     _callCenterBloc = CallCenterBloc();
     _appConstantHelper = AppConstantHelper();
     _appConstantHelper.setContext(context);
-    email.text=AppStrings.userEmail;
+    email.text = AppStrings.userEmail;
   }
 
   @override
@@ -68,8 +59,11 @@ class _callCenterState extends State<callCenter> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0.0,
-        title: Text("Call Center", style: TextStyle(
-            fontFamily: "Sofia", fontWeight: FontWeight.w800, fontSize: 22.0),),
+        title: Text(
+          "Call Center",
+          style: TextStyle(
+              fontFamily: "Sofia", fontWeight: FontWeight.w800, fontSize: 22.0),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.only(right: 12.0, left: 12.0, top: 15.0),
@@ -106,7 +100,7 @@ class _callCenterState extends State<callCenter> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData && snapshot.data) {
                         nama.clear();
-                        email.clear();
+                        // email.clear();
                         problem.clear();
                       }
                       return Form(
@@ -116,144 +110,354 @@ class _callCenterState extends State<callCenter> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             SizedBox(
-                              height: 15.0,
+                              height: 24.0,
                             ),
-                            Text(
-                              "Name",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500, fontSize: 15.0),
-                            ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            TextFormField(
-                              validator: (input) {
-                                if (input.isEmpty) {
-                                  return 'Please input your name';
-                                }
-                              },
-                              autovalidate: autoValidate,
-                              onChanged: (val)
-                              {
-                                setState(() {
-
-                                });
-                              },
-                              onSaved: (input) => _name = input,
-                              controller: nama,
-                              keyboardType: TextInputType.text,
-                              textCapitalization: TextCapitalization.words,
-                              style: TextStyle(
-                                  fontFamily: "WorkSansSemiBold",
-                                  fontSize: 16.0,
-                                  color: Colors.black),
-                              decoration: InputDecoration(
-                               // filled: true,
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 0.5,
-                                        color:
-                                        Colors.black12.withOpacity(0.01))),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 0.5,
-                                        color:
-                                        Colors.black12.withOpacity(0.01))),
-
-                                contentPadding: EdgeInsets.all(13.0),
-                                hintText: "Input your name",
-                                hintStyle: TextStyle(
-                                    fontFamily: "Sans", fontSize: 15.0),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20.0,
-                            ),
-                            Text("Email",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 15.0)),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            TextFormField(
-                              validator: (input) {
-                                if (input.isEmpty) {
-                                  return 'Please input your email';
-                                }
-                              },
-                              onSaved: (input) => _email = input,
-                              controller: email,
-                              keyboardType: TextInputType.text,
-                              // textCapitalization: TextCapitalization.words,
-                              style: TextStyle(
-                                  fontFamily: "WorkSansSemiBold",
-                                  fontSize: 16.0,
-                                  color: Colors.black),
-                              decoration: InputDecoration(
-                                filled: true,
-                                enabled: false,
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 0.5,
-                                        color:
-                                            Colors.black12.withOpacity(0.01))),
-                                contentPadding: EdgeInsets.all(13.0),
-                                hintText: "Input your email",
-                                hintStyle: TextStyle(
-                                    fontFamily: "Sans", fontSize: 15.0),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20.0,
-                            ),
-                            Text("Description",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 15.0)),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Container(
-                              color: Colors.white,
-                              width: double.infinity,
-                              child: TextFormField(
-                                validator: (input) {
-                                  if (input.isEmpty) {
-                                    return 'Please enter the problem that you are facing on this app.';
-                                  }
-                                },
-                                autovalidate: autoValidate,
-                                onChanged: (val)
-                                {
-                                  setState(() {
-
-                                  });
-                                },
-                                maxLines: 10,
-                                onSaved: (input) => _problem = input,
-                                controller: problem,
-                                keyboardType: TextInputType.text,
-                                textCapitalization: TextCapitalization.words,
-                                style: TextStyle(
-                                    fontFamily: "WorkSansSemiBold",
-                                    fontSize: 16.0,
-                                    color: Colors.black),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          width: 0.5,
-                                          color: Colors.black12
-                                              .withOpacity(0.01))),
-
-
-                                  contentPadding: EdgeInsets.all(13.0),
-                                  hintText: "Please explain the problem that you are facing on this app.",
-                                  hintStyle: TextStyle(
-                                      fontFamily: "Sans", fontSize: 15.0),
+                            // Text(
+                            //   "Name",
+                            //   style: TextStyle(
+                            //       fontWeight: FontWeight.w500, fontSize: 15.0),
+                            // ),
+                            // SizedBox(
+                            //   height: 10.0,
+                            // ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 6.0, right: 6.0),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          blurRadius: 10.0,
+                                          color:
+                                              Colors.black12.withOpacity(0.1)),
+                                    ],
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(40.0))),
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20.0,
+                                        right: 20.0,
+                                        top: 4,
+                                        bottom: 4),
+                                    child: Theme(
+                                      data: ThemeData(
+                                        highlightColor: Colors.white,
+                                        hintColor: Colors.white,
+                                      ),
+                                      child: TextFormField(
+                                          style: TextStyle(
+                                              color: Colors.black87,
+                                              fontFamily: "Sofia"),
+                                          controller: nama,
+                                          validator: (val) {
+                                            if (val.isEmpty) {
+                                              return "Please enter your full name";
+                                            } else
+                                              return null;
+                                          },
+                                          autovalidate: autoValidate,
+                                          onChanged: (val) {
+                                            setState(() {});
+                                          },
+                                          decoration: InputDecoration(
+                                            labelText: 'Full name',
+                                            labelStyle: TextStyle(
+                                                color: Colors.black54,
+                                                fontFamily: "Sofia",
+                                                height: 1.0),
+                                            enabledBorder:
+                                                new UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.white,
+                                                  width: 1.0,
+                                                  style: BorderStyle.none),
+                                            ),
+                                          )),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
+                            // TextFormField(
+                            //   validator: (input) {
+                            //     if (input.isEmpty) {
+                            //       return 'Please input your name';
+                            //     }
+                            //   },
+                            //   autovalidate: autoValidate,
+                            //   onChanged: (val)
+                            //   {
+                            //     setState(() {
+                            //
+                            //     });
+                            //   },
+                            //   onSaved: (input) => _name = input,
+                            //   controller: nama,
+                            //   keyboardType: TextInputType.text,
+                            //   textCapitalization: TextCapitalization.words,
+                            //   style: TextStyle(
+                            //       fontFamily: "WorkSansSemiBold",
+                            //       fontSize: 16.0,
+                            //       color: Colors.black),
+                            //   decoration: InputDecoration(
+                            //    // filled: true,
+                            //     enabledBorder: OutlineInputBorder(
+                            //       borderSide: BorderSide(color: Colors.grey),
+                            //     ),
+                            //     border: OutlineInputBorder(
+                            //       borderSide: BorderSide(color: Colors.grey),
+                            //     ),
+                            //     focusedBorder: OutlineInputBorder(
+                            //       borderSide: BorderSide(color: Colors.grey),
+                            //     ),
+                            //
+                            //     contentPadding: EdgeInsets.all(13.0),
+                            //     hintText: "Input your name",
+                            //     hintStyle: TextStyle(
+                            //         fontFamily: "Sans", fontSize: 15.0),
+                            //   ),
+                            // ),
+                            SizedBox(
+                              height: 24.0,
+                            ),
+                            // Text("Email",
+                            //     style: TextStyle(
+                            //         fontWeight: FontWeight.w500,
+                            //         fontSize: 15.0)),
+                            // SizedBox(
+                            //   height: 10.0,
+                            // ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 6.0, right: 6.0),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          blurRadius: 10.0,
+                                          color:
+                                              Colors.black12.withOpacity(0.1)),
+                                    ],
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(40.0))),
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(40.0)),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 0.0,
+                                          right: 0.0,
+                                          top: 0,
+                                          bottom: 0),
+                                      child: Theme(
+                                        data: ThemeData(
+                                          highlightColor: Colors.white,
+                                          hintColor: Colors.white,
+                                        ),
+                                        child: TextFormField(
+                                            style: TextStyle(
+                                                color: Colors.black54,
+                                                fontFamily: "Sofia"),
+                                            controller: email,
+                                            validator: (val) {
+                                              if (val.isEmpty) {
+                                                return "Input your email";
+                                              } else
+                                                return null;
+                                            },
+                                            autovalidate: autoValidate,
+                                            onChanged: (val) {
+                                              setState(() {});
+                                            },
+                                            enabled: false,
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  const EdgeInsets.only(
+                                                      left: 20.0,
+                                                      right: 20.0,
+                                                      top: 16,
+                                                      bottom: 16),
+                                              labelText: 'Email',
+                                              filled: true,
+                                              labelStyle: TextStyle(
+                                                  color: Colors.black54,
+                                                  fontFamily: "Sofia",
+                                                  height: 1.0),
+                                              enabledBorder:
+                                                  new UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.white,
+                                                    width: 1.0,
+                                                    style: BorderStyle.none),
+                                              ),
+                                            )),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // TextFormField(
+                            //   validator: (input) {
+                            //     if (input.isEmpty) {
+                            //       return 'Please input your email';
+                            //     }
+                            //   },
+                            //   onSaved: (input) => _email = input,
+                            //   controller: email,
+                            //   keyboardType: TextInputType.text,
+                            //   // textCapitalization: TextCapitalization.words,
+                            //   style: TextStyle(
+                            //       fontFamily: "WorkSansSemiBold",
+                            //       fontSize: 16.0,
+                            //       color: Colors.black),
+                            //   decoration: InputDecoration(
+                            //     filled: true,
+                            //     enabled: false,
+                            //     border: OutlineInputBorder(
+                            //         borderSide: BorderSide(
+                            //             width: 0.5,
+                            //             color:
+                            //                 Colors.black12.withOpacity(0.01))),
+                            //     contentPadding: EdgeInsets.all(13.0),
+                            //     hintText: "Input your email",
+                            //     hintStyle: TextStyle(
+                            //         fontFamily: "Sans", fontSize: 15.0),
+                            //   ),
+                            // ),
+                            SizedBox(
+                              height: 24.0,
+                            ),
+                            // Text("Description",
+                            //     style: TextStyle(
+                            //         fontWeight: FontWeight.w500,
+                            //         fontSize: 15.0)),
+                            // SizedBox(
+                            //   height: 10.0,
+                            // ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 6.0, right: 6.0),
+                              child: Container(
+                                width: double.infinity,
+                                alignment: Alignment.topCenter,
+                                decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          blurRadius: 10.0,
+                                          color:
+                                              Colors.black12.withOpacity(0.1)),
+                                    ],
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(40.0))),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20.0,
+                                      right: 20.0,
+                                      top: 4,
+                                      bottom: 4),
+                                  child: Center(
+                                    child: Theme(
+                                      data: ThemeData(
+                                        highlightColor: Colors.white,
+                                        hintColor: Colors.white,
+                                      ),
+                                      child: TextFormField(
+                                          style: TextStyle(
+                                              color: Colors.black87,
+                                              fontFamily: "Sofia"),
+                                          controller: problem,
+                                          validator: (val) {
+                                            if (val.isEmpty) {
+                                              return "Please explain the problem that you are facing on this app.";
+                                            } else
+                                              return null;
+                                          },
+                                          autovalidate: autoValidate,
+                                          onChanged: (val) {
+                                            setState(() {});
+                                          },
+                                          textAlignVertical:
+                                              TextAlignVertical.top,
+                                          minLines: 5,
+                                          maxLines: 8,
+                                          textInputAction: TextInputAction.done,
+                                          decoration: InputDecoration(
+                                            labelText: 'Description',
+                                            hintText:
+                                                "Please explain the problem that you are facing on this app.",
+                                            labelStyle: TextStyle(
+                                                color: Colors.black54,
+                                                fontFamily: "Sofia",
+                                                height: 1.0),
+                                            hintStyle: TextStyle(
+                                                color: Colors.black38,
+                                                fontFamily: "Sofia",
+                                                height: 1.0,
+                                                fontSize: 14),
+                                            enabledBorder:
+                                                new UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.white,
+                                                  width: 1.0,
+                                                  style: BorderStyle.none),
+                                            ),
+                                          )),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Container(
+                            //   color: Colors.white,
+                            //   width: double.infinity,
+                            //   child: TextFormField(
+                            //     validator: (input) {
+                            //       if (input.isEmpty) {
+                            //         return 'Please enter the problem that you are facing on this app.';
+                            //       }
+                            //     },
+                            //     autovalidate: autoValidate,
+                            //     onChanged: (val)
+                            //     {
+                            //       setState(() {
+                            //
+                            //       });
+                            //     },
+                            //     maxLines: 10,
+                            //     onSaved: (input) => _problem = input,
+                            //     controller: problem,
+                            //     keyboardType: TextInputType.text,
+                            //     textCapitalization: TextCapitalization.words,
+                            //     style: TextStyle(
+                            //         fontFamily: "WorkSansSemiBold",
+                            //         fontSize: 16.0,
+                            //         color: Colors.black),
+                            //     decoration: InputDecoration(
+                            //
+                            //       contentPadding: EdgeInsets.all(13.0),
+                            //       enabledBorder: OutlineInputBorder(
+                            //         borderSide: BorderSide(color: Colors.grey),
+                            //       ),
+                            //       border: OutlineInputBorder(
+                            //         borderSide: BorderSide(color: Colors.grey),
+                            //       ),
+                            //       focusedBorder: OutlineInputBorder(
+                            //         borderSide: BorderSide(color: Colors.grey),
+                            //       ),
+                            //       hintText: "Please explain the problem that you are facing on this app.",
+                            //       hintStyle: TextStyle(
+                            //           fontFamily: "Sans", fontSize: 15.0),
+                            //     ),
+                            //   ),
+                            // ),
                             SizedBox(
                               height: 40.0,
                             ),
@@ -266,13 +470,12 @@ class _callCenterState extends State<callCenter> {
                                   setState(() {});
                                   // addData();
                                   callCenterUpdateProblemApi();
-                                }else {
-                                  autoValidate=true;
-
+                                } else {
+                                  autoValidate = true;
                                 }
                               },
                               child: Container(
-                                height: 50.0,
+                                height: 60.0,
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                     color: Color(0xFF09314F),

@@ -74,7 +74,7 @@ class HomeBloc {
         .then((onResponse) {
       if (!onResponse.status) {
         print("Error From Server  " + onResponse.message);
-        showErrorDialog(context, "Error", onResponse.message);
+        // showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
         hotelByCategoryDataSink.add(onResponse);
       }
@@ -128,6 +128,7 @@ class HomeBloc {
               context: context, title: title, msg: msg);
         });
   }
+
 
   setLocalStorage(LoginData onResponse) {
     LocalStorage.setUserName(onResponse.username).then((sucess) {

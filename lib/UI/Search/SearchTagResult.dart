@@ -78,7 +78,7 @@ class _SearchTagResultState extends State<SearchTagResult> {
                           decoration: BoxDecoration(
                               image: DecorationImage(
                                   image: NetworkImage(
-                                      "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                                      "  https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                         );
                       }
                       return snapshot.hasData &&

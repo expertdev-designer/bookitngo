@@ -31,110 +31,86 @@ class _noMessageState extends State<noMessage> {
       ),
       body: Stack(
         children: <Widget>[
-          StreamBuilder(
-              stream: Firestore.instance
-                  .collection('users')
-                  .document(widget.userID)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return new Stack(children: <Widget>[]);
-                }
-                var userDocument = snapshot.data;
-                var string = AppStrings.userName;
-                String getInitials({String string, int limitTo}) {
-                  var buffer = StringBuffer();
-                  var split = string.split(' ');
-                  for (var i = 0; i < (limitTo ?? split.length); i++) {
-                    buffer.write(split[i][0]);
-                  }
-
-                  return buffer.toString();
-                }
-
-                var output = getInitials(string: string);
-
-                return Stack(
-                  children: [
-                    Image.asset(
-                      "assets/image/destinationPopuler/destination1.png",
-                      height: _height,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: 210.0,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 20.0,
-                                    color: Colors.black12.withOpacity(0.08))
-                              ]),
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 20.0, bottom: 20.0),
-                                child: Text(
-                                  "Book it and go bot",
-                                  style: TextStyle(
-                                      fontFamily: "Sofia",
-                                      fontSize: 21.0,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 20.0, right: 20.0),
-                                child: Text(
-                                  "Our bots are very happy to help you through your difficulties if you have any questions, our bots will help you",
-                                  style: TextStyle(
-                                      color: Colors.black26,
-                                      fontFamily: "Sofia"),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 20.0,
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(PageRouteBuilder(
-                                      pageBuilder: (_, __, ___) => chatBot()));
-                                  // Navigator.of(context).push(PageRouteBuilder(
-                                  //     pageBuilder: (_, __, ___) => new Chat(
-                                  //           chatRoomId: widget.userID,
-                                  //           name: userDocument["name"],
-                                  //         )));
-                                },
-                                child: Container(
-                                  height: 45.0,
-                                  width: 180.0,
-                                  color: Color(0xFF09314F),
-                                  child: Center(
-                                    child: Text(
-                                      "Start Chatting",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: "Sofia"),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
+          Stack(
+            children: [
+              Image.asset(
+                "assets/image/destinationPopuler/destination1.png",
+                height: _height,
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: 210.0,
+                    width: double.infinity,
+                    decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                      BoxShadow(
+                          blurRadius: 20.0,
+                          color: Colors.black12.withOpacity(0.08))
+                    ]),
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                          child: Text(
+                            "Book It n Go chatbot",
+                            style: TextStyle(
+                                fontFamily: "Sofia",
+                                fontSize: 21.0,
+                                fontWeight: FontWeight.w500),
                           ),
                         ),
-                      ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: Text(
+                            "Our bots will assist you in finding the right solution to your queries.",
+                            // "Our bots are very happy to help you through your difficulties if you have any questions, our bots will help you",
+                            style: TextStyle(
+                                color: Colors.black26,
+                                wordSpacing: 2.0,
+                                letterSpacing: 2.0,
+                                fontFamily: "Sofia"),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(PageRouteBuilder(
+                                pageBuilder: (_, __, ___) => chatBot()));
+                            // Navigator.of(context).push(PageRouteBuilder(
+                            //     pageBuilder: (_, __, ___) => new Chat(
+                            //           chatRoomId: widget.userID,
+                            //           name: userDocument["name"],
+                            //         )));
+                          },
+                          child: Container(
+                            height: 45.0,
+                            width: 180.0,
+                            color: Color(0xFF09314F),
+                            child: Center(
+                              child: Text(
+                                "Start Chatting",
+                                style: TextStyle(
+                                    color: Colors.white, fontFamily: "Sofia"),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                  ],
-                );
-              }),
+                  ),
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );

@@ -414,7 +414,7 @@ class _AddCreditCardState extends State<AddCreditCard> {
                             ),
                           ),
                           SizedBox(
-                            height: 100,
+                            height: MediaQuery.of(context).size.height * 0.15,
                           ),
                           Column(
                             children: [
@@ -532,6 +532,7 @@ class _AddCreditCardState extends State<AddCreditCard> {
                                       }
                                     },
                                     child: Container(
+                                      margin: EdgeInsets.only(bottom: 100),
                                       height: 53.0,
                                       width: double.infinity,
                                       child: Center(

@@ -196,7 +196,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                                               RegExp regex =
                                               new RegExp(pattern);
                                               if (input.isEmpty) {
-                                                return 'Please enter your Email';
+                                                return 'Please enter an Email';
                                               } else if (!regex
                                                   .hasMatch(input) ||
                                                   input == null)
@@ -231,7 +231,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 
                                             validator: (input) {
                                               if (input.isEmpty) {
-                                                return 'Please enter your Password';
+                                                return 'Please enter a Password';
                                               }
                                               if (input.length < 5) {
                                                 return 'Minimum of 5 characters allowed';

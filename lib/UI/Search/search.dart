@@ -212,7 +212,7 @@ class noItem extends StatelessWidget {
             ),
             Padding(padding: EdgeInsets.only(bottom: 10.0)),
             Text(
-              "No Matching Result Found ",
+              "No matching result found ",
               style: TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 17.5,

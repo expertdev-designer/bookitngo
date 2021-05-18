@@ -334,31 +334,24 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                             letterSpacing: 1.3),
                                       ))),
                               SizedBox(
-                                height: 90,
+                                height: 40,
                               ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-
-                    /// Set Animaion after user click buttonSignup
-                    FadeAnimation(
-                        1.9,
-                        InkWell(
-                          onTap: () async {
-                            SharedPreferences prefs;
-                            prefs = await SharedPreferences.getInstance();
-                            final formState = _registerFormKey.currentState;
-                            if (formState.validate()) {
-                              callRegisterApi(
-                                  signupNameController.text,
-                                  signupEmailController.text,
-                                  signupPasswordController.text);
-                              signupNameController.clear();
-                              signupEmailController.clear();
-                              signupPasswordController.clear();
-                              /*formState.save();
+                              FadeAnimation(
+                                  1.9,
+                                  InkWell(
+                                    onTap: () async {
+                                      SharedPreferences prefs;
+                                      prefs = await SharedPreferences.getInstance();
+                                      final formState = _registerFormKey.currentState;
+                                      if (formState.validate()) {
+                                        callRegisterApi(
+                                            signupNameController.text,
+                                            signupEmailController.text,
+                                            signupPasswordController.text);
+                                        signupNameController.clear();
+                                        signupEmailController.clear();
+                                        signupPasswordController.clear();
+                                        /*formState.save();
                               setState(() {
                                 isLoading = true;
                               });
@@ -403,12 +396,12 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                 print(_email);
                                 print(_pass);
                               }*/
-                            } else {
-                              // Activate autovalidation
-                              autoValidation = true;
-                            }
-                            return false;
-                            /*else {
+                                      } else {
+                                        // Activate autovalidation
+                                        autoValidation = true;
+                                      }
+                                      return false;
+                                      /*else {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -427,30 +420,41 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                     );
                                   });
                             }*/
-                          },
-                          child: Container(
-                            height: 55.0,
-                            margin: EdgeInsets.only(left: 10.0, right: 10.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: Color(0xFF8DA2BF),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Sign Up",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: "Sofia",
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 17.5,
-                                    letterSpacing: 1.2),
+                                    },
+                                    child: Container(
+                                      height: 55.0,
+                                      margin: EdgeInsets.only(left: 10.0, right: 10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: Color(0xFF8DA2BF),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Sign Up",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: "Sofia",
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 17.5,
+                                              letterSpacing: 1.2),
+                                        ),
+                                      ),
+                                    ),
+                                  )),
+                              Container(
+                                color: Colors.yellow,
+
+                                height: MediaQuery.of(context).size.height * 0.2,
                               ),
-                            ),
+                            ],
                           ),
-                        )),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.2,
+                        )
+                      ],
                     ),
+
+                    /// Set Animaion after user click buttonSignup
+
+
                   ],
                 ),
               ],

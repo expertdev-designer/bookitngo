@@ -4,6 +4,7 @@ import 'exploreTrip.dart';
 
 class trip extends StatefulWidget {
   String userID;
+
   trip({this.userID});
 
   @override
@@ -58,8 +59,7 @@ class _tripState extends State<trip> {
                           pageBuilder: (_, __, ___) => exploreTrip(
                                 userId: widget.userID,
                               )));
-                    },
-                    child: Container(
+                    }, child: Container(
                       height: 45.0,
                       width: 140.0,
                       decoration: BoxDecoration(

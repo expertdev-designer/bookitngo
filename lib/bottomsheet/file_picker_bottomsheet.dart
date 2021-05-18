@@ -50,6 +50,7 @@ void filePickerBottomSheet(context, AppConstantHelper helper,Function(File) onFi
 
                   ),
                   onTap: () {
+                     Permission.camera.request();
                     requestPermission(Permission.camera,true);
                     Navigator.pop(context);
                   }),

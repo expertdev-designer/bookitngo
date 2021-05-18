@@ -16,20 +16,70 @@ class BookItCreditCardForm extends StatefulWidget {
     this.textColor = Colors.black,
     this.cursorColor,
     this.cardHolderDecoration = const InputDecoration(
-      labelText: 'Card holder name',
-      hintText: "Card Holder"
+      labelText: 'Card Holder Name',
+      hintText: "Card Holder Name",
+      labelStyle: TextStyle(
+        color: Colors.grey
+      ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+      border: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+
     ),
     this.cardNumberDecoration = const InputDecoration(
-      labelText: 'Card number',
-      hintText: 'XXXX XXXX XXXX XXXX',
+      labelText: 'Card Number',
+      hintText: '0000 0000 0000 0000',
+      labelStyle: TextStyle(
+          color: Colors.grey
+      ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+      border: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+
     ),
     this.expiryDateDecoration = const InputDecoration(
       labelText: 'Expired Date',
       hintText: 'MM/YY',
+      labelStyle: TextStyle(
+          color: Colors.grey
+      ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+      border: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
     ),
     this.cvvCodeDecoration = const InputDecoration(
       labelText: 'CVV',
       hintText: 'XXX',
+      labelStyle: TextStyle(
+          color: Colors.grey
+      ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+      border: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey),
+      ),
     ),
     @required this.formKey,
     this.cvvValidationMessage = 'Please enter a valid CVV',
@@ -184,6 +234,8 @@ class _BookItCreditCardFormState extends State<BookItCreditCardForm> {
                 style: TextStyle(
                   color: widget.textColor,
                 ),
+
+
                 decoration: widget.cardNumberDecoration,
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.next,

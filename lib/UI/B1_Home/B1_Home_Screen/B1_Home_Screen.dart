@@ -2,6 +2,7 @@ import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/Destination/populardestination.dart';
 import 'package:book_it/UI/B1_Home/Recommendation/RecommendationDetailScreen.dart';
 import 'package:book_it/UI/B1_Home/Vocation/vacationsPage.dart';
+import 'package:book_it/UI/B3_Trips/exploreTrip.dart';
 import 'package:book_it/UI/B4_Booking/Booking.dart';
 import 'package:book_it/UI/Search/search.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
@@ -314,31 +315,31 @@ class _HomeState extends State<Home> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-              top: 10.0,
-            ),
-            child: _recommended != null && _recommended.length > 0
-                ? Container(
-                    height: 250.0,
-                    child: new CardRecommended(
-                      dataUser: widget.userID,
-                      list: _recommended,
-                    ),
-                  ): Container(
-              height: 190.0,
-
-              child: Center(
-                child: Text(
-                  "No Recommendation found for you ",
-                  style: TextStyle(
-                      fontFamily: "Sofia",
-                      fontSize: 20.0,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w500),
-                ),
+              padding: const EdgeInsets.only(
+                top: 10.0,
               ),
-            )
-               /* : Container(
+              child: _recommended != null && _recommended.length > 0
+                  ? Container(
+                      height: 250.0,
+                      child: new CardRecommended(
+                        dataUser: widget.userID,
+                        list: _recommended,
+                      ),
+                    )
+                  : Container(
+                      height: 190.0,
+                      child: Center(
+                        child: Text(
+                          "No Recommendation found for you ",
+                          style: TextStyle(
+                              fontFamily: "Sofia",
+                              fontSize: 20.0,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    )
+              /* : Container(
                     height: 260.0,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
@@ -346,7 +347,7 @@ class _HomeState extends State<Home> {
                             image: NetworkImage(
                                 "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
                   ),*/
-          ),
+              ),
         ],
       ),
     );
@@ -372,10 +373,18 @@ class _HomeState extends State<Home> {
                     "Popular Destinations",
                     style: _txtStyle,
                   ),
-                  Text(
-                    "See More",
-                    style: _txtStyle.copyWith(
-                        color: Colors.black26, fontSize: 13.5),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => exploreTrip(
+                                userId: widget.userID,
+                              )));
+                    },
+                    child: Text(
+                      "See More",
+                      style: _txtStyle.copyWith(
+                          color: Colors.black26, fontSize: 13.5),
+                    ),
                   )
                 ],
               )),
@@ -550,7 +559,7 @@ class _HomeState extends State<Home> {
                       String location = _rooms[i].address.toString();
                       String image = _rooms[i].images.first.toString();
                       String id = _rooms[i].sId.toString();
-                      num price =_rooms[i].price;
+                      num price = _rooms[i].price;
                       num latLang1 = num.parse(_rooms[i].latitude.toString());
                       num latLang2 = num.parse(_rooms[i].longitude.toString());
 
@@ -1345,5 +1354,3 @@ class CardDestinationPopuler extends StatelessWidget {
     );
   }
 }
-
-
