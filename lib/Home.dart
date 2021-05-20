@@ -13,6 +13,9 @@ class Home extends StatelessWidget {
           length: 3,
           child: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
+              leading: null,
+
               title: const Text('Paged Vertical Calendar'),
               bottom: TabBar(
                 indicatorSize: TabBarIndicatorSize.label,

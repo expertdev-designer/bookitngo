@@ -61,8 +61,7 @@ class _callCenterState extends State<callCenter> {
         elevation: 0.0,
         title: Text(
           "Call Center",
-          style: TextStyle(
-              fontFamily: "Sofia", fontWeight: FontWeight.w800, fontSize: 22.0),
+          style: TextStyle(fontFamily: "Sofia"),
         ),
       ),
       body: Padding(
@@ -285,6 +284,7 @@ class _callCenterState extends State<callCenter> {
                                                       bottom: 16),
                                               labelText: 'Email',
                                               filled: true,
+                                              fillColor: Colors.grey.withOpacity(0.2),
                                               labelStyle: TextStyle(
                                                   color: Colors.black54,
                                                   fontFamily: "Sofia",

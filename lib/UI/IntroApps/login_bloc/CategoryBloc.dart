@@ -10,7 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../travelSelection.dart';
+import '../CategorySelection.dart';
 
 class CategoryBloc {
   Stream get progressStream => progressController.stream;
@@ -41,7 +41,7 @@ class CategoryBloc {
 
 //  Stream get progressStream => progressController.stream;
 
-  void getCategory({BuildContext context,String token}) {
+  void getCategory({BuildContext context, String token}) {
     progressSink.add(true);
     apiRepository.getCategories(token).then((onResponse) {
       if (!onResponse.status) {
@@ -62,7 +62,8 @@ class CategoryBloc {
     });
   }
 
-  void saveCategory({BuildContext context, List<String> categories}) {
+  void saveCategory(
+      {BuildContext context, List<String> categories, String isFrom}) {
     progressSink.add(true);
     apiRepository.saveCategories(categories).then((onResponse) {
       if (!onResponse.status) {
@@ -70,13 +71,17 @@ class CategoryBloc {
         showErrorDialog(context, " Error", onResponse.message);
       } else if (onResponse.status) {
         successDataSink.add(true);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => bottomNavBar(
-                userID: AppStrings.authToken,
-              ),
-            ));
+        if (isFrom == "Home") {
+          Navigator.pop(context);
+        } else {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => bottomNavBar(
+                  userID: AppStrings.authToken,
+                ),
+              ));
+        }
       }
       progressSink.add(false);
     }).catchError((onError) {

@@ -37,7 +37,7 @@ class CommmonProgressIndicator extends StatelessWidget {
                   dotIcon: Icon(Icons.adjust),
                   duration: Duration(seconds: 1),
                 )),
-              decoration: BoxDecoration(color: Colors.transparent.withOpacity(0.5)),)
+              decoration: BoxDecoration(color: Colors.transparent.withOpacity(0.1)),)
                 : Container())
         : Container(
             height: 0.0,

@@ -3,10 +3,12 @@ import 'package:book_it/UI/B5_Profile/ListProfile/AboutApps.dart';
 import 'package:book_it/UI/IntroApps/onBoardingVideo.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/UI/Webview/web_view_screen.dart';
 import 'package:book_it/network_helper/local_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'ListProfile/CallCenter.dart';
@@ -122,7 +124,7 @@ class _profileState extends State<profile> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 300.0),
+            padding: const EdgeInsets.only(top: 230.0),
             child: Column(
               children: <Widget>[
                 InkWell(
@@ -142,6 +144,7 @@ class _profileState extends State<profile> {
                     txt: "Edit Profile",
                     image: "assets/image/icon/profile.png",
                     padding: 20.0,
+                    isSvg: false,
                   ),
                 ),
                 InkWell(
@@ -160,6 +163,7 @@ class _profileState extends State<profile> {
                     txt: "Credit Card",
                     image: "assets/image/icon/card.png",
                     padding: 20.0,
+                    isSvg: false,
                   ),
                 ),
                 InkWell(
@@ -171,16 +175,55 @@ class _profileState extends State<profile> {
                     txt: "Call Center",
                     image: "assets/image/icon/callCenter.png",
                     padding: 20.0,
+                    isSvg: false,
                   ),
                 ),
                 InkWell(
                   onTap: () {
-                    _launchURL();
+                    // _launchURL();
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new WebView(
+                              text: "About us",
+                              url: "https://bookitngo.com/",
+                            )));
                   },
                   child: category(
                     txt: "About Us",
                     image: "assets/image/icon/settings.png",
                     padding: 20.0,
+                    isSvg: false,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new WebView(
+                              text: "Privacy Policy",
+                              url: "https://bookitngo.com/privacy-policy/",
+                            )));
+                  },
+                  child: category(
+                    txt: "Privacy Policy",
+                    image: "assets/image/images/privacy_policy.svg",
+                    padding: 20.0,
+                    isSvg: true,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    // _launchURL();
+
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new WebView(
+                            text: "Terms & Conditions",
+                            url:
+                                "https://bookitngo.com/terms-and-conditions/")));
+                  },
+                  child: category(
+                    txt: "Terms & Conditions",
+                    image: "assets/image/images/terms.svg",
+                    padding: 20.0,
+                    isSvg: true,
                   ),
                 ),
                 InkWell(
@@ -254,10 +297,11 @@ class _profileState extends State<profile> {
 class category extends StatelessWidget {
   @override
   String txt, image;
+  bool isSvg;
   GestureTapCallback tap;
   double padding;
 
-  category({this.txt, this.image, this.tap, this.padding});
+  category({this.txt, this.image, this.tap, this.padding, this.isSvg});
 
   Widget build(BuildContext context) {
     return InkWell(
@@ -273,10 +317,15 @@ class category extends StatelessWidget {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(right: padding),
-                      child: Image.asset(
-                        image,
-                        height: 25.0,
-                      ),
+                      child: !isSvg
+                          ? Image.asset(
+                              image,
+                              height: 25.0,
+                            )
+                          : SvgPicture.asset(
+                              image,
+                              height: 25.0,
+                            ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 20.0),

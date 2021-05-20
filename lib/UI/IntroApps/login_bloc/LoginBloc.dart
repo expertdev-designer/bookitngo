@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../travelSelection.dart';
+import '../CategorySelection.dart';
 
 class LoginBloc {
   Stream get progressStream => progressController.stream;
@@ -33,7 +33,7 @@ class LoginBloc {
       } else if (onResponse.status) {
         setLocalStorage(onResponse.data);
         Navigator.of(context).pushReplacement(PageRouteBuilder(
-            pageBuilder: (_, __, ___) => new mainSelection(
+            pageBuilder: (_, __, ___) => new CategorySelectionPage(
                   userID: onResponse.data.token,
                 )));
       }

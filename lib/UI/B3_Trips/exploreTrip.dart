@@ -14,7 +14,7 @@ import 'package:book_it/DataSample/HotelListData.dart';
 import 'package:book_it/DataSample/travelModelData.dart';
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/Destination/destinationDetail.dart';
-import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetailPage.dart';
 
 class exploreTrip extends StatefulWidget {
   String userId;
@@ -526,7 +526,7 @@ class recommendedCardList extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 Navigator.of(context).push(PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => new hotelDetail2(
+                    pageBuilder: (_, __, ___) => new HotelDetailPage(
                           userId: dataUser,
                           titleD: title,
                           idD: id,
@@ -696,7 +696,7 @@ class card extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new hotelDetail2(
+                        pageBuilder: (_, __, ___) => new HotelDetailPage(
                               userId: dataUser,
                               titleD: title,
                               idD: id,

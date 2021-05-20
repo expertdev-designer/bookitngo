@@ -990,7 +990,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'RoomDetail.dart';
-import 'hotelDetail_concept_2.dart';
+import 'hotelDetailPage.dart';
 
 class Room extends StatefulWidget {
   String imageD,

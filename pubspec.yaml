@@ -55,6 +55,7 @@ dependencies:
   stripe_payment:
   dot_navigation_bar:
   paged_vertical_calendar:
+  flutter_webview_plugin:
 #  table_calendar: ^2.3.3
 #  calendar_views: ^0.5.2
 #  vertical_calendar: ^1.0.1+6
@@ -240,6 +241,11 @@ flutter:
     - assets/image/onBoardingImage/N1.png
     - assets/image/destinationPopuler/vacations_placeholder.svg
     - assets/image/destinationPopuler/vacation.png
+    - assets/image/images/tick_b.svg
+    - assets/image/images/update_location1.svg
+    - assets/image/images/update_location2.svg
+    - assets/image/images/privacy_policy.svg
+    - assets/image/images/terms.svg
 
 
 

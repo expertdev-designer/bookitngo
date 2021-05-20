@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:book_it/Library/loader_animation/dot.dart';
 import 'package:book_it/Library/loader_animation/loader.dart';
-import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetailPage.dart';
 import 'package:book_it/UI/Search/model/SearchResponse.dart';
 import 'package:book_it/UI/Search/searchBoxEmpty.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 
 import 'SearchTagResult.dart';
 import 'bloc/SearchBloc.dart';
+import 'model/SearchTagResponse.dart';
 
 class Search extends StatefulWidget {
   String userId;
@@ -40,12 +41,30 @@ class _SearchState extends State<Search> {
     });
     searchBloc = SearchBloc();
     _addNameController = TextEditingController();
+    getSearchTag();
   }
 
   void getSearchResultsFromServer(String text) {
     AppConstantHelper.checkConnectivity().then((isConnected) {
       if (isConnected) {
         searchBloc.doSearchHotelsApiCall(context: context, searchText: text);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
+  }
+
+  void getSearchTag() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        searchBloc.getSearchTag(context: context);
       } else {
         showDialog(
             context: context,
@@ -67,11 +86,7 @@ class _SearchState extends State<Search> {
         iconTheme: IconThemeData(color: Color(0xFF09314F)),
         title: Text(
           "Search",
-          style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 19.0,
-              color: Colors.black54,
-              fontFamily: "Sofia"),
+          style: TextStyle(fontFamily: "Sofia"),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -147,36 +162,61 @@ class _SearchState extends State<Search> {
                 StreamBuilder<SearchResponse>(
                   stream: searchBloc.searchTagDataStream,
                   builder: (context, snapshot) {
-                    if (snapshot.hasError) return Text('Error: ${snapshot.error}');
-                    if (searchString == null)
-                      return searchBoxEmpty(
-                        idUser: widget.userId,
-                      );
-                    if (searchString.trim() == "")
-                      return searchBoxEmpty(
-                        idUser: widget.userId,
-                      );
-                    if ( snapshot.hasData &&
+                    if (snapshot.hasError)
+                      return Text('Error: ${snapshot.error}');
+                    if (searchString == null) {
+                      return StreamBuilder<SearchTagResponse>(
+                          initialData: null,
+                          stream: searchBloc.tagDataStream,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              // tagList = snapshot.data.data;
+                              // print("tagList ${tagList}");
+                              return searchBoxEmpty(
+                                idUser: widget.userId,
+                                tagList: snapshot.data.data,
+                              );
+                            } else
+                              return Container();
+                          });
+                    }
+                    if (searchString.trim() == "") {
+                      return StreamBuilder<SearchTagResponse>(
+                          initialData: null,
+                          stream: searchBloc.tagDataStream,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              // tagList = snapshot.data.data;
+                              // print("tagList ${tagList}");
+                              return searchBoxEmpty(
+                                idUser: widget.userId,
+                                tagList: snapshot.data.data,
+                              );
+                            } else
+                              return Container();
+                          });
+                    }
+
+                    if (snapshot.hasData &&
                         snapshot.data != null &&
                         snapshot.data.data != null &&
-                        snapshot.data.data.length > 0)
-                      {
-                        return cardList(
-                          dataUser: widget.userId,
-                          list: snapshot.data.data,
-                        );
-                      }
-                      else
+                        snapshot.data.data.length > 0) {
+                      return cardList(
+                        dataUser: widget.userId,
+                        list: snapshot.data.data,
+                      );
+                    } else
                       return noItem();
-
                   },
                 ),
                 StreamBuilder<bool>(
                   stream: searchBloc.progressStream,
                   builder: (context, snapshot) {
-                    return Center(
-                        child: CommmonProgressIndicator(
-                            snapshot.hasData ? snapshot.data : false));
+                    return Align(
+                      alignment: Alignment.topCenter,
+                      child: CommmonProgressIndicator(
+                          snapshot.hasData ? snapshot.data : false),
+                    );
                   },
                 ),
               ],

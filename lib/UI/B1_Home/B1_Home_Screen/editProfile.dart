@@ -86,7 +86,7 @@ class _updateProfileState extends State<updateProfile> {
         elevation: 0.0,
         title: Text("Edit Profile",
           style: TextStyle(
-              fontFamily: "Sofia", fontWeight: FontWeight.w800, fontSize: 22.0),),
+              fontFamily: "Sofia", ),),
         centerTitle: true,
       ),
       body: Stack(
@@ -104,7 +104,7 @@ class _updateProfileState extends State<updateProfile> {
                     children: <Widget>[
                       StreamBuilder<bool>(
                           initialData: false,
-                          stream: editProfileBloc.progressStream,
+                          stream: editProfileBloc.progressStream2,
                           builder: (context, snapshot) {
                             return Container(
                               height: 140.0,

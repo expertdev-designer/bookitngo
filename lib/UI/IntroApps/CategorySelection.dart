@@ -4,20 +4,21 @@ import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
 import 'package:book_it/UI/Bottom_Nav_Bar/bottomNavBar.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'login_bloc/CategoryBloc.dart';
 import 'model/CategoriesResponse.dart';
 
-class mainSelection extends StatefulWidget {
-  String userID;
+class CategorySelectionPage extends StatefulWidget {
+  String userID, isFrom;
 
-  mainSelection({this.userID});
+  CategorySelectionPage({this.userID, this.isFrom});
 
   @override
-  _mainSelectionState createState() => _mainSelectionState();
+  _CategorySelectionPageState createState() => _CategorySelectionPageState();
 }
 
-class _mainSelectionState extends State<mainSelection> {
+class _CategorySelectionPageState extends State<CategorySelectionPage> {
   @override
 
   ///
@@ -67,7 +68,8 @@ class _mainSelectionState extends State<mainSelection> {
   void saveCategoryList() {
     AppConstantHelper.checkConnectivity().then((isConnected) {
       if (isConnected) {
-        _categoryBloc.saveCategory(context: context, categories: ids);
+        _categoryBloc.saveCategory(
+            context: context, categories: ids, isFrom: widget.isFrom);
       } else {
         showDialog(
             context: context,
@@ -104,7 +106,8 @@ class _mainSelectionState extends State<mainSelection> {
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Text(
-                      "Choose your Desired Destination",
+                      // "Choose your Desired Destination",
+                      "Choose your preferred destination",
                       style: TextStyle(
                         color: Colors.black87,
                         fontSize: 30.0,
@@ -114,6 +117,10 @@ class _mainSelectionState extends State<mainSelection> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 10.0,
+                ),
+
                 StreamBuilder<CategoriesResponse>(
                     initialData: null,
                     stream: _categoryBloc.categoryDataStream,
@@ -127,7 +134,7 @@ class _mainSelectionState extends State<mainSelection> {
                           shrinkWrap: true,
                           childAspectRatio: 1.6,
                           crossAxisSpacing: 10,
-                          padding: EdgeInsets.only(left: 10, right: 10),
+                          padding: EdgeInsets.only(left: 20, right: 20),
                           physics: NeverScrollableScrollPhysics(),
                           children:
                               List.generate(snapshot.data.data.length, (index) {
@@ -147,22 +154,29 @@ class _mainSelectionState extends State<mainSelection> {
                                 });
                               },
                               child: FadeAnimation(
-                                0.9,
-                                !snapshot.data.data[index].isSelect
-                                    ? itemCard(
-                                        image:
-                                            "${AppStrings.imagePAth + snapshot.data.data[index].image}",
-                                        title:
-                                            "${snapshot.data.data[index].name}",
-                                      )
-                                    : itemCardSelected(
-                                        image:
-                                            "${AppStrings.imagePAth + snapshot.data.data[index].image}",
-                                        title:
-                                            "${snapshot.data.data[index].name}",
-                                        sizeFont: 25.0,
-                                      ),
-                              ),
+                                  0.9,
+                                  itemCard(
+                                      image:
+                                          "${AppStrings.imagePAth + snapshot.data.data[index].image}",
+                                      title:
+                                          "${snapshot.data.data[index].name}",
+                                      isSelected:
+                                          snapshot.data.data[index].isSelect)
+                                  // !snapshot.data.data[index].isSelect
+                                  //     ? itemCard(
+                                  //         image:
+                                  //             "${AppStrings.imagePAth + snapshot.data.data[index].image}",
+                                  //         title:
+                                  //             "${snapshot.data.data[index].name}",
+                                  //       )
+                                  //     : itemCardSelected(
+                                  //         image:
+                                  //             "${AppStrings.imagePAth + snapshot.data.data[index].image}",
+                                  //         title:
+                                  //             "${snapshot.data.data[index].name}",
+                                  //         sizeFont: 25.0,
+                                  //       ),
+                                  ),
                             );
                           }),
                         );
@@ -341,7 +355,7 @@ class _mainSelectionState extends State<mainSelection> {
                 ),
 
                 FadeAnimation(
-                    5.5,
+                    4.0,
                     ids != null && ids.length > 0
                         ? InkWell(
                             onTap: () {
@@ -360,7 +374,7 @@ class _mainSelectionState extends State<mainSelection> {
                                   ])),
                               child: Center(
                                 child: Text(
-                                  "Next",
+                                  "Continue",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontFamily: "Sofia",
@@ -382,7 +396,7 @@ class _mainSelectionState extends State<mainSelection> {
                             ),
                             child: Center(
                               child: Text(
-                                "Next",
+                                "Continue",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: "Sofia",
@@ -393,9 +407,47 @@ class _mainSelectionState extends State<mainSelection> {
                             ),
                           )),
                 SizedBox(
-                  height: 30.0,
-                )
+                  height: 20.0,
+                ),
               ],
+            ),
+          ),
+          Visibility(
+            visible: widget.isFrom == "Home" ? false : true,
+            child: Positioned(
+              bottom: 30,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new bottomNavBar(
+                              userID: widget.userID,
+                            ),
+                        transitionDuration: Duration(milliseconds: 600),
+                        transitionsBuilder:
+                            (_, Animation<double> animation, __, Widget child) {
+                          return Opacity(
+                            opacity: animation.value,
+                            child: child,
+                          );
+                        }));
+                  },
+                  child: FadeAnimation(
+                    6.0,
+                    Text(
+                      "Skip",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "Sofia",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 19.5,
+                          letterSpacing: 1.2),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
           StreamBuilder<bool>(
@@ -417,60 +469,77 @@ class _mainSelectionState extends State<mainSelection> {
 ///
 class itemCard extends StatelessWidget {
   String image, title;
+  bool isSelected;
 
-  itemCard({this.image, this.title});
+  itemCard({this.image, this.title, this.isSelected});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0, bottom: 10.0),
-      child: Container(
-        height: 85.0,
-        width: 165.0,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(15.0))),
-        child: Material(
-          child: DecoratedBox(
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+              left: 5.0, right: 5.0, top: 16.0, bottom: 10.0),
+          child: Container(
+            height: 95.0,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(15.0)),
-              image: DecorationImage(
-                  image: NetworkImage(image), fit: BoxFit.cover),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0xFFABABAB).withOpacity(0.7),
-                  blurRadius: 4.0,
-                  spreadRadius: 3.0,
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+            child: Material(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                  image: DecorationImage(
+                      image: NetworkImage(image), fit: BoxFit.cover),
+                  border: Border.all(
+                      width: isSelected ? 2 : 0,
+                      color: isSelected ? Color(0xFF7F53AC) : Colors.white),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color(0xFFABABAB).withOpacity(0.7),
+                        blurRadius: 6.0,
+                        offset: Offset(0, 3)),
+                  ],
                 ),
-              ],
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                color: Colors.black12.withOpacity(0.1),
-              ),
-              child: Center(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    shadows: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.7),
-                          blurRadius: 10.0,
-                          spreadRadius: 2.0)
-                    ],
-                    color: Colors.white,
-                    fontFamily: "Sofia",
-                    fontWeight: FontWeight.w800,
-                    fontSize: 25.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                    color: Colors.black12.withOpacity(0.1),
+                  ),
+                  child: Center(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        shadows: [
+                          BoxShadow(
+                              color: Colors.black.withOpacity(0.7),
+                              blurRadius: 10.0,
+                              spreadRadius: 2.0)
+                        ],
+                        color: Colors.white,
+                        fontFamily: "Sofia",
+                        fontWeight: FontWeight.w800,
+                        fontSize: 25.0,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
+        Visibility(
+          visible: isSelected ? true : false,
+          child: Positioned(
+              right: 0,
+              top: 0,
+              child: SvgPicture.asset(
+                "assets/image/images/tick_b.svg",
+                width: 34,
+                height: 34,
+              )),
+        )
+      ],
     );
   }
 }
@@ -505,10 +574,9 @@ class itemCardSelected extends StatelessWidget {
                   DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xFFABABAB).withOpacity(0.7),
-                  blurRadius: 4.0,
-                  spreadRadius: 3.0,
-                ),
+                    color: Color(0xFFABABAB).withOpacity(0.7),
+                    blurRadius: 6.0,
+                    offset: Offset(0, 3)),
               ],
             ),
             child: Container(

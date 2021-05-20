@@ -1,5 +1,5 @@
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
-import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetailPage.dart';
 import 'package:book_it/UI/Search/model/SearchResponse.dart';
 import 'package:book_it/UI/Search/search.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
@@ -162,7 +162,7 @@ class cardList extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 Navigator.of(context).push(PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => new hotelDetail2(
+                    pageBuilder: (_, __, ___) => new HotelDetailPage(
                           userId: dataUser,
                           titleD: title,
                           idD: id,
@@ -235,7 +235,16 @@ class cardList extends StatelessWidget {
                               ),
                             ),
                             SizedBox(
-                              height: 15.0,
+                              height: 5.0,
+                            ),
+                            Text(
+                              "\tStarting at ",
+                              style: TextStyle(
+                                height: 1.5,
+                                  color: Colors.black54,
+                                  fontFamily: "Gotik",
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12.0),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -244,22 +253,26 @@ class cardList extends StatelessWidget {
                                 SizedBox(
                                   width: 5.0,
                                 ),
-                                Container(
-                                  width: 150.0,
-                                  child: Text(
-                                    "\$ " + price.toString() + "/Night",
-                                    style: TextStyle(
-                                      fontFamily: "Sofia",
-                                      fontSize: 16.0,
-                                      color: Colors.deepPurpleAccent,
-                                      fontWeight: FontWeight.w600,
+
+                                Row(
+                                  children: [
+
+                                    Text(
+                                      "\$ " + price.toString() + "/night",
+                                      style: TextStyle(
+                                        fontFamily: "Sofia",
+                                        fontSize: 16.0,
+                                        height: 1.5,
+                                        color: Colors.deepPurpleAccent,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
                             SizedBox(
-                              height: 5.0,
+                              height: 8.0,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -289,31 +302,34 @@ class cardList extends StatelessWidget {
                             SizedBox(
                               height: 5.0,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.star,
-                                  size: 17.0,
-                                  color: Colors.yellow,
-                                ),
-                                SizedBox(
-                                  width: 5.0,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 15.0),
-                                  child: Text(
-                                    rating.toString(),
-                                    style: TextStyle(
-                                      fontFamily: "Sans",
-                                      fontSize: 15.0,
-                                      color: Colors.yellow,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.start,
+                            //   crossAxisAlignment: CrossAxisAlignment.start,
+                            //   children: <Widget>[
+                            //     Icon(
+                            //       Icons.star,
+                            //       size: 17.0,
+                            //       color: Colors.yellow,
+                            //     ),
+                            //     SizedBox(
+                            //       width: 5.0,
+                            //     ),
+                            //     Padding(
+                            //       padding: const EdgeInsets.only(bottom: 15.0),
+                            //       child: Text(
+                            //         rating.toString(),
+                            //         style: TextStyle(
+                            //           fontFamily: "Sans",
+                            //           fontSize: 15.0,
+                            //           color: Colors.yellow,
+                            //           fontWeight: FontWeight.w800,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
+                            ratingbar(
+                              starRating: double.parse(rating.toString()),
                             ),
                             SizedBox(
                               height: 10.0,

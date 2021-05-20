@@ -1,6 +1,6 @@
 import 'package:book_it/Library/loader_animation/dot.dart';
 import 'package:book_it/Library/loader_animation/loader.dart';
-import 'package:book_it/UI/IntroApps/travelSelection.dart';
+import 'package:book_it/UI/IntroApps/CategorySelection.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

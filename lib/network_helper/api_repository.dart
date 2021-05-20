@@ -15,6 +15,7 @@ import 'package:book_it/UI/B5_Profile/model/PaymentCardResponse.dart';
 import 'package:book_it/UI/IntroApps/model/CategoriesResponse.dart';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
 import 'package:book_it/UI/Search/model/SearchResponse.dart';
+import 'package:book_it/UI/Search/model/SearchTagResponse.dart';
 import 'package:book_it/model/CommonResponse.dart';
 import 'package:dio/dio.dart';
 import 'api_helper.dart';
@@ -340,12 +341,12 @@ class ApiRepository {
 
 //*....................Get Search Tag api ...............*/
 
-  Future<SearchResponse> getSearchTag() async {
+  Future<SearchTagResponse> getSearchTag() async {
     getDioOptions(_dio);
     var response = await _dio.post(base_url + ApiEndPoints.post_api_getTags);
     print("SearchResponse" + response.toString());
     Map<String, dynamic> data = jsonDecode(response.toString());
-    return SearchResponse.fromJson(data);
+    return SearchTagResponse.fromJson(data);
   }
 
   //*....................Cancel Booking api ...............*/

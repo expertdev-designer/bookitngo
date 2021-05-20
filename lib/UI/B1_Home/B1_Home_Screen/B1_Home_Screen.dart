@@ -4,14 +4,17 @@ import 'package:book_it/UI/B1_Home/Recommendation/RecommendationDetailScreen.dar
 import 'package:book_it/UI/B1_Home/Vocation/vacationsPage.dart';
 import 'package:book_it/UI/B3_Trips/exploreTrip.dart';
 import 'package:book_it/UI/B4_Booking/Booking.dart';
+import 'package:book_it/UI/IntroApps/CategorySelection.dart';
 import 'package:book_it/UI/Search/search.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:book_it/network_helper/local_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetailPage.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shimmer/shimmer.dart';
 import 'bloc/HomeBloc.dart';
 import 'editProfile.dart';
@@ -20,7 +23,9 @@ import 'model/HomeResponse.dart';
 class Home extends StatefulWidget {
   String userID;
 
-  Home({this.userID});
+  Home({
+    this.userID,
+  });
 
   @override
   _HomeState createState() => _HomeState();
@@ -102,6 +107,24 @@ class _HomeState extends State<Home> {
       centerTitle: false,
       actions: <Widget>[
         Padding(
+          padding: const EdgeInsets.only(top: 6.0),
+          child: IconButton(
+              icon: SvgPicture.asset("assets/image/images/update_location1.svg",
+                  width: 24, height: 24),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => CategorySelectionPage(
+                              userID: AppStrings.authToken,
+                              isFrom: "Home",
+                            ))).then((value) => getHomeDataFrommServer());
+              }),
+        ),
+        SizedBox(
+          width: 10,
+        ),
+        Padding(
           padding: const EdgeInsets.only(right: 20.0),
           child: Padding(
               padding: const EdgeInsets.only(right: 0.0, top: 9.0),
@@ -126,18 +149,25 @@ class _HomeState extends State<Home> {
                     setState(() {});
                   });
                 },
-                child: Container(
-                  height: 40.0,
-                  width: 40.0,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage(AppStrings.userImage.isNotEmpty
-                            ? AppStrings.imagePAth + AppStrings.userImage
-                            : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"),
-                        fit: BoxFit.cover,
-                      )),
-                ),
+                child: AppStrings.userImage.isNotEmpty
+                    ? Container(
+                        height: 40.0,
+                        width: 40.0,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: NetworkImage(AppStrings
+                                      .userImage.isNotEmpty
+                                  ? AppStrings.imagePAth + AppStrings.userImage
+                                  : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"),
+                              fit: BoxFit.cover,
+                            )),
+                      )
+                    : Container(
+                        height: 50.0,
+                        width: 50.0,
+                        decoration: BoxDecoration(shape: BoxShape.circle),
+                        child: Icon(Icons.account_circle)),
               )),
         )
       ],
@@ -279,7 +309,7 @@ class _HomeState extends State<Home> {
             top: 10.0,
           ),
           child: Container(
-              height: 195.0,
+              height: 210.0,
               child: _featured != null && _featured.length > 0
                   ? new FeaturedCard(
                       dataUser: widget.userID,
@@ -568,7 +598,7 @@ class _HomeState extends State<Home> {
                         child: InkWell(
                           onTap: () {
                             Navigator.of(context).push(PageRouteBuilder(
-                                pageBuilder: (_, __, ___) => new hotelDetail2(
+                                pageBuilder: (_, __, ___) => new HotelDetailPage(
                                       userId: widget.userID,
                                       titleD: title,
                                       idD: id,
@@ -659,9 +689,20 @@ class _HomeState extends State<Home> {
                                     Padding(padding: EdgeInsets.only(top: 2.0)),
                                     Row(
                                       children: <Widget>[
+                                        SizedBox(
+                                          width: 10.0,
+                                        ),
+                                        Text(
+                                          "Starting at ",
+                                          style: TextStyle(
+                                              color: Colors.black54,
+                                              fontFamily: "Gotik",
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 12.0),
+                                        ),
                                         Padding(
                                           padding: const EdgeInsets.only(
-                                              left: 10.0, right: 0.0),
+                                              left: 0.0, right: 0.0),
                                           child: Text(
                                             "\$${price.toString()}",
                                             style: TextStyle(
@@ -672,7 +713,7 @@ class _HomeState extends State<Home> {
                                           ),
                                         ),
                                         Text(
-                                          "/night",
+                                          "\t/night",
                                           style: TextStyle(
                                               color: Colors.black54,
                                               fontFamily: "Gotik",
@@ -696,19 +737,19 @@ class _HomeState extends State<Home> {
                                                 starRating: double.parse(
                                                     rating.toString()),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 12.0),
-                                                child: Text(
-                                                  rating.toString(),
-                                                  style: TextStyle(
-                                                      fontFamily: "Sans",
-                                                      color: Colors.black26,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 12.0),
-                                                ),
-                                              )
+                                              // Padding(
+                                              //   padding: const EdgeInsets.only(
+                                              //       left: 12.0),
+                                              //   child: Text(
+                                              //     rating.toString(),
+                                              //     style: TextStyle(
+                                              //         fontFamily: "Sans",
+                                              //         color: Colors.black26,
+                                              //         fontWeight:
+                                              //             FontWeight.w500,
+                                              //         fontSize: 12.0),
+                                              //   ),
+                                              // )
                                             ],
                                           ),
                                         ],
@@ -1064,7 +1105,7 @@ class FeaturedCard extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 Navigator.of(context).push(PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => new hotelDetail2(
+                    pageBuilder: (_, __, ___) => new HotelDetailPage(
                           userId: dataUser,
                           titleD: title,
                           idD: id,
@@ -1111,7 +1152,7 @@ class FeaturedCard extends StatelessWidget {
                           child: Material(
                             child: Container(
                               height: 120.0,
-                              width: 140.0,
+                              width: MediaQuery.of(context).size.width*0.38,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(7.0),
@@ -1142,13 +1183,22 @@ class FeaturedCard extends StatelessWidget {
                           ),
                         ),
                         Padding(padding: EdgeInsets.only(top: 2.0)),
-                        /*   Row(
+                        Row(
                           children: <Widget>[
+                            SizedBox(width: 10.0,),
+                            Text(
+                              "Starting at ",
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontFamily: "Gotik",
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12.0),
+                            ),
                             Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10.0, right: 0.0),
+                              padding: const EdgeInsets.only(
+                                  left: 0.0, right: 0.0),
                               child: Text(
-                                "\$ " + price.toString(),
+                                "\$${price.toString()}",
                                 style: TextStyle(
                                     color: Colors.black54,
                                     fontFamily: "Gotik",
@@ -1157,7 +1207,7 @@ class FeaturedCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "/night",
+                              "\t/night",
                               style: TextStyle(
                                   color: Colors.black54,
                                   fontFamily: "Gotik",
@@ -1165,7 +1215,7 @@ class FeaturedCard extends StatelessWidget {
                                   fontSize: 10.0),
                             ),
                           ],
-                        ),*/
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(
                               left: 10.0, right: 15.0, top: 3.0),
@@ -1178,17 +1228,17 @@ class FeaturedCard extends StatelessWidget {
                                   ratingbar(
                                     starRating: double.parse(rating.toString()),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 12.0),
-                                    child: Text(
-                                      rating.toString(),
-                                      style: TextStyle(
-                                          fontFamily: "Sans",
-                                          color: Colors.black26,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 12.0),
-                                    ),
-                                  )
+                                  // Padding(
+                                  //   padding: const EdgeInsets.only(left: 12.0),
+                                  //   child: Text(
+                                  //     rating.toString(),
+                                  //     style: TextStyle(
+                                  //         fontFamily: "Sans",
+                                  //         color: Colors.black26,
+                                  //         fontWeight: FontWeight.w500,
+                                  //         fontSize: 12.0),
+                                  //   ),
+                                  // )
                                 ],
                               ),
                             ],

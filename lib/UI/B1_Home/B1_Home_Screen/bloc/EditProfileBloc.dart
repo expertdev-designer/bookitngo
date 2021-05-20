@@ -16,13 +16,19 @@ class EditProfileBloc {
 
   StreamSink get progressSink => progressController.sink;
 
+  Stream get progressStream2 => progressController2.stream;
+
+  final BehaviorSubject progressController2 = BehaviorSubject<bool>();
+
+  StreamSink get progressSink2 => progressController2.sink;
+
   ApiRepository apiRepository = ApiRepository();
   AppConstantHelper helper = AppConstantHelper();
 
 //  Stream get progressStream => progressController.stream;
 
   void uploadProfileImage({File file, BuildContext context}) {
-    progressSink.add(true);
+    progressSink2.add(true);
     apiRepository.uploadImage(file: file).then((onResponse) {
       if (!onResponse.status) {
         print("Error From Server  " + onResponse.message);
@@ -35,9 +41,9 @@ class EditProfileBloc {
         });
         _showUpdateProfileDialog(context);
       }
-      progressSink.add(false);
+      progressSink2.add(false);
     }).catchError((onError) {
-      progressSink.add(false);
+      progressSink2.add(false);
       print("On_Error" + onError.toString());
       showErrorDialog(context, "Upload Image Error", onError.toString());
     });
@@ -144,9 +150,11 @@ class EditProfileBloc {
           )),
           Center(
               child: Padding(
-            padding: const EdgeInsets.only(top: 30.0, bottom: 40.0),
+            padding: const EdgeInsets.only(
+                top: 30.0, bottom: 40.0, left: 20, right: 20),
             child: Text(
               "Your profile is updated successfully.",
+              textAlign: TextAlign.center,
               style: TextStyle(fontSize: 17.0),
             ),
           )),

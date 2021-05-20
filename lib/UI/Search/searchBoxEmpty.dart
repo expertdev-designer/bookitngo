@@ -1,33 +1,44 @@
+import 'package:book_it/UI/Search/model/SearchTagResponse.dart';
 import 'package:flutter/material.dart';
 
 import 'SearchTagResult.dart';
+import 'bloc/SearchBloc.dart';
 
 class searchBoxEmpty extends StatefulWidget {
   String idUser;
+  List<SearchTagData> tagList;
 
-  searchBoxEmpty({Key key, this.idUser}) : super(key: key);
+  searchBoxEmpty({Key key, this.idUser, this.tagList}) : super(key: key);
 
   _searchBoxEmptyState createState() => _searchBoxEmptyState();
 }
 
 class _searchBoxEmptyState extends State<searchBoxEmpty>
     with TickerProviderStateMixin {
-  List<String> tagList = [
-    "Anahein",
-    "Mountains",
-    "Los Angeles",
-    "Tropical",
-    "Las Vegas",
-    "Park",
-    "Hotel",
-    "Experience",
-    "Beaches",
-    "Sun",
-    "Florida",
-    "San Francisco",
-    "New York",
-    "Museum",
-  ];
+  // List<String> tagList = [
+  //   "Anahein",
+  //   "Mountains",
+  //   "Los Angeles",
+  //   "Tropical",
+  //   "Las Vegas",
+  //   "Park",
+  //   "Hotel",
+  //   "Experience",
+  //   "Beaches",
+  //   "Sun",
+  //   "Florida",
+  //   "San Francisco",
+  //   "New York",
+  //   "Museum",
+  // ];
+  // List<SearchTagData> tagList = [];
+  SearchBloc searchBloc;
+
+  @override
+  void initState() {
+    searchBloc = SearchBloc();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,56 +66,55 @@ class _searchBoxEmptyState extends State<searchBoxEmpty>
               Wrap(
                 spacing: 4.0,
                 runSpacing: 0.0,
-                children: List<Widget>.generate(
-                    tagList.length, // place the length of the array here
+                children: List<Widget>.generate(widget.tagList.length,
+                    // place the length of the array here
                     (int index) {
                   return /*Container(
-                    height: 29.5,
-                    width: 98.0,
-                    margin: EdgeInsets.only(bottom: 20, right: 16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4.5,
-                          spreadRadius: 1.0,
-                        )
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        tagList[index],
-                        overflow: TextOverflow.ellipsis,
+                        height: 29.5,
+                        width: 98.0,
+                        margin: EdgeInsets.only(bottom: 20, right: 16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4.5,
+                              spreadRadius: 1.0,
+                            )
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            tagList[index],
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Colors.black54, fontFamily: "Sans"),
+                          ),
+                        ),
+                      )*/
+                      InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => SearchTagResult(
+                                data: "${widget.tagList[index]}",
+                                type: "${widget.tagList[index]}",
+                                userID: widget.idUser,
+                              )));
+                    },
+                    child: Chip(
+                      labelPadding: EdgeInsets.all(2.0),
+                      label: Text(
+                        widget.tagList[index].search,
                         style: TextStyle(
                             color: Colors.black54, fontFamily: "Sans"),
                       ),
+                      backgroundColor: Colors.white,
+                      elevation: 3.0,
+                      shadowColor: Colors.grey[60],
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
                     ),
-                  )*/
-                    InkWell(
-                      onTap: ()
-                      {
-                        Navigator.of(context).push(PageRouteBuilder(
-                                            pageBuilder: (_, __, ___) => SearchTagResult(
-                                                  data: "${tagList[index]}",
-                                                  type: "${tagList[index]}",
-                                                  userID: widget.idUser,
-                                                )));
-                      },
-                      child: Chip(
-                        labelPadding: EdgeInsets.all(2.0),
-                        label: Text(
-                          tagList[index],
-                            style: TextStyle(
-                                color: Colors.black54, fontFamily: "Sans"),
-                        ),
-                        backgroundColor: Colors.white,
-                        elevation: 3.0,
-                        shadowColor: Colors.grey[60],
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      ),
-                    );
+                  );
                 }).toList(),
               ),
             ],

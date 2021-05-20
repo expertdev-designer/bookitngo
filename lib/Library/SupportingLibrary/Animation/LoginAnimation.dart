@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:book_it/UI/Bottom_Nav_Bar/bottomNavBar.dart';
-import 'package:book_it/UI/IntroApps/travelSelection.dart';
+import 'package:book_it/UI/IntroApps/CategorySelection.dart';
 
 /// Componen Login Animation to set Animation in login like a bounce ball to fullscreen
 class LoginAnimation extends StatefulWidget {
@@ -42,7 +42,7 @@ class _LoginAnimationState extends State<LoginAnimation> {
     widget.animationController.addListener(() {
       if (widget.animation.isCompleted) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => new mainSelection()));
+            builder: (BuildContext context) => new CategorySelectionPage()));
       }
     });
 

@@ -19,12 +19,13 @@ import 'Room.dart';
 import 'bloc/MapBloc.dart';
 import 'maps.dart';
 
-class hotelDetail2 extends StatefulWidget {
+// ignore: must_be_immutable
+class HotelDetailPage extends StatefulWidget {
   String imageD, titleD, locationD, idD, typeD, userId, descriptionD;
   List<String> photoD, serviceD;
   num ratingD, priceD, latLang1D, latLang2D;
 
-  hotelDetail2(
+  HotelDetailPage(
       {this.imageD,
       this.titleD,
       this.priceD,
@@ -40,10 +41,10 @@ class hotelDetail2 extends StatefulWidget {
       this.ratingD});
 
   @override
-  _hotelDetail2State createState() => _hotelDetail2State();
+  _HotelDetailPageState createState() => _HotelDetailPageState();
 }
 
-class _hotelDetail2State extends State<hotelDetail2> {
+class _HotelDetailPageState extends State<HotelDetailPage> {
   /// Check user
   bool _checkUser = true;
 
@@ -73,6 +74,7 @@ class _hotelDetail2State extends State<hotelDetail2> {
 
   final Set<Marker> _markers = {};
   MapBloc mapBloc;
+  List<Marker> allMarkers = [];
 
   void initState() {
     // _getData();
@@ -81,13 +83,21 @@ class _hotelDetail2State extends State<hotelDetail2> {
       Marker(
         markerId:
             MarkerId(widget.latLang1D.toString() + widget.latLang2D.toString()),
-        position: LatLng(widget.latLang1D, widget.latLang2D),
+        // position: LatLng(widget.latLang1D, widget.latLang2D),
+        position: LatLng(32.0998, 76.2691),
         icon: BitmapDescriptor.defaultMarker,
       ),
     );
     mapBloc = MapBloc();
     super.initState();
     getHotelListingForMap();
+    allMarkers.add(Marker(
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+          BitmapDescriptor.hueViolet,
+        ),
+        markerId: MarkerId(widget.latLang1D.toString()),
+        draggable: false,
+        position: LatLng(widget.latLang1D, widget.latLang2D)));
   }
 
   void getHotelListingForMap() {
@@ -134,13 +144,34 @@ class _hotelDetail2State extends State<hotelDetail2> {
             children: <Widget>[
               Container(
                 height: 190.0,
-                child: GoogleMap(
+                child:
+                    /*GoogleMap(
                   mapType: MapType.normal,
                   initialCameraPosition: CameraPosition(
-                    target: LatLng(40.7078523, -74.008981),
+                    target: LatLng(widget.latLang1D, widget.latLang1D),
                     zoom: 13.0,
                   ),
                   markers: _markers,
+                )*/
+                    GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: CameraPosition(
+                      target: LatLng(widget.latLang1D, widget.latLang2D),
+                      zoom: 13.0),
+
+                  // markers: markers,
+                  onTap: (pos) {
+                    print(pos);
+                    Marker m = Marker(markerId: MarkerId('1'), position: pos);
+                    setState(() {
+                      allMarkers.add(m);
+                    });
+                  },
+                  markers: Set.from(allMarkers),
+                  onMapCreated: (GoogleMapController controller) {
+                    // _controller = controller;
+                    // _controller.setMapStyle(_mapStyle);
+                  },
                 ),
               ),
               Padding(
@@ -348,11 +379,14 @@ class _hotelDetail2State extends State<hotelDetail2> {
                               fontWeight: FontWeight.w700),
                           textAlign: TextAlign.justify,
                         ),
-                        InkWell(
-                          onTap: () {
+                        FlatButton(
+                          onPressed: () {
                             Navigator.of(context).push(PageRouteBuilder(
-                                pageBuilder: (_, __, ___) =>
-                                    gallery(image: widget.photoD)));
+                                pageBuilder: (_, __, ___) => gallery(
+                                      image: widget.photoD,
+                                      initialIndex: 0,
+                                      title: widget.titleD,
+                                    )));
                           },
                           child: Text(
                             "See all",
@@ -368,52 +402,39 @@ class _hotelDetail2State extends State<hotelDetail2> {
                     ),
                   ),
 
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 0.0, left: 0.0, right: 0.0, bottom: 40.0),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(PageRouteBuilder(
-                            pageBuilder: (_, __, ___) =>
-                                gallery(image: widget.photoD)));
-                      },
-                      child: Container(
-                        height: 150.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 130.0,
-                              width: MediaQuery.of(context).size.width / 3,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage(AppStrings.imagePAth +
-                                          widget.photoD[0]),
-                                      fit: BoxFit.cover)),
+                  Container(
+                    height: 170.0,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        itemCount: widget.photoD.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                top: 0.0, left: 0.0, right: 0.0, bottom: 40.0),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(PageRouteBuilder(
+                                    pageBuilder: (_, __, ___) => gallery(
+                                          image: widget.photoD,
+                                          initialIndex: index,
+                                          title: widget.titleD,
+                                        )));
+                              },
+                              child: Container(
+                                height: 130.0,
+                                width: MediaQuery.of(context).size.width / 3,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: NetworkImage(
+                                            AppStrings.imagePAth +
+                                                widget.photoD[index]),
+                                        fit: BoxFit.cover)),
+                              ),
                             ),
-                            Container(
-                              height: 130.0,
-                              width: MediaQuery.of(context).size.width / 3,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage(AppStrings.imagePAth +
-                                          widget.photoD[1]),
-                                      fit: BoxFit.cover)),
-                            ),
-                            Container(
-                              height: 130.0,
-                              width: MediaQuery.of(context).size.width / 3,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage(AppStrings.imagePAth +
-                                          widget.photoD[2]),
-                                      fit: BoxFit.cover)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                          );
+                        }),
                   ),
 
                   // Padding(

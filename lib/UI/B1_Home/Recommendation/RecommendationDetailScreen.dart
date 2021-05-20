@@ -1,6 +1,6 @@
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/bloc/HomeBloc.dart';
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HotelHotelByCategoryResponse.dart';
-import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetail_concept_2.dart';
+import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetailPage.dart';
 import 'package:book_it/UI/B4_Booking/Booking.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
@@ -176,7 +176,7 @@ class card extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new hotelDetail2(
+                        pageBuilder: (_, __, ___) => new HotelDetailPage(
                               userId: dataUser,
                               titleD: title,
                               idD: id,
@@ -350,7 +350,7 @@ class CardList extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 Navigator.of(context).push(PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => new hotelDetail2(
+                    pageBuilder: (_, __, ___) => new HotelDetailPage(
                           userId: dataUser,
                           titleD: title,
                           idD: id,
@@ -429,10 +429,10 @@ class CardList extends StatelessWidget {
                                     color: Colors.blueAccent,
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 5.0)),
-                                  Text(
-                                    "(" + rating.toString() + ")",
-                                    style: _txtStyleSub,
-                                  )
+                                  // Text(
+                                  //   "(" + rating.toString() + ")",
+                                  //   style: _txtStyleSub,
+                                  // )
                                 ],
                               ),
                               Padding(
@@ -458,8 +458,17 @@ class CardList extends StatelessWidget {
                           padding: const EdgeInsets.only(right: 13.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
+                              Text(
+                                "\tStarting at ",
+                                style: TextStyle(
+                                    height: 1.5,
+                                    color: Colors.black54,
+                                    fontFamily: "Gotik",
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.0),
+                              ),
                               Text(
                                 "\$" + price.toString(),
                                 style: TextStyle(
@@ -468,7 +477,7 @@ class CardList extends StatelessWidget {
                                     fontWeight: FontWeight.w500,
                                     fontFamily: "Gotik"),
                               ),
-                              Text("per night",
+                              Text("/per night",
                                   style: _txtStyleSub.copyWith(fontSize: 11.0))
                             ],
                           ),
@@ -484,103 +493,6 @@ class CardList extends StatelessWidget {
   }
 }
 
-Widget _card(String image, title, location, ratting) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          height: 220.0,
-          width: 160.0,
-          decoration: BoxDecoration(
-              image:
-                  DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
-              color: Colors.black12,
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              boxShadow: [
-                BoxShadow(
-                    blurRadius: 5.0,
-                    color: Colors.black12.withOpacity(0.1),
-                    spreadRadius: 2.0)
-              ]),
-        ),
-        SizedBox(
-          height: 5.0,
-        ),
-        Text(
-          title,
-          style: TextStyle(
-              fontFamily: "Sofia",
-              fontWeight: FontWeight.w600,
-              fontSize: 17.0,
-              color: Colors.black87),
-        ),
-        SizedBox(
-          height: 2.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Icon(
-              Icons.location_on,
-              size: 18.0,
-              color: Colors.black12,
-            ),
-            Text(
-              location,
-              style: TextStyle(
-                  fontFamily: "Sofia",
-                  fontWeight: FontWeight.w500,
-                  fontSize: 15.0,
-                  color: Colors.black26),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.star,
-              size: 18.0,
-              color: Colors.yellow,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 3.0),
-              child: Text(
-                ratting,
-                style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontFamily: "Sofia",
-                    fontSize: 13.0),
-              ),
-            ),
-            SizedBox(
-              width: 35.0,
-            ),
-            Container(
-              height: 27.0,
-              width: 82.0,
-              decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              child: Center(
-                child: Text("Discount 15%",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10.0)),
-              ),
-            )
-          ],
-        ),
-      ],
-    ),
-  );
-}
 
 class cardCountry extends StatelessWidget {
   Color colorTop, colorBottom;

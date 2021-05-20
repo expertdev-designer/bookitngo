@@ -6,6 +6,7 @@ import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/HotelRoomL
 import 'package:book_it/UI/B4_Booking/model/BookingHistoryResponse.dart';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
 import 'package:book_it/UI/Search/model/SearchResponse.dart';
+import 'package:book_it/UI/Search/model/SearchTagResponse.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/network_helper/api_repository.dart';
@@ -27,6 +28,13 @@ class SearchBloc {
       BehaviorSubject<SearchResponse>();
 
   StreamSink get searchDataDataSink => searchTagDataController.sink;
+
+  Stream get tagDataStream => tagDataController.stream;
+
+  final BehaviorSubject tagDataController =
+      BehaviorSubject<SearchTagResponse>();
+
+  StreamSink get tagDataSink => tagDataController.sink;
 
   ApiRepository apiRepository = ApiRepository();
   AppConstantHelper helper = AppConstantHelper();
@@ -56,7 +64,7 @@ class SearchBloc {
         print("Error From Server  " + onResponse.message);
         // showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
-        searchDataDataSink.add(onResponse);
+        tagDataSink.add(onResponse);
       }
       progressSink.add(false);
     }).catchError((onError) {
@@ -65,6 +73,7 @@ class SearchBloc {
       showErrorDialog(context, "Error", onError.toString());
     });
   }
+
   void showErrorDialog(context, title, msg) {
     showDialog(
         context: context,

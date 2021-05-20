@@ -168,7 +168,7 @@ class _AddCreditCardState extends State<AddCreditCard> {
         title: Text(
           "Credit Card",
           style: TextStyle(
-              fontFamily: "Sofia", fontWeight: FontWeight.w800, fontSize: 22.0),
+              fontFamily: "Sofia",),
         ),
         elevation: 0.0,
       ),

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 class gallery extends StatefulWidget {
   List<String> image;
+  int initialIndex;
+  var title;
 
-  gallery({this.image});
+  gallery({this.image,this.initialIndex,this.title});
 
   @override
   _galleryState createState() => _galleryState();
@@ -18,11 +20,15 @@ class _galleryState extends State<gallery> {
         elevation: 0.0,
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.black,
+        centerTitle: true,
+        title: Text(widget.title, style: TextStyle(
+          color: Colors.white,
+            fontFamily: "Sofia"))
       ),
       backgroundColor: Colors.black,
       body: PageView(
           controller: PageController(
-            initialPage: 0,
+            initialPage: widget.initialIndex,
           ),
           scrollDirection: Axis.horizontal,
           pageSnapping: true,
