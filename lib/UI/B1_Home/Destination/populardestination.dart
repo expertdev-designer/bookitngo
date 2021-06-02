@@ -238,7 +238,7 @@ class _PopularDestinationState extends State<PopularDestination> {
                   : Container(
                       child: Center(
                         child: Text(
-                          "Not have item",
+                          "No data found",
                           style: TextStyle(
                               fontFamily: "Sofia",
                               fontSize: 20.0,
@@ -301,7 +301,7 @@ class _PopularDestinationState extends State<PopularDestination> {
                       height: 300,
                       child: Center(
                         child: Text(
-                          "Not have item",
+                          "No data found",
                           style: TextStyle(
                               fontFamily: "Sofia",
                               fontSize: 20.0,

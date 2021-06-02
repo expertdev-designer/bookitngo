@@ -3,8 +3,6 @@ import 'package:book_it/Library/loader_animation/loader.dart';
 import 'package:book_it/UI/IntroApps/CategorySelection.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
 import 'package:book_it/Library/SupportingLibrary/Animation/LoginAnimation.dart';
@@ -255,7 +253,6 @@ class _ForgotPasswordState extends State<ForgotPassword>
                             SharedPreferences prefs;
                             prefs = await SharedPreferences.getInstance();
                             final formState = _registerFormKey.currentState;
-                            FirebaseUser user;
                             if (formState.validate()) {
                               callForgotPasswordApi(loginEmailController.text);
                               loginEmailController.clear();

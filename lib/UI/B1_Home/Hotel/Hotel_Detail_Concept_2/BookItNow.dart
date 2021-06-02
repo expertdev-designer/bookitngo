@@ -2,6 +2,7 @@ import 'package:book_it/UI/Bottom_Nav_Bar/bottomNavBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Bookitnow extends StatefulWidget {

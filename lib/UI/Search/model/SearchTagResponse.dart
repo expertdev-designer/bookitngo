@@ -81,7 +81,7 @@ class SearchTagData {
 
   SearchTagData.fromJson(Map<String, dynamic> json) {
     _sId = json['_id'];
-    _search = json['search'];
+    _search = json['name'];
     _createdBy = json['created_by'];
     _updatedBy = json['updated_by'];
     _updatedAt = json['updated_at'];
@@ -92,7 +92,7 @@ class SearchTagData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this._sId;
-    data['search'] = this._search;
+    data['name'] = this._search;
     data['created_by'] = this._createdBy;
     data['updated_by'] = this._updatedBy;
     data['updated_at'] = this._updatedAt;

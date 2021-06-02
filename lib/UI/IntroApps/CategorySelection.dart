@@ -421,18 +421,26 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
               child: Center(
                 child: FlatButton(
                   onPressed: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new bottomNavBar(
-                              userID: widget.userID,
-                            ),
-                        transitionDuration: Duration(milliseconds: 600),
-                        transitionsBuilder:
-                            (_, Animation<double> animation, __, Widget child) {
-                          return Opacity(
-                            opacity: animation.value,
-                            child: child,
-                          );
-                        }));
+
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => bottomNavBar(
+                            userID: AppStrings.authToken,
+                          ),
+                        ));
+                    // Navigator.of(context).push(PageRouteBuilder(
+                    //     pageBuilder: (_, __, ___) => new bottomNavBar(
+                    //           userID: widget.userID,
+                    //         ),
+                    //     transitionDuration: Duration(milliseconds: 600),
+                    //     transitionsBuilder:
+                    //         (_, Animation<double> animation, __, Widget child) {
+                    //       return Opacity(
+                    //         opacity: animation.value,
+                    //         child: child,
+                    //       );
+                    //     }));
                   },
                   child: FadeAnimation(
                     6.0,

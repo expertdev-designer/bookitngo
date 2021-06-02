@@ -163,56 +163,56 @@ class PaymentBloc {
 
 //
 
-  _showUpdateProfileDialog(BuildContext ctx) {
-    showDialog(
-      context: ctx,
-      barrierDismissible: true,
-      child: SimpleDialog(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: InkWell(
-                      onTap: () {
-                        Navigator.of(ctx).pop();
-                      },
-                      child: Icon(
-                        Icons.close,
-                        size: 30.0,
-                      ))),
-              SizedBox(
-                width: 10.0,
-              )
-            ],
-          ),
-          Container(
-              padding: EdgeInsets.only(top: 30.0, right: 60.0, left: 60.0),
-              color: Colors.white,
-              child: Icon(
-                Icons.check_circle,
-                size: 150.0,
-                color: Colors.green,
-              )),
-          Center(
-              child: Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Text(
-              "Succes",
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22.0),
-            ),
-          )),
-          Center(
-              child: Padding(
-            padding: const EdgeInsets.only(top: 30.0, bottom: 40.0),
-            child: Text(
-              "Update Profile Succes",
-              style: TextStyle(fontSize: 17.0),
-            ),
-          )),
-        ],
-      ),
-    );
-  }
+  // _showUpdateProfileDialog(BuildContext ctx) {
+  //   showDialog(
+  //     context: ctx,
+  //     barrierDismissible: true,
+  //     child: SimpleDialog(
+  //       children: <Widget>[
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: <Widget>[
+  //             Padding(
+  //                 padding: EdgeInsets.only(left: 10.0),
+  //                 child: InkWell(
+  //                     onTap: () {
+  //                       Navigator.of(ctx).pop();
+  //                     },
+  //                     child: Icon(
+  //                       Icons.close,
+  //                       size: 30.0,
+  //                     ))),
+  //             SizedBox(
+  //               width: 10.0,
+  //             )
+  //           ],
+  //         ),
+  //         Container(
+  //             padding: EdgeInsets.only(top: 30.0, right: 60.0, left: 60.0),
+  //             color: Colors.white,
+  //             child: Icon(
+  //               Icons.check_circle,
+  //               size: 150.0,
+  //               color: Colors.green,
+  //             )),
+  //         Center(
+  //             child: Padding(
+  //           padding: const EdgeInsets.only(top: 16.0),
+  //           child: Text(
+  //             "Succes",
+  //             style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22.0),
+  //           ),
+  //         )),
+  //         Center(
+  //             child: Padding(
+  //           padding: const EdgeInsets.only(top: 30.0, bottom: 40.0),
+  //           child: Text(
+  //             "Update Profile Succes",
+  //             style: TextStyle(fontSize: 17.0),
+  //           ),
+  //         )),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

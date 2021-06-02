@@ -1,6 +1,6 @@
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/bloc/HomeBloc.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
-import 'package:carousel_pro/carousel_pro.dart';
+// import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/DataSample/travelModelData.dart';
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
@@ -71,26 +71,26 @@ class _PopularDestinationPageState extends State<PopularDestinationPage> {
       ),
     );
 
-    var _slideImage = Container(
-      height: 222.0,
-      child: new Carousel(
-        boxFit: BoxFit.cover,
-        dotColor: Colors.white.withOpacity(0.8),
-        dotSize: 5.5,
-        dotSpacing: 16.0,
-        dotBgColor: Colors.transparent,
-        showIndicator: true,
-        overlayShadow: true,
-        overlayShadowColors: Colors.white.withOpacity(0.1),
-        overlayShadowSize: 0.9,
-        images: [
-          AssetImage("assets/image/banner/banner4.jpg"),
-          AssetImage("assets/image/banner/banner6.jpg"),
-          AssetImage("assets/image/banner/banner10.jpg"),
-          AssetImage("assets/image/banner/banner12.jpg"),
-        ],
-      ),
-    );
+    // var _slideImage = Container(
+    //   height: 222.0,
+    //   child: new Carousel(
+    //     boxFit: BoxFit.cover,
+    //     dotColor: Colors.white.withOpacity(0.8),
+    //     dotSize: 5.5,
+    //     dotSpacing: 16.0,
+    //     dotBgColor: Colors.transparent,
+    //     showIndicator: true,
+    //     overlayShadow: true,
+    //     overlayShadowColors: Colors.white.withOpacity(0.1),
+    //     overlayShadowSize: 0.9,
+    //     images: [
+    //       AssetImage("assets/image/banner/banner4.jpg"),
+    //       AssetImage("assets/image/banner/banner6.jpg"),
+    //       AssetImage("assets/image/banner/banner10.jpg"),
+    //       AssetImage("assets/image/banner/banner12.jpg"),
+    //     ],
+    //   ),
+    // );
 
     var _description = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,7 +265,7 @@ class _PopularDestinationPageState extends State<PopularDestinationPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ///Slider image in top
-            _slideImage,
+            // _slideImage,
 
             SizedBox(
               height: 20.0,

@@ -13,6 +13,7 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -381,10 +382,10 @@ class _BookingScreenState extends State<BookingScreen> {
                                           Padding(
                                               padding:
                                                   EdgeInsets.only(left: 5.0)),
-                                          Text(
-                                            "(" + rating.toString() + ")",
-                                            style: _txtStyleSub,
-                                          )
+                                          // Text(
+                                          //   "(" + rating.toString() + ")",
+                                          //   style: _txtStyleSub,
+                                          // )
                                         ],
                                       ),
                                       Padding(

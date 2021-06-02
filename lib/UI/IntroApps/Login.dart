@@ -1,15 +1,7 @@
-import 'package:book_it/Library/loader_animation/dot.dart';
-import 'package:book_it/Library/loader_animation/loader.dart';
-import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
-import 'package:book_it/UI/IntroApps/CategorySelection.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
-import 'package:book_it/Library/SupportingLibrary/Animation/LoginAnimation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'ForgotPassword.dart';
 import 'SignUp.dart';
 import 'login_bloc/LoginBloc.dart';
@@ -95,8 +87,8 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
-      body:
-          /*isLoading
+      body: /*
+      isLoading
           ? Center(
           child: ColorLoader5(
             dotOneColor: Colors.red,
@@ -106,11 +98,11 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
             dotIcon: Icon(Icons.adjust),
             duration: Duration(seconds: 1),
           ))
-
       ////
       /// Layout loading
       ///
           :*/
+
           Stack(
         children: [
           Form(

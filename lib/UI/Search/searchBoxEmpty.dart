@@ -97,8 +97,8 @@ class _searchBoxEmptyState extends State<searchBoxEmpty>
                     onTap: () {
                       Navigator.of(context).push(PageRouteBuilder(
                           pageBuilder: (_, __, ___) => SearchTagResult(
-                                data: "${widget.tagList[index]}",
-                                type: "${widget.tagList[index]}",
+                                data: "${widget.tagList[index].search}",
+                                type: "${widget.tagList[index].search}",
                                 userID: widget.idUser,
                               )));
                     },

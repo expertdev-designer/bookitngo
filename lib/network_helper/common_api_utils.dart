@@ -26,4 +26,6 @@ class ApiEndPoints {
   static const String post_api_getTags = "getTags";
   static const String post_api_cancelBooking = "cancelBooking";
   static const String post_api_getHotelMap = "getHotelMap";
+  static const String post_api_getHotelListing = "getHotelListing";
+
 }

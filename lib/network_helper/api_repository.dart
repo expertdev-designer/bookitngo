@@ -247,6 +247,18 @@ class ApiRepository {
     return HotelByCategoryResponse.fromJson(data);
   }
 
+  //*.....................Get Hotel by category api ...............*/
+
+  Future<HotelByCategoryResponse> getHotelListingApi({String type}) async {
+    getDioOptions(_dio);
+    var response = await _dio.post(
+        base_url + ApiEndPoints.post_api_getHotelListing,
+        data: {'type': type, "page_no": "0"});
+    print("getHotelListingApiResponse" + response.toString());
+    Map<String, dynamic> data = jsonDecode(response.toString());
+    return HotelByCategoryResponse.fromJson(data);
+  }
+
 //*.....................Get Hotel by category api ...............*/
 
   Future<HotelByLocationResponse> getHotelByLocation(

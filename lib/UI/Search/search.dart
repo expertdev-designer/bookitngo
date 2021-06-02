@@ -1,13 +1,9 @@
 import 'dart:async';
-
-import 'package:book_it/Library/loader_animation/dot.dart';
-import 'package:book_it/Library/loader_animation/loader.dart';
-import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetailPage.dart';
 import 'package:book_it/UI/Search/model/SearchResponse.dart';
 import 'package:book_it/UI/Search/searchBoxEmpty.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:book_it/network_helper/local_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'SearchTagResult.dart';
@@ -29,6 +25,9 @@ class _SearchState extends State<Search> {
 
   bool load = true;
   SearchBloc searchBloc;
+  List<String> searchSuggestion = [];
+
+  bool isSuggestionVisible = false;
 
   @override
   void initState() {
@@ -42,6 +41,11 @@ class _SearchState extends State<Search> {
     searchBloc = SearchBloc();
     _addNameController = TextEditingController();
     getSearchTag();
+
+    // LocalStorage.getListData(LocalStorage.getTag).then((value) {
+    //   searchSuggestion = value;
+    //   print("searchSuggestion${searchSuggestion.length}");
+    // });
   }
 
   void getSearchResultsFromServer(String text) {
@@ -133,12 +137,28 @@ class _SearchState extends State<Search> {
                     child: Theme(
                       data: ThemeData(hintColor: Colors.transparent),
                       child: TextFormField(
-                        onChanged: (value) {
+                        onChanged: (val) {
+                          // setState(() {
+                          //   if (value.length > 1) {
+                          //     isSuggestionVisible = true;
+                          //   } else {
+                          //     isSuggestionVisible = false;
+                          //   }
+                          //
+                          // });
+                        },
+                        onFieldSubmitted: (val) {
                           setState(() {
-                            searchString = value.toLowerCase();
+                            searchString = val.toLowerCase();
                             getSearchResultsFromServer(searchString);
+                            /*var list = [];
+                            list.add(val);
+                            LocalStorage.setListData(LocalStorage.getTag, list);
+                            isSuggestionVisible = false;*/
                           });
                         },
+                        enableSuggestions: true,
+                        textInputAction: TextInputAction.search,
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             icon: Icon(
@@ -196,8 +216,9 @@ class _SearchState extends State<Search> {
                               return Container();
                           });
                     }
-
-                    if (snapshot.hasData &&
+                    if (isSuggestionVisible) {
+                      return suggestionList();
+                    } else if (snapshot.hasData &&
                         snapshot.data != null &&
                         snapshot.data.data != null &&
                         snapshot.data.data.length > 0) {
@@ -225,6 +246,27 @@ class _SearchState extends State<Search> {
         ),
       ),
     );
+  }
+
+  Widget suggestionList() {
+    return ListView.builder(
+        itemCount: searchSuggestion != null && searchSuggestion.length > 0
+            ? searchSuggestion.length
+            : 0,
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return ListTile(
+            trailing: Icon(Icons.close),
+            title: Text(
+              "${searchSuggestion[index]}",
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 17.5,
+                  color: Colors.black26.withOpacity(0.3),
+                  fontFamily: "Popins"),
+            ),
+          );
+        });
   }
 }
 

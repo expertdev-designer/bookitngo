@@ -387,7 +387,7 @@ class CardList extends StatelessWidget {
                     ]),
                 child: Column(children: [
                   Hero(
-                    tag: 'hero-tag-${id}',
+                    tag: '${id}',
                     child: Material(
                       child: Container(
                         height: 165.0,

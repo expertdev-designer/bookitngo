@@ -1,6 +1,5 @@
 import 'package:book_it/UI/B2_Message/ChatBot.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class noMessage extends StatefulWidget {

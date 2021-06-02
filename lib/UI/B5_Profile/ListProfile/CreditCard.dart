@@ -6,13 +6,14 @@ import 'package:book_it/UI/B5_Profile/model/PaymentCardResponse.dart';
 import 'package:book_it/UI/Utills/AppColors.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_form.dart';
 import 'package:flutter_credit_card/credit_card_model.dart';
 import 'package:flutter_credit_card/credit_card_widget.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 import 'BookitCreditCardWidget.dart';
@@ -168,7 +169,8 @@ class _AddCreditCardState extends State<AddCreditCard> {
         title: Text(
           "Credit Card",
           style: TextStyle(
-              fontFamily: "Sofia",),
+            fontFamily: "Sofia",
+          ),
         ),
         elevation: 0.0,
       ),
@@ -516,7 +518,6 @@ class _AddCreditCardState extends State<AddCreditCard> {
                                             addCard(token.tokenId);
                                           }).catchError(setError);
                                         }
-
                                         // addData();
                                         // Navigator.of(context).push(PageRouteBuilder(
                                         //     pageBuilder: (_, __, ___) => new BookingConfirmPage(),

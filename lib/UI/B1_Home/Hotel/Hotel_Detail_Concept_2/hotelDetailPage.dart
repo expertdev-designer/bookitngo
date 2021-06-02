@@ -6,6 +6,7 @@ import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/HotelMapLi
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -242,27 +243,6 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                  StreamBuilder(
-                    stream: Firestore.instance
-                        .collection('users')
-                        .document(widget.userId)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return new Text("Loading");
-                      } else {
-                        var userDocument = snapshot.data;
-                        // _nama = userDocument["name"];
-                        // _email = userDocument["email"];
-                        // _photoProfile = userDocument["photoProfile"];
-                      }
-
-                      var userDocument = snapshot.data;
-                      return Container();
-                    },
-                  ),
-
-                  /// Description
                   Padding(
                     padding: const EdgeInsets.only(
                         top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
@@ -672,118 +652,132 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
             opacity: (1 - shrinkOffset / expandedHeight),
             child: Padding(
               padding: const EdgeInsets.only(
-                  top: 20.0, right: 20.0, left: 20.0, bottom: 40.0),
+                  top: 20.0, right: 20.0, left: 20.0, bottom: 0.0),
               child: Container(
                 height: 170.0,
-                width: double.infinity,
+
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     color: Colors.white.withOpacity(0.90)),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 18.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 15.0, right: 2.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                    width: 210.0,
-                                    child: Text(
-                                      title,
-                                      maxLines: 2,
-                                      style: _txtStyleTitle.copyWith(
-                                          fontSize: 22.0),
-                                      overflow: TextOverflow.ellipsis,
-                                    )),
-                              ],
+                    Expanded(
+                      flex: 6,
+                      child: Container(
+
+                        padding: const EdgeInsets.only(top: 18.0,left: 20.0,right: 10.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 15.0, right: 2.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Flexible(
+                                      child: Text(
+                                        title,
+                                        maxLines: 2,
+                                        style: _txtStyleTitle.copyWith(
+                                            fontSize: 20.0),
+                                        overflow: TextOverflow.ellipsis,
+                                      )),
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 15.0, right: 20.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    StarRating(
-                                      color: Color(0xFF09314F),
-                                      starCount: 5,
-                                      size: 20,
-                                      rating: double.parse(ratting.toString()),
-                                    ),
-                                    // ratingbar(starRating: ratting,color: Colors.deepPurpleAccent,),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.location_on,
-                                            size: 14.0,
-                                            color: Colors.black26,
-                                          ),
-                                          Text(
-                                            location,
-                                            style: TextStyle(
-                                                color: Colors.black26,
-                                                fontSize: 14.5,
-                                                fontFamily: "Sofia",
-                                                fontWeight: FontWeight.w400),
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 15.0, right: 20.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      StarRating(
+                                        color: Color(0xFF09314F),
+                                        starCount: 5,
+                                        size: 20,
+                                        rating: double.parse(ratting.toString()),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                //  LikeButton(),
-                              ],
-                            ),
-                          )
-                        ],
+                                      // ratingbar(starRating: ratting,color: Colors.deepPurpleAccent,),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.location_on,
+                                              size: 14.0,
+                                              color: Colors.black26,
+                                            ),
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                "${location}",
+                                                style: TextStyle(
+                                                    color: Colors.black26,
+                                                    fontSize: 14,
+                                                    fontFamily: "Sofia",
+                                                    fontWeight: FontWeight.w400),
+                                                maxLines: 3,
+                                                softWrap: true,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  //  LikeButton(),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 13.0, top: 22.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "Starting at",
-                            style: TextStyle(
-                                fontSize: 14.0,
-                                color: Color(0xFF09314F),
-                                fontWeight: FontWeight.w500,
-                                fontFamily: "Gotik"),
-                          ),
-                          Text(
-                            "\$ " + price.toString(),
-                            style: TextStyle(
-                                fontSize: 25.0,
-                                color: Color(0xFF09314F),
-                                fontWeight: FontWeight.w600,
-                                fontFamily: "Gotik"),
-                          ),
-                          Text("/per night",
-                              style: _txtStyleSub.copyWith(fontSize: 11.0))
-                        ],
+
+                    Expanded(
+                      flex: 4,
+                      child: Container(
+                        padding: const EdgeInsets.only(right: 30.0, top: 22.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              "Starting at",
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.end,
+                              softWrap: true,
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Color(0xFF09314F),
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: "Gotik"),
+                            ),
+                            Text(
+                              "\$ " + price.toString(),
+                              style: TextStyle(
+                                  fontSize: 25.0,
+                                  color: Color(0xFF09314F),
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: "Gotik"),
+                            ),
+                            Text("/per night",
+                                style: _txtStyleSub.copyWith(fontSize: 11.0))
+                          ],
+                        ),
                       ),
                     ),
                   ],

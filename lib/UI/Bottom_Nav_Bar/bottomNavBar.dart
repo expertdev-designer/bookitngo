@@ -22,7 +22,27 @@ class bottomNavBar extends StatefulWidget {
 class _bottomNavBarState extends State<bottomNavBar> {
   int currentIndex = 0;
   bool _color = true;
+  List<Widget> pageList = [
+    Home(
+      userID:"userID",
+    ),
+    noMessage(
+      userID:"userID",
+    ),
+    trip(
+      userID: "afs",
+    ),
+    BookingScreen(
+      idUser: "asf",
+    ),
+    profile(
+      userID: "ferwt24",
+    ),profile(
+      userID: "ferwt24",
+    ),
 
+
+  ];
   Widget callPage(int current) {
     switch (current) {
       case 0:
@@ -35,17 +55,17 @@ class _bottomNavBarState extends State<bottomNavBar> {
           userID: widget.userID,
         );
         break;
+      // case 2:
+      //   return new trip(
+      //     userID: widget.userID,
+      //   );
+      //   break;
       case 2:
-        return new trip(
-          userID: widget.userID,
-        );
-        break;
-      case 3:
         return new BookingScreen(
           idUser: widget.userID,
         );
         break;
-      case 4:
+      case 3:
         return new profile(
           userID: widget.userID,
         );
@@ -65,7 +85,12 @@ class _bottomNavBarState extends State<bottomNavBar> {
     }
     return Scaffold(
       backgroundColor: Colors.white,
-      body: callPage(currentIndex),
+      body:callPage(currentIndex)
+      /*IndexedStack(
+        index: currentIndex,
+        children: pageList,
+          //
+      )*/,
       bottomNavigationBar:  Container(
        decoration: BoxDecoration(
          color: Colors.white,
@@ -79,7 +104,7 @@ class _bottomNavBarState extends State<bottomNavBar> {
          ],
        ),
         child: DotNavigationBar(
-          margin: EdgeInsets.symmetric(horizontal: 12.0),
+          margin: EdgeInsets.symmetric(horizontal: 30.0),
     itemPadding: EdgeInsets.symmetric(vertical: 2,horizontal: 12.0),
 
     unselectedItemColor: Colors.grey,
@@ -107,12 +132,12 @@ class _bottomNavBarState extends State<bottomNavBar> {
             ),
 
             /// Search
-            DotNavigationBarItem(
-              unselectedColor: Colors.grey,
-              selectedColor: AppColor.primaryColor,
-              icon: SvgPicture.asset('assets/image/icon/travel.svg',width: 22,height: 22,color: currentIndex==2?AppColor.primaryColor:Colors.grey),
-
-            ),
+            // DotNavigationBarItem(
+            //   unselectedColor: Colors.grey,
+            //   selectedColor: AppColor.primaryColor,
+            //   icon: SvgPicture.asset('assets/image/icon/travel.svg',width: 22,height: 22,color: currentIndex==2?AppColor.primaryColor:Colors.grey),
+            //
+            // ),
             /// Search
             DotNavigationBarItem(
               unselectedColor: Colors.grey,

@@ -3,8 +3,6 @@ import 'package:book_it/Library/loader_animation/loader.dart';
 import 'package:book_it/UI/IntroApps/CategorySelection.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
 import 'package:book_it/Library/SupportingLibrary/Animation/LoginAnimation.dart';
@@ -295,7 +293,12 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                                     fontFamily: "sofia"),
                                                 suffix: InkWell(
                                                   onTap: _togglePasswordView,
-                                                  child: Icon( !_isHidden?Icons.visibility:Icons.visibility_off,color: Colors.black12,),
+                                                  child: Icon(
+                                                    !_isHidden
+                                                        ? Icons.visibility
+                                                        : Icons.visibility_off,
+                                                    color: Colors.black12,
+                                                  ),
                                                 )),
                                           ),
                                         )
@@ -341,8 +344,10 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                   InkWell(
                                     onTap: () async {
                                       SharedPreferences prefs;
-                                      prefs = await SharedPreferences.getInstance();
-                                      final formState = _registerFormKey.currentState;
+                                      prefs =
+                                          await SharedPreferences.getInstance();
+                                      final formState =
+                                          _registerFormKey.currentState;
                                       if (formState.validate()) {
                                         callRegisterApi(
                                             signupNameController.text,
@@ -423,7 +428,8 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                     },
                                     child: Container(
                                       height: 55.0,
-                                      margin: EdgeInsets.only(left: 10.0, right: 10.0),
+                                      margin: EdgeInsets.only(
+                                          left: 10.0, right: 10.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(50),
                                         color: Color(0xFF8DA2BF),
@@ -442,9 +448,8 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                     ),
                                   )),
                               Container(
-                                color: Colors.yellow,
-
-                                height: MediaQuery.of(context).size.height * 0.2,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.2,
                               ),
                             ],
                           ),
@@ -453,8 +458,6 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                     ),
 
                     /// Set Animaion after user click buttonSignup
-
-
                   ],
                 ),
               ],
@@ -472,7 +475,6 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
       ),
     );
   }
-
 
   void _togglePasswordView() {
     setState(() {

@@ -35,8 +35,15 @@ class _VacationPageState extends State<VacationPage> {
   void getHotelByCategoryHotel() {
     AppConstantHelper.checkConnectivity().then((isConnected) {
       if (isConnected) {
-        _homeBloc.getHotelByCategory(
-            context: context, categoryId: widget.categoryId);
+        if (widget.title == "Featured" ||
+            widget.title == "Recommended" ||
+            widget.title == "Recommended Rooms")
+          {
+            _homeBloc.getHotelListingApi(
+                context: context, type: widget.categoryId);
+          }else
+          _homeBloc.getHotelByCategory(
+              context: context, categoryId: widget.categoryId);
       } else {
         showDialog(
             context: context,
@@ -107,7 +114,6 @@ class _VacationPageState extends State<VacationPage> {
                           Image.asset(
                             "assets/image/destinationPopuler/vacation.png",
                           ),
-
                           Text(
                             "No data found",
                             style: TextStyle(
@@ -120,7 +126,6 @@ class _VacationPageState extends State<VacationPage> {
                         ],
                       ),
                     );
-
             },
           ),
         ),
@@ -166,8 +171,6 @@ class _VacationPageState extends State<VacationPage> {
     );
   }
 }
-
-
 
 class VacationList extends StatelessWidget {
   String dataUser;

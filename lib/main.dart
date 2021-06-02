@@ -1,20 +1,21 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:book_it/network_helper/local_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/UI/IntroApps/OnBoarding.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'Home.dart';
 import 'UI/B1_Home/Hotel/Hotel_Detail_Concept_2/BookItNow.dart';
 import 'UI/Bottom_Nav_Bar/bottomNavBar.dart';
 import 'UI/IntroApps/Login.dart';
 import 'UI/IntroApps/CategorySelection.dart';
+import 'Web/LoginSign/WebSignInSignUpPage.dart';
 
 void main() {
   HttpOverrides.global = new MyHttpOverrides();
@@ -46,15 +47,32 @@ class splash extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
 
-    return MaterialApp(
+    return kIsWeb ?
+    MaterialApp(
+      home: WebSignInSignUpPage(),
+      //home: splashScreen(),
+      debugShowCheckedModeBanner: false,
+
+      theme: ThemeData(
+          brightness: Brightness.light,
+          backgroundColor: Colors.white,
+          primaryColorLight: Colors.white,
+          fontFamily: "Poppins",
+          primaryColorBrightness: Brightness.light,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          primaryColor: Colors.white),
+    ) :
+    MaterialApp(
       home: splashScreen(),
       //home: splashScreen(),
       debugShowCheckedModeBanner: false,
+
       theme: ThemeData(
           brightness: Brightness.light,
           backgroundColor: Colors.white,
           primaryColorLight: Colors.white,
           primaryColorBrightness: Brightness.light,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
           primaryColor: Colors.white),
     );
   }
@@ -66,8 +84,6 @@ class splashScreen extends StatefulWidget {
 }
 
 class _splashScreenState extends State<splashScreen> {
-  final FirebaseMessaging _messaging = FirebaseMessaging();
-
   @override
   void _Navigator() {
     LocalStorage.getUserAuthToken().then((value) {
@@ -79,7 +95,8 @@ class _splashScreenState extends State<splashScreen> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => bottomNavBar(
+                builder: (context) =>
+                    bottomNavBar(
                       userID: value,
                     )));
       }
@@ -126,9 +143,9 @@ class _splashScreenState extends State<splashScreen> {
     ///
     /// Setting Message Notification from firebase to user
     ///
-    _messaging.getToken().then((token) {
-      print(token);
-    });
+    // _messaging.getToken().then((token) {
+    //   print(token);
+    // });
   }
 
   /// Check user

@@ -86,6 +86,26 @@ class HomeBloc {
     });
   }
 
+
+void getHotelListingApi({BuildContext context, String type}) {
+    progressSink.add(true);
+    apiRepository
+        .getHotelListingApi(type: type)
+        .then((onResponse) {
+      if (!onResponse.status) {
+        print("Error From Server  " + onResponse.message);
+        // showErrorDialog(context, "Error", onResponse.message);
+      } else if (onResponse.status) {
+        hotelByCategoryDataSink.add(onResponse);
+      }
+      progressSink.add(false);
+    }).catchError((onError) {
+      progressSink.add(false);
+      print("On_Error" + onError.toString());
+      showErrorDialog(context, "Error", onError.toString());
+    });
+  }
+
   void getRecommendedHotelByCategory({BuildContext context}) {
     progressSink.add(true);
     apiRepository.getRecommendedHotelsApi().then((onResponse) {

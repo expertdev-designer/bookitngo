@@ -108,11 +108,12 @@ class EditProfileBloc {
 
 //
 
-  _showUpdateProfileDialog(BuildContext ctx) {
+  _showUpdateProfileDialog(BuildContext ctx)
+  {
     showDialog(
       context: ctx,
       barrierDismissible: true,
-      child: SimpleDialog(
+      builder: (_) => SimpleDialog(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

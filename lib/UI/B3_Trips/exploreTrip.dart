@@ -302,13 +302,13 @@ class _exploreTripState extends State<exploreTrip> {
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w700),
                           ),
-                          Text(
-                            "See all",
-                            style: TextStyle(
-                                fontFamily: "Sofia",
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w300),
-                          ),
+                          // Text(
+                          //   "See all",
+                          //   style: TextStyle(
+                          //       fontFamily: "Sofia",
+                          //       fontSize: 16.0,
+                          //       fontWeight: FontWeight.w300),
+                          // ),
                         ]),
                   ),
                   Padding(
@@ -747,13 +747,18 @@ class card extends StatelessWidget {
                 SizedBox(
                   height: 5.0,
                 ),
-                Text(
-                  title,
-                  style: TextStyle(
-                      fontFamily: "Sofia",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 17.0,
-                      color: Colors.black87),
+                Container(
+                  width: 160.0,
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontFamily: "Sofia",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15.0,
+                        color: Colors.black87),
+                  ),
                 ),
                 SizedBox(
                   height: 2.0,
@@ -771,8 +776,8 @@ class card extends StatelessWidget {
                       location,
                       style: TextStyle(
                           fontFamily: "Sofia",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15.0,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12.0,
                           color: Colors.black26),
                     ),
                   ],

@@ -1,20 +1,21 @@
+import 'dart:async';
+
 import 'package:book_it/Library/SupportingLibrary/Ratting/Rating.dart';
 import 'package:book_it/UI/B1_Home/Destination/populardestination.dart';
 import 'package:book_it/UI/B1_Home/Recommendation/RecommendationDetailScreen.dart';
 import 'package:book_it/UI/B1_Home/Vocation/vacationsPage.dart';
 import 'package:book_it/UI/B3_Trips/exploreTrip.dart';
-import 'package:book_it/UI/B4_Booking/Booking.dart';
 import 'package:book_it/UI/IntroApps/CategorySelection.dart';
 import 'package:book_it/UI/Search/search.dart';
+import 'package:book_it/UI/Utills/AppColors.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
-import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:book_it/network_helper/local_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetailPage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 import 'bloc/HomeBloc.dart';
 import 'editProfile.dart';
@@ -46,6 +47,8 @@ class _HomeState extends State<Home> {
   List<Destinations> _destinations = [];
   List<Categories> _categories = [];
   List<HotelData> _rooms = [];
+  final GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey =
+      GlobalKey<LiquidPullToRefreshState>();
 
   @override
   void initState() {
@@ -56,6 +59,15 @@ class _HomeState extends State<Home> {
     getHomeDataFrommServer();
 
     super.initState();
+  }
+
+  Future<void> _handleRefresh() {
+    final Completer<void> completer = Completer<void>();
+    Timer(const Duration(seconds: 2), () {
+      completer.complete();
+    });
+    setState(() {});
+    return completer.future.then<void>((_) {});
   }
 
   void getHomeDataFrommServer() {
@@ -232,61 +244,67 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       appBar: _appBar,
-      body: Container(
-        decoration: BoxDecoration(color: Colors.white),
-        child: Stack(
-          children: <Widget>[
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: StreamBuilder<HomeResponse>(
-                    initialData: null,
-                    stream: _homeBloc.homeDataStream,
-                    builder: (context, snapshot) {
-                      // ignore: missing_return
-                      if (snapshot.hasData &&
-                          snapshot.data != null &&
-                          snapshot.data.data != null) {
-                        _featured = [];
-                        _recommended = [];
-                        _destinations = [];
-                        _categories = [];
-                        _rooms = [];
-                        _featured = snapshot.data.data.featured;
-                        print("_featured${_featured.length}");
-                        _recommended = snapshot.data.data.recommended;
-                        print("_recommended${_recommended.length}");
-                        _destinations = snapshot.data.data.destinations;
-                        _categories = snapshot.data.data.categories;
-                        _rooms = snapshot.data.data.rooms;
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            _searchBox,
-                            _featuredHotel(),
-                            Recomendedbookitngo(),
-                            _destinationPopuler(),
-                            _vacations(),
-                            _recommendedRooms()
-                          ],
-                        );
-                      } else if (!snapshot.hasData)
-                        return shimmerView(context);
-                      else
-                        return shimmerView(context);
-                    }),
+      body: LiquidPullToRefresh(
+        color: AppColor.primaryColor.withOpacity(0.9),
+        onRefresh: _handleRefresh,
+        backgroundColor: Colors.white,
+        showChildOpacityTransition: false,
+        child: Container(
+          decoration: BoxDecoration(color: Colors.white),
+          child: Stack(
+            children: <Widget>[
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: StreamBuilder<HomeResponse>(
+                      initialData: null,
+                      stream: _homeBloc.homeDataStream,
+                      builder: (context, snapshot) {
+                        // ignore: missing_return
+                        if (snapshot.hasData &&
+                            snapshot.data != null &&
+                            snapshot.data.data != null) {
+                          _featured = [];
+                          _recommended = [];
+                          _destinations = [];
+                          _categories = [];
+                          _rooms = [];
+                          _featured = snapshot.data.data.featured;
+                          print("_featured${_featured.length}");
+                          _recommended = snapshot.data.data.recommended;
+                          print("_recommended${_recommended.length}");
+                          _destinations = snapshot.data.data.destinations;
+                          _categories = snapshot.data.data.categories;
+                          _rooms = snapshot.data.data.rooms;
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              _searchBox,
+                              _featuredHotel(),
+                              Recomendedbookitngo(),
+                              _destinationPopuler(),
+                              _vacations(),
+                              _recommendedRooms()
+                            ],
+                          );
+                        } else if (!snapshot.hasData)
+                          return shimmerView(context);
+                        else
+                          return shimmerView(context);
+                      }),
+                ),
               ),
-            ),
-            // StreamBuilder<bool>(
-            //   stream: _homeBloc.progressStream,
-            //   builder: (context, snapshot) {
-            //     return Center(
-            //         child: CommmonProgressIndicator(
-            //             snapshot.hasData ? snapshot.data : false));
-            //   },
-            // )
-          ],
+              // StreamBuilder<bool>(
+              //   stream: _homeBloc.progressStream,
+              //   builder: (context, snapshot) {
+              //     return Center(
+              //         child: CommmonProgressIndicator(
+              //             snapshot.hasData ? snapshot.data : false));
+              //   },
+              // )
+            ],
+          ),
         ),
       ),
     );
@@ -298,86 +316,132 @@ class _HomeState extends State<Home> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 20.0, top: 10.0),
-          child: Text(
-            "Featured",
-            style: _txtStyle,
+          padding: const EdgeInsets.only(
+            left: 20.0,
+            top: 10.0,
+            right: 0.0,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Featured",
+                style: _txtStyle,
+              ),
+              FlatButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  Navigator.of(context).push(PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => new VacationPage(
+                        title: 'Featured',
+                        categoryId: "features",
+                      ),
+                      transitionDuration: Duration(milliseconds: 600),
+                      transitionsBuilder: (_,
+                          Animation<double> animation,
+                          __,
+                          Widget child) {
+                        return Opacity(
+                          opacity: animation.value,
+                          child: child,
+                        );
+                      }));
+                },
+                child: Text(
+                  "See More",
+                  style:
+                      _txtStyle.copyWith(color: Colors.black26, fontSize: 13.5),
+                ),
+              )
+            ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 10.0,
-          ),
-          child: Container(
-              height: 210.0,
-              child: _featured != null && _featured.length > 0
-                  ? new FeaturedCard(
-                      dataUser: widget.userID,
-                      featured: _featured,
-                    )
-                  : Container(
-                      height: 190.0,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                    )),
-        )
+        Container(
+            height: 210.0,
+            child: _featured != null && _featured.length > 0
+                ? new FeaturedCard(
+                    dataUser: widget.userID,
+                    featured: _featured,
+                  )
+                : Container(
+                    height: 190.0,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: NetworkImage(
+                                "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                  ))
       ],
     );
   }
 
   Widget Recomendedbookitngo() {
     return Container(
-      padding: EdgeInsets.only(top: 40.0),
-      height: 350.0,
+      padding: EdgeInsets.only(top: 10.0),
+      height: 320.0,
       width: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(bottom: 10.0, left: 20.0),
-            child: Text(
-              "Recommended",
-              style: _txtStyle,
+            padding: const EdgeInsets.only(bottom: 0.0, left: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Recommended",
+                  style: _txtStyle,
+                ),
+                FlatButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new VacationPage(
+                          title: 'Recommended',
+                          categoryId: "recomended",
+                        ),
+                        transitionDuration: Duration(milliseconds: 600),
+                        transitionsBuilder: (_,
+                            Animation<double> animation,
+                            __,
+                            Widget child) {
+                          return Opacity(
+                            opacity: animation.value,
+                            child: child,
+                          );
+                        }));
+                  },
+                  child: Text(
+                    "See More",
+                    style: _txtStyle.copyWith(
+                        color: Colors.black26, fontSize: 13.5),
+                  ),
+                )
+              ],
             ),
           ),
-          Padding(
-              padding: const EdgeInsets.only(
-                top: 10.0,
-              ),
-              child: _recommended != null && _recommended.length > 0
-                  ? Container(
-                      height: 250.0,
-                      child: new CardRecommended(
-                        dataUser: widget.userID,
-                        list: _recommended,
-                      ),
-                    )
-                  : Container(
-                      height: 190.0,
-                      child: Center(
-                        child: Text(
-                          "No Recommendation found for you ",
-                          style: TextStyle(
-                              fontFamily: "Sofia",
-                              fontSize: 20.0,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    )
-              /* : Container(
-                    height: 260.0,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                  ),*/
-              ),
+          _recommended != null && _recommended.length > 0
+              ? Container(
+                  height: 250.0,
+                  child: new CardRecommended(
+                    dataUser: widget.userID,
+                    list: _recommended,
+                  ),
+                )
+              : Container(
+                  height: 190.0,
+                  child: Center(
+                    child: Text(
+                      "No Recommendation found for you ",
+                      style: TextStyle(
+                          fontFamily: "Sofia",
+                          fontSize: 20.0,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ),
         ],
       ),
     );
@@ -385,7 +449,7 @@ class _HomeState extends State<Home> {
 
   Widget _destinationPopuler() {
     return Container(
-      padding: EdgeInsets.only(top: 30.0),
+      padding: EdgeInsets.only(top: 0.0),
       height: 280.0,
       width: double.infinity,
       child: Column(
@@ -394,7 +458,7 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           Padding(
               padding:
-                  const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
+                  const EdgeInsets.only(left: 20.0, right: 10.0, bottom: 20.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,7 +540,7 @@ class _HomeState extends State<Home> {
 
   Widget _vacations() {
     return Container(
-      padding: EdgeInsets.only(top: 30.0),
+      padding: EdgeInsets.only(top: 20.0, bottom: 20),
       height: 280.0,
       width: double.infinity,
       child: Column(
@@ -485,7 +549,7 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           Padding(
               padding:
-                  const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
+                  const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -555,224 +619,251 @@ class _HomeState extends State<Home> {
   }
 
   Widget _recommendedRooms() {
-    return SingleChildScrollView(
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 20.0, top: 40.0, right: 20.0),
-              child: Text("Recommended Rooms", style: _txtStyle),
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 20.0,
             ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Recommended Rooms", style: _txtStyle),
+                FlatButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new VacationPage(
+                          title: 'Recommended Rooms',
+                          categoryId: "rooms",
+                        ),
+                        transitionDuration: Duration(milliseconds: 600),
+                        transitionsBuilder: (_,
+                            Animation<double> animation,
+                            __,
+                            Widget child) {
+                          return Opacity(
+                            opacity: animation.value,
+                            child: child,
+                          );
+                        }));
+                  },
+                  child: Text(
+                    "See More",
+                    style: _txtStyle.copyWith(
+                        color: Colors.black26, fontSize: 13.5),
+                  ),
+                )
+              ],
+            ),
+          ),
 
-            /// To set GridView item
-            ///
-            _rooms != null && _rooms.length > 0
-                ? GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        childAspectRatio: 0.795, crossAxisCount: 2),
-                    itemCount: _rooms.length,
-                    shrinkWrap: true,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                    primary: false,
-                    itemBuilder: (BuildContext context, int i) {
-                      List<String> photo = List.from(_rooms[i].images);
-                      List<String> service = List.from(_rooms[i].amenities);
-                      String description = _rooms[i].description;
-                      String title = _rooms[i].name.toString();
-                      String type = _rooms[i].name.toString();
-                      num rating = num.parse(_rooms[i].rating.toString());
-                      String location = _rooms[i].address.toString();
-                      String image = _rooms[i].images.first.toString();
-                      String id = _rooms[i].sId.toString();
-                      num price = _rooms[i].price;
-                      num latLang1 = num.parse(_rooms[i].latitude.toString());
-                      num latLang2 = num.parse(_rooms[i].longitude.toString());
+          /// To set GridView item
+          ///
+          _rooms != null && _rooms.length > 0
+              ? GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      childAspectRatio: 0.795, crossAxisCount: 2),
+                  itemCount: _rooms.length,
+                  shrinkWrap: true,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                  primary: false,
+                  itemBuilder: (BuildContext context, int i) {
+                    List<String> photo = List.from(_rooms[i].images);
+                    List<String> service = List.from(_rooms[i].amenities);
+                    String description = _rooms[i].description;
+                    String title = _rooms[i].name.toString();
+                    String type = _rooms[i].name.toString();
+                    num rating = num.parse(_rooms[i].rating.toString());
+                    String location = _rooms[i].address.toString();
+                    String image = _rooms[i].images.first.toString();
+                    String id = _rooms[i].sId.toString();
+                    num price = _rooms[i].price;
+                    num latLang1 = num.parse(_rooms[i].latitude.toString());
+                    num latLang2 = num.parse(_rooms[i].longitude.toString());
 
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(PageRouteBuilder(
-                                pageBuilder: (_, __, ___) => new HotelDetailPage(
-                                      userId: widget.userID,
-                                      titleD: title,
-                                      idD: id,
-                                      imageD: image,
-                                      latLang1D: latLang1,
-                                      latLang2D: latLang2,
-                                      locationD: location,
-                                      priceD: price,
-                                      descriptionD: description,
-                                      photoD: photo,
-                                      ratingD: rating,
-                                      serviceD: service,
-                                      typeD: type,
-                                    ),
-                                transitionDuration: Duration(milliseconds: 600),
-                                transitionsBuilder: (_,
-                                    Animation<double> animation,
-                                    __,
-                                    Widget child) {
-                                  return Opacity(
-                                    opacity: animation.value,
-                                    child: child,
-                                  );
-                                }));
-                          },
-                          child: Container(
-                            height: 1000.0,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0xFF656565).withOpacity(0.15),
-                                    blurRadius: 4.0,
-                                    spreadRadius: 1.0,
-                                    //           offset: Offset(4.0, 10.0)
-                                  )
-                                ]),
-                            child: Wrap(
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Hero(
-                                      tag: 'hero-tag_room-${id}',
-                                      child: Material(
-                                        child: Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              5.8,
-                                          width: 200.0,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(7.0),
-                                                  topRight:
-                                                      Radius.circular(7.0)),
-                                              image: DecorationImage(
-                                                  image: NetworkImage(
-                                                      AppStrings.imagePAth +
-                                                          image),
-                                                  fit: BoxFit.cover)),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(padding: EdgeInsets.only(top: 5.0)),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10.0, right: 10.0),
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(PageRouteBuilder(
+                              pageBuilder: (_, __, ___) => new HotelDetailPage(
+                                    userId: widget.userID,
+                                    titleD: title,
+                                    idD: "RecommededRooms${id}",
+                                    imageD: image,
+                                    latLang1D: latLang1,
+                                    latLang2D: latLang2,
+                                    locationD: location,
+                                    priceD: price,
+                                    descriptionD: description,
+                                    photoD: photo,
+                                    ratingD: rating,
+                                    serviceD: service,
+                                    typeD: type,
+                                  ),
+                              transitionDuration: Duration(milliseconds: 600),
+                              transitionsBuilder: (_,
+                                  Animation<double> animation,
+                                  __,
+                                  Widget child) {
+                                return Opacity(
+                                  opacity: animation.value,
+                                  child: child,
+                                );
+                              }));
+                        },
+                        child: Container(
+                          height: 1000.0,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0xFF656565).withOpacity(0.15),
+                                  blurRadius: 4.0,
+                                  spreadRadius: 1.0,
+                                  //           offset: Offset(4.0, 10.0)
+                                )
+                              ]),
+                          child: Wrap(
+                            children: <Widget>[
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Hero(
+                                    tag: 'hero-tag_room-${id}',
+                                    child: Material(
                                       child: Container(
-                                        width: 130.0,
-                                        child: Text(
-                                          title,
-                                          style: TextStyle(
-                                              letterSpacing: 0.5,
-                                              color: Colors.black54,
-                                              fontFamily: "Sans",
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 13.0),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                5.8,
+                                        width: 200.0,
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(7.0),
+                                                topRight: Radius.circular(7.0)),
+                                            image: DecorationImage(
+                                                image: NetworkImage(
+                                                    AppStrings.imagePAth +
+                                                        image),
+                                                fit: BoxFit.cover)),
                                       ),
                                     ),
-                                    Padding(padding: EdgeInsets.only(top: 2.0)),
-                                    Row(
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 5.0)),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, right: 10.0),
+                                    child: Container(
+                                      width: 130.0,
+                                      child: Text(
+                                        title,
+                                        style: TextStyle(
+                                            letterSpacing: 0.5,
+                                            color: Colors.black54,
+                                            fontFamily: "Sans",
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13.0),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 2.0)),
+                                  Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: 10.0,
+                                      ),
+                                      Text(
+                                        "Starting at ",
+                                        style: TextStyle(
+                                            color: Colors.black54,
+                                            fontFamily: "Gotik",
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 12.0),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 0.0, right: 0.0),
+                                        child: Text(
+                                          "\$${price.toString()}",
+                                          style: TextStyle(
+                                              color: Colors.black54,
+                                              fontFamily: "Gotik",
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 14.0),
+                                        ),
+                                      ),
+                                      Text(
+                                        "\t/night",
+                                        style: TextStyle(
+                                            color: Colors.black54,
+                                            fontFamily: "Gotik",
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 10.0),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, right: 15.0, top: 5.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
-                                        SizedBox(
-                                          width: 10.0,
-                                        ),
-                                        Text(
-                                          "Starting at ",
-                                          style: TextStyle(
-                                              color: Colors.black54,
-                                              fontFamily: "Gotik",
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 12.0),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 0.0, right: 0.0),
-                                          child: Text(
-                                            "\$${price.toString()}",
-                                            style: TextStyle(
-                                                color: Colors.black54,
-                                                fontFamily: "Gotik",
-                                                fontWeight: FontWeight.w800,
-                                                fontSize: 14.0),
-                                          ),
-                                        ),
-                                        Text(
-                                          "\t/night",
-                                          style: TextStyle(
-                                              color: Colors.black54,
-                                              fontFamily: "Gotik",
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 10.0),
+                                        Row(
+                                          children: <Widget>[
+                                            ratingbar(
+                                              starRating: double.parse(
+                                                  rating.toString()),
+                                            ),
+                                            // Padding(
+                                            //   padding: const EdgeInsets.only(
+                                            //       left: 12.0),
+                                            //   child: Text(
+                                            //     rating.toString(),
+                                            //     style: TextStyle(
+                                            //         fontFamily: "Sans",
+                                            //         color: Colors.black26,
+                                            //         fontWeight:
+                                            //             FontWeight.w500,
+                                            //         fontSize: 12.0),
+                                            //   ),
+                                            // )
+                                          ],
                                         ),
                                       ],
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10.0, right: 15.0, top: 5.0),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Row(
-                                            children: <Widget>[
-                                              ratingbar(
-                                                starRating: double.parse(
-                                                    rating.toString()),
-                                              ),
-                                              // Padding(
-                                              //   padding: const EdgeInsets.only(
-                                              //       left: 12.0),
-                                              //   child: Text(
-                                              //     rating.toString(),
-                                              //     style: TextStyle(
-                                              //         fontFamily: "Sans",
-                                              //         color: Colors.black26,
-                                              //         fontWeight:
-                                              //             FontWeight.w500,
-                                              //         fontSize: 12.0),
-                                              //   ),
-                                              // )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    })
-                : Container(
-                    height: 190.0,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
-                  )
-          ],
-        ),
+                      ),
+                    );
+                  })
+              : Container(
+                  height: 190.0,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: NetworkImage(
+                              "https://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"))),
+                )
+        ],
       ),
     );
   }
@@ -902,7 +993,7 @@ class _HomeState extends State<Home> {
                                       width: 50.0,
                                       color: Colors.black12,
                                     ),
-                                  )
+                                  ),
                                 ],
                               ))
                         ]),
@@ -1100,157 +1191,185 @@ class FeaturedCard extends StatelessWidget {
           var latLang1 = featured[i].latitude;
           var latLang2 = featured[i].longitude;
 
-          return Padding(
-            padding: const EdgeInsets.only(left: 18.0, top: 10.0, bottom: 8.0),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).push(PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => new HotelDetailPage(
-                          userId: dataUser,
-                          titleD: title,
-                          idD: id,
-                          imageD: image,
-                          latLang1D: num.parse(latLang1),
-                          latLang2D: num.parse(latLang2),
-                          locationD: location,
-                          priceD: price,
-                          descriptionD: description,
-                          photoD: photo,
-                          ratingD: rating.toDouble(),
-                          serviceD: service,
-                          typeD: type,
-                        ),
-                    transitionDuration: Duration(milliseconds: 600),
-                    transitionsBuilder:
-                        (_, Animation<double> animation, __, Widget child) {
-                      return Opacity(
-                        opacity: animation.value,
-                        child: child,
-                      );
-                    }));
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0xFF656565).withOpacity(0.15),
-                        blurRadius: 4.0,
-                        spreadRadius: 1.0,
-                      )
-                    ]),
-                child: Wrap(
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Hero(
-                          tag: 'hero-tag-${id}',
-                          child: Material(
-                            child: Container(
-                              height: 120.0,
-                              width: MediaQuery.of(context).size.width*0.38,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(7.0),
-                                      topRight: Radius.circular(7.0)),
-                                  image: DecorationImage(
-                                      image: NetworkImage(
-                                          AppStrings.imagePAth + image),
-                                      fit: BoxFit.cover)),
-                            ),
-                          ),
-                        ),
-                        Padding(padding: EdgeInsets.only(top: 5.0)),
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(left: 10.0, right: 10.0),
-                          child: Container(
-                            width: 110.0,
-                            child: Text(
-                              title,
-                              style: TextStyle(
-                                  letterSpacing: 0.5,
-                                  color: Colors.black54,
-                                  fontFamily: "Sans",
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13.0),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                        Padding(padding: EdgeInsets.only(top: 2.0)),
-                        Row(
-                          children: <Widget>[
-                            SizedBox(width: 10.0,),
-                            Text(
-                              "Starting at ",
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontFamily: "Gotik",
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12.0),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 0.0, right: 0.0),
-                              child: Text(
-                                "\$${price.toString()}",
-                                style: TextStyle(
-                                    color: Colors.black54,
-                                    fontFamily: "Gotik",
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 14.0),
+          return i >= 6
+              ? Container(
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  alignment: Alignment.center,
+                  child: FlatButton(
+                    onPressed: () {
+                      // Navigator.of(context).push(PageRouteBuilder(
+                      //     pageBuilder: (_, __, ___) => exploreTrip(
+                      //       userId: widget.userID,
+                      //     )));
+                    },
+                    child: Text(
+                      "See More",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Gotik'),
+                    ),
+                  ),
+                )
+              : Padding(
+                  padding:
+                      const EdgeInsets.only(left: 18.0, top: 10.0, bottom: 8.0),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => new HotelDetailPage(
+                                userId: dataUser,
+                                titleD: title,
+                                idD: id,
+                                imageD: image,
+                                latLang1D: num.parse(latLang1),
+                                latLang2D: num.parse(latLang2),
+                                locationD: location,
+                                priceD: price,
+                                descriptionD: description,
+                                photoD: photo,
+                                ratingD: rating.toDouble(),
+                                serviceD: service,
+                                typeD: type,
                               ),
-                            ),
-                            Text(
-                              "\t/night",
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontFamily: "Gotik",
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 10.0),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10.0, right: 15.0, top: 3.0),
-                          child: Row(
+                          transitionDuration: Duration(milliseconds: 600),
+                          transitionsBuilder: (_, Animation<double> animation,
+                              __, Widget child) {
+                            return Opacity(
+                              opacity: animation.value,
+                              child: child,
+                            );
+                          }));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0xFF656565).withOpacity(0.15),
+                              blurRadius: 4.0,
+                              spreadRadius: 1.0,
+                            )
+                          ]),
+                      child: Wrap(
+                        children: <Widget>[
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
+                              Hero(
+                                tag: 'hero-tag-${id}',
+                                child: Material(
+                                  child: Container(
+                                    height: 120.0,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.38,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(7.0),
+                                            topRight: Radius.circular(7.0)),
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                                AppStrings.imagePAth + image),
+                                            fit: BoxFit.cover)),
+                                  ),
+                                ),
+                              ),
+                              Padding(padding: EdgeInsets.only(top: 5.0)),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0),
+                                child: Container(
+                                  width: 110.0,
+                                  child: Text(
+                                    title,
+                                    style: TextStyle(
+                                        letterSpacing: 0.5,
+                                        color: Colors.black54,
+                                        fontFamily: "Sans",
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13.0),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              Padding(padding: EdgeInsets.only(top: 2.0)),
                               Row(
                                 children: <Widget>[
-                                  ratingbar(
-                                    starRating: double.parse(rating.toString()),
+                                  SizedBox(
+                                    width: 10.0,
                                   ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.only(left: 12.0),
-                                  //   child: Text(
-                                  //     rating.toString(),
-                                  //     style: TextStyle(
-                                  //         fontFamily: "Sans",
-                                  //         color: Colors.black26,
-                                  //         fontWeight: FontWeight.w500,
-                                  //         fontSize: 12.0),
-                                  //   ),
-                                  // )
+                                  Text(
+                                    "Starting at ",
+                                    style: TextStyle(
+                                        color: Colors.black54,
+                                        fontFamily: "Gotik",
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12.0),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 0.0, right: 0.0),
+                                    child: Text(
+                                      "\$${price.toString()}",
+                                      style: TextStyle(
+                                          color: Colors.black54,
+                                          fontFamily: "Gotik",
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14.0),
+                                    ),
+                                  ),
+                                  Text(
+                                    "\t/night",
+                                    style: TextStyle(
+                                        color: Colors.black54,
+                                        fontFamily: "Gotik",
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 10.0),
+                                  ),
                                 ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 15.0, top: 3.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        ratingbar(
+                                          starRating:
+                                              double.parse(rating.toString()),
+                                        ),
+                                        // Padding(
+                                        //   padding: const EdgeInsets.only(left: 12.0),
+                                        //   child: Text(
+                                        //     rating.toString(),
+                                        //     style: TextStyle(
+                                        //         fontFamily: "Sans",
+                                        //         color: Colors.black26,
+                                        //         fontWeight: FontWeight.w500,
+                                        //         fontSize: 12.0),
+                                        //   ),
+                                        // )
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          );
+                  ),
+                );
         });
   }
 }
@@ -1274,11 +1393,24 @@ class CardRecommended extends StatelessWidget {
         primary: false,
         itemCount: list.length,
         itemBuilder: (context, i) {
-          String title = list[i].name.toString();
+          /* String title = list[i].name.toString();
           String image = list[i].images.first;
           String textImage = list[i].images.first.toString();
           String desc = list[i].description.toString();
-          String key = list[i].sId.toString();
+          String key = list[i].sId.toString();*/
+
+          List<String> photo = list[i].images;
+          List<String> service = list[i].amenities;
+          String description = list[i].description;
+          String title = list[i].name.toString();
+          String type = list[i].name.toString();
+          num rating = list[i].rating;
+          String location = list[i].address;
+          String image = list[i].images[0];
+          String id = list[i].sId.toString();
+          num price = list[i].price;
+          var latLang1 = list[i].latitude;
+          var latLang2 = list[i].longitude;
           return Padding(
             padding: const EdgeInsets.only(
                 left: 15.0, right: 12.0, top: 8.0, bottom: 10.0),
@@ -1288,12 +1420,37 @@ class CardRecommended extends StatelessWidget {
               children: <Widget>[
                 InkWell(
                   onTap: () {
+                    // Navigator.of(context).push(PageRouteBuilder(
+                    //     pageBuilder: (_, __, ___) => new RecommendedDetail(
+                    //           keyID: key,
+                    //           title: title,
+                    //           categoryId: dataUser,
+                    //         )));
+
                     Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (_, __, ___) => new RecommendedDetail(
-                              keyID: key,
-                              title: title,
-                              categoryId: dataUser,
-                            )));
+                        pageBuilder: (_, __, ___) => new HotelDetailPage(
+                              userId: dataUser,
+                              titleD: title,
+                              idD: id,
+                              imageD: image,
+                              latLang1D: num.parse(latLang1),
+                              latLang2D: num.parse(latLang2),
+                              locationD: location,
+                              priceD: price,
+                              descriptionD: description,
+                              photoD: photo,
+                              ratingD: rating.toDouble(),
+                              serviceD: service,
+                              typeD: type,
+                            ),
+                        transitionDuration: Duration(milliseconds: 600),
+                        transitionsBuilder:
+                            (_, Animation<double> animation, __, Widget child) {
+                          return Opacity(
+                            opacity: animation.value,
+                            child: child,
+                          );
+                        }));
                   },
                   child: Container(
                     width: 285.0,
@@ -1346,7 +1503,7 @@ class CardRecommended extends StatelessWidget {
                   child: Container(
                       width: 270.0,
                       child: Text(
-                        desc,
+                        description,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
                         style: TextStyle(
@@ -1375,7 +1532,7 @@ class CardDestinationPopuler extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         height: 400.0,
-        width: 140.0,
+        width: MediaQuery.of(context).size.width * 0.39,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
             image: DecorationImage(

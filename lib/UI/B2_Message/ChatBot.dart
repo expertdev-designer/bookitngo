@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dialogflow/dialogflow_v2.dart';
+// import 'package:flutter_dialogflow/dialogflow_v2.dart';
+import 'package:flutter_dialogflow/utils/language.dart';
+import 'package:flutter_dialogflow/v2/auth_google.dart';
+import 'package:flutter_dialogflow/v2/dialogflow_v2.dart';
+import 'package:flutter_dialogflow/v2/message.dart';
 
 class chatBot extends StatefulWidget {
   chatBot({Key key}) : super(key: key);
@@ -53,6 +57,9 @@ class _chatBotState extends State<chatBot> {
       type: false,
     );
     setState(() {
+      print("chat Bot Result ${response.queryResult.intent.name}");
+      print("chat Bot Result ${response.queryResult.parameters.entries}");
+      print("chat Bot Result ${response.queryResult}");
       _messages.insert(0, message);
     });
   }

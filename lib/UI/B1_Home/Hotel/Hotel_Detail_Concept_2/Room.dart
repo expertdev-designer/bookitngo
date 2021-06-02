@@ -7,8 +7,7 @@ import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'RoomDetail.dart';
+import 'package:intl/intl.dart';
 import 'SelectCheckInOutDate.dart';
 import 'bloc/GetRoomsAndBookNowBloc.dart';
 import 'model/BookingRoomList.dart';
@@ -332,7 +331,7 @@ class _RoomState extends State<Room> {
                     keyboardType: TextInputType.phone,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please input your phione number';
+                        return 'Please input your phone number';
                       }
                       return null;
                     },
@@ -503,36 +502,36 @@ class _RoomState extends State<Room> {
                                                             MainAxisAlignment
                                                                 .end,
                                                         children: [
-                                                          Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons.star,
-                                                                color: Colors
-                                                                    .yellow,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 4.0,
-                                                              ),
-                                                              Text(
-                                                                "${widget.ratingD}",
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontFamily:
-                                                                      "Gotik",
-                                                                  fontSize:
-                                                                      14.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            ],
-                                                          )
+                                                          // Row(
+                                                          //   children: [
+                                                          //     Icon(
+                                                          //       Icons.star,
+                                                          //       color: Colors
+                                                          //           .yellow,
+                                                          //     ),
+                                                          //     SizedBox(
+                                                          //       width: 4.0,
+                                                          //     ),
+                                                          //     Text(
+                                                          //       "${widget.ratingD}",
+                                                          //       style:
+                                                          //           TextStyle(
+                                                          //         color: Colors
+                                                          //             .white,
+                                                          //         fontFamily:
+                                                          //             "Gotik",
+                                                          //         fontSize:
+                                                          //             14.0,
+                                                          //         fontWeight:
+                                                          //             FontWeight
+                                                          //                 .w600,
+                                                          //       ),
+                                                          //       overflow:
+                                                          //           TextOverflow
+                                                          //               .ellipsis,
+                                                          //     ),
+                                                          //   ],
+                                                          // )
                                                         ],
                                                       ),
                                                     ),

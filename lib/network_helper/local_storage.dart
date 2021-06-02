@@ -7,6 +7,7 @@ class LocalStorage {
   static final String _userRole = "userRole";
   static final String _npUserID = "npUserID";
   static final String _userImage = "userImage";
+  static final String getTag = "SearchTag";
 
   static Future<String> getUserName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -80,6 +81,28 @@ class LocalStorage {
     return prefs.setString(_userRole, userEmail);
   }
 
+  // static Future<List<String>> getSearchTag() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //   return prefs.getStringList(getTag) ?? '';
+  // }
+  //
+  // static Future<bool> setSearchTag(List<String> tag) async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //   return prefs.setStringList(getTag, tag);
+  // }
+
+  static setListData(String key, List<String> value) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    myPrefs.setStringList(key, value);
+  }
+
+  static  Future<List<String>> getListData(String key) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getStringList(key);
+  }
+
   static Future<bool> clearAllPreferncesData() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.remove(_userName);
@@ -87,6 +110,7 @@ class LocalStorage {
     preferences.remove(_userEmail);
     preferences.remove(_userRole);
     preferences.remove(_userImage);
+    preferences.remove(getTag);
     preferences.clear();
     preferences.commit();
   }
