@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -81,7 +82,7 @@ class _ColorLoader5State extends State<ColorLoader5>
             child: new Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: Dot(
-                radius: 30.0,
+                radius: kIsWeb?40.0:30.0,
                 color: widget.dotOneColor,
                 type: widget.dotType,
                 icon: widget.dotIcon,
@@ -93,7 +94,7 @@ class _ColorLoader5State extends State<ColorLoader5>
             child: new Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: Dot(
-                radius: 30.0,
+                radius: kIsWeb?40.0:30.0,
                 color: widget.dotTwoColor,
                 type: widget.dotType,
                 icon: widget.dotIcon,
@@ -105,7 +106,7 @@ class _ColorLoader5State extends State<ColorLoader5>
             child: new Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: Dot(
-                radius: 30.0,
+                radius: kIsWeb?40.0:30.0,
                 color: widget.dotThreeColor,
                 type: widget.dotType,
                 icon: widget.dotIcon,

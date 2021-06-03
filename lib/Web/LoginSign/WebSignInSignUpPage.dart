@@ -1,5 +1,8 @@
+import 'package:book_it/UI/IntroApps/login_bloc/LoginBloc.dart';
 import 'package:book_it/UI/Utills/AppColors.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/WebAppStrings.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:book_it/Web/WebHome/WebDashboardPage.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
@@ -51,20 +54,60 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
       new GlobalKey<FormState>();
   final TextEditingController _forgotEmailController = TextEditingController();
 
+  LoginBloc _loginBloc;
+  AppConstantHelper _appConstantHelper;
+
+  @override
+  void initState() {
+    _loginBloc = LoginBloc();
+    _appConstantHelper = AppConstantHelper();
+    _appConstantHelper.setContext(context);
+    super.initState();
+  }
+
+  void callLoginApi(String email, String password) {
+    _loginBloc.doLogin(
+        username: email, password: password.trim(), context: context);
+  }
+
+  void callSignUpApi({String email, String password, String fullName}) {
+    _loginBloc.register(
+        username: fullName,
+        email: email,
+        password: password.trim(),
+        context: context);
+  }
+
+  void callForgotPasswordApi(String email, String password) {
+    _loginBloc.forgotPassword(email: email, context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _headerWidget(height, width),
-            _mainContainerWidget(height, width),
-            _footerWidget(height, width),
-          ],
-        ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                _headerWidget(height, width),
+                _mainContainerWidget(height, width),
+                _footerWidget(height, width),
+              ],
+            ),
+          ),
+          StreamBuilder<bool>(
+            stream: _loginBloc.progressStream,
+            builder: (context, snapshot) {
+              return Center(
+                  child: CommmonProgressIndicator(
+                      snapshot.hasData ? snapshot.data : false));
+            },
+          )
+        ],
       ),
     );
   }
@@ -325,6 +368,10 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
                 //sign in click
                 if (_formSignInKey.currentState.validate()) {
                   print("Working");
+                  // call  sign in api here ...........
+
+                  callLoginApi(_signInEmailController.text,
+                      _signInPasswordController.text);
                 }
               },
               child: Container(
@@ -598,27 +645,15 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
                   borderRadius: BorderRadius.circular(6)),
               onPressed: () {
                 if (_formSignUpKey.currentState.validate()) {
-                  Navigator.of(context)
-                      .pushReplacement(
-                      PageRouteBuilder(
-                          pageBuilder:
-                              (_, __, ___) =>
-                              WebDashBoardPage(),
-                          transitionDuration:
-                          Duration(
-                              milliseconds:
-                              2000),
-                          transitionsBuilder: (_,
-                              Animation<double>
-                              animation,
-                              __,
-                              Widget child) {
-                            return Opacity(
-                              opacity:
-                              animation.value,
-                              child: child,
-                            );
-                          }));
+                  // call sign up api here ..........
+                  callSignUpApi(
+                      fullName: _textFullNameController.text,
+                      email: _textEmailController.text,
+                      password: _textPasswordController.text);
+
+                  _textPasswordController.clear();
+                  _textFullNameController.clear();
+                  _textEmailController.clear();
                 }
               },
               child: Container(

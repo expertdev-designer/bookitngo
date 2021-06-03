@@ -2,9 +2,11 @@ import 'dart:async';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/Web/WebHome/WebDashboardPage.dart';
 import 'package:book_it/network_helper/api_repository.dart';
 import 'package:book_it/network_helper/local_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -22,7 +24,11 @@ class LoginBloc {
 
 //  Stream get progressStream => progressController.stream;
 
-  void doLogin({String username, String password, BuildContext context}) {
+  void doLogin({
+    String username,
+    String password,
+    BuildContext context,
+  }) {
     progressSink.add(true);
     apiRepository
         .loginApi(usernameEmail: username, password: password)
@@ -32,10 +38,23 @@ class LoginBloc {
         showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
         setLocalStorage(onResponse.data);
-        Navigator.of(context).pushReplacement(PageRouteBuilder(
-            pageBuilder: (_, __, ___) => new CategorySelectionPage(
-                  userID: onResponse.data.token,
-                )));
+        if (kIsWeb) {
+          Navigator.of(context).pushReplacement(PageRouteBuilder(
+              pageBuilder: (_, __, ___) => WebDashBoardPage(),
+              transitionDuration: Duration(milliseconds: 2000),
+              transitionsBuilder:
+                  (_, Animation<double> animation, __, Widget child) {
+                return Opacity(
+                  opacity: animation.value,
+                  child: child,
+                );
+              }));
+        } else {
+          Navigator.of(context).pushReplacement(PageRouteBuilder(
+              pageBuilder: (_, __, ___) => new CategorySelectionPage(
+                    userID: onResponse.data.token,
+                  )));
+        }
       }
       progressSink.add(false);
     }).catchError((onError) {
