@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -26,13 +27,12 @@ class AppConstantHelper {
     this.cropType = cropType;
   }
 
-
-  static Widget  showDialog({BuildContext context,title,msg})
-  {
+  static Widget showDialog({BuildContext context, title, msg}) {
     return AlertDialog(
+      insetPadding: EdgeInsets.symmetric(
+          horizontal: kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 20),
       title: Text("$title"),
-      content: Text(
-          "$msg"),
+      content: Text("$msg"),
       actions: <Widget>[
         FlatButton(
           child: Text("Close"),
@@ -42,9 +42,7 @@ class AppConstantHelper {
         )
       ],
     );
-
   }
-
 
   static String allWordsCapitilize(String value) {
     var result = value[0].toUpperCase();
@@ -88,6 +86,7 @@ class AppConstantHelper {
     }
     return isConnectd;
   }
+
   Future<bool> requestPermissionForStorageandCamera(bool isCamera) async {
     if (!isCamera) {
       print("Pickerrd1");
@@ -179,6 +178,7 @@ class AppConstantHelper {
     }
     return imageFile;
   }
+
   void showAlert(bool val, String text) {
     print(context);
     var alert = AlertDialog(
@@ -215,7 +215,6 @@ class AppConstantHelper {
             ))
       ],
     );
-
   }
 
   placeHolderImage({String imagePath, double height, double width}) {

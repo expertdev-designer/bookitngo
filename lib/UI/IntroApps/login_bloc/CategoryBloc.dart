@@ -4,9 +4,11 @@ import 'package:book_it/UI/IntroApps/model/CategoriesResponse.dart';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/Web/WebHome/WebDashboardPage.dart';
 import 'package:book_it/network_helper/api_repository.dart';
 import 'package:book_it/network_helper/local_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -74,13 +76,23 @@ class CategoryBloc {
         if (isFrom == "Home") {
           Navigator.pop(context);
         } else {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => bottomNavBar(
-                  userID: AppStrings.authToken,
-                ),
-              ));
+          if (kIsWeb) {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WebDashBoardPage(
+                      // userID: AppStrings.authToken,
+                      ),
+                ));
+          } else {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => bottomNavBar(
+                    userID: AppStrings.authToken,
+                  ),
+                ));
+          }
         }
       }
       progressSink.add(false);

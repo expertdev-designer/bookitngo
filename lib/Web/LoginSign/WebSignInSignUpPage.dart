@@ -16,6 +16,10 @@ class WebSignInSignUpPage extends StatefulWidget {
 class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
   bool isSignUpSelected = true;
   bool isForgotSelected = false;
+  bool isSignInSelected = false;
+
+  // bool isSignInSelected = false;
+
   final List<SliderList> imagesList = [
     SliderList(
         imageUrl: "assets/image/onBoardingImage/B1.png",
@@ -78,7 +82,7 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
         context: context);
   }
 
-  void callForgotPasswordApi(String email, String password) {
+  void callForgotPasswordApi(String email) {
     _loginBloc.forgotPassword(email: email, context: context);
   }
 
@@ -98,6 +102,34 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
                 _footerWidget(height, width),
               ],
             ),
+            // child: StreamBuilder<int>(
+            //     initialData: null,
+            //     stream: _loginBloc.onSuccessStream,
+            //     builder: (context, snapshot) {
+            //       if (snapshot.hasData && snapshot.data == 1) {
+            //         _textPasswordController.clear();
+            //         _textFullNameController.clear();
+            //         _textEmailController.clear();
+            //         isSignUpSelected = false;
+            //         isSignInSelected=true;
+            //         isForgotSelected=false;
+            //
+            //       } else if (snapshot.hasData && snapshot.data == 2) {
+            //         _forgotEmailController.clear();
+            //         isSignUpSelected = false;
+            //         isSignInSelected=true;
+            //         isForgotSelected=false;
+            //
+            //       }
+            //
+            //       return Column(
+            //         children: [
+            //           _headerWidget(height, width),
+            //           _mainContainerWidget(height, width),
+            //           _footerWidget(height, width),
+            //         ],
+            //       );
+            //     }),
           ),
           StreamBuilder<bool>(
             stream: _loginBloc.progressStream,
@@ -115,7 +147,7 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
   _headerWidget(height, width) {
     return Container(
       width: width,
-      height: 100,
+      height: 80,
       color: Colors.white,
       child: Row(
         children: [
@@ -128,35 +160,41 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
                   margin: EdgeInsets.all(
                     10,
                   ),
-                  height: 80,
+                  height: 60,
                   child: Image.asset("assets/image/logo/fullLogo.png"),
                 )
               ],
             ),
           ),
           MaterialButton(
-            padding: EdgeInsets.only(right: 30, left: 30, top: 16, bottom: 16),
+            padding: EdgeInsets.only(right: 24, left: 24, top: 12, bottom: 12),
             shape: RoundedRectangleBorder(
                 side: BorderSide(
                     width: 1.5,
                     color: isSignUpSelected ? Colors.white : Colors.black),
-                borderRadius: BorderRadius.circular(2)),
+                borderRadius: BorderRadius.circular(4)),
             splashColor: Colors.black12,
             onPressed: () {
-              if (isSignUpSelected) {
+              // if (isSignUpSelected) {
+              //
+              //   isSignUpSelected = false;
+              // } else {
+              //   isSignUpSelected = true;
+              // }
+              if (!isSignInSelected) {
+                isSignInSelected = true;
                 isSignUpSelected = false;
-              } else {
-                isSignUpSelected = true;
               }
               setState(() {});
             },
             child: Text(
               WebAppStrings.sign_in,
               style: TextStyle(
-                  fontSize: !isSignUpSelected ? 16.0 : 14,
-                  fontWeight:
-                      !isSignUpSelected ? FontWeight.w600 : FontWeight.w600,
-                  color: !isSignUpSelected
+                  fontSize: isSignInSelected && !isSignUpSelected ? 16.0 : 14,
+                  fontWeight: isSignInSelected && !isSignUpSelected
+                      ? FontWeight.w600
+                      : FontWeight.w600,
+                  color: isSignInSelected && !isSignUpSelected
                       ? Colors.black87
                       : Colors.black87.withOpacity(0.7),
                   letterSpacing: 1.5),
@@ -166,28 +204,31 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
             width: 1,
           ),
           MaterialButton(
-            padding: EdgeInsets.only(right: 30, left: 30, top: 16, bottom: 16),
+            padding: EdgeInsets.only(right: 24, left: 24, top: 12, bottom: 12),
             shape: RoundedRectangleBorder(
                 side: BorderSide(
                     width: 1.5,
                     color: isSignUpSelected ? Colors.black : Colors.white),
-                borderRadius: BorderRadius.circular(2)),
+                borderRadius: BorderRadius.circular(4)),
             splashColor: Colors.black12,
             onPressed: () {
-              if (isSignUpSelected) {
-                isSignUpSelected = false;
-              } else {
+              if (!isSignUpSelected) {
                 isSignUpSelected = true;
+                isSignInSelected = false;
               }
+              /*else {
+                isSignUpSelected = true;
+              }*/
               setState(() {});
             },
             child: Text(
               WebAppStrings.sign_up,
               style: TextStyle(
-                  fontSize: isSignUpSelected ? 16.0 : 14,
-                  fontWeight:
-                      isSignUpSelected ? FontWeight.w600 : FontWeight.w600,
-                  color: isSignUpSelected
+                  fontSize: isSignUpSelected && !isSignInSelected ? 16.0 : 14,
+                  fontWeight: isSignUpSelected && !isSignInSelected
+                      ? FontWeight.w600
+                      : FontWeight.w600,
+                  color: isSignUpSelected && !isSignInSelected
                       ? Colors.black87
                       : Colors.black87.withOpacity(0.7),
                   letterSpacing: 1.5),
@@ -390,8 +431,10 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
           SizedBox(height: 20),
           MaterialButton(
             onPressed: () {
+              print("isForgotSelected");
               isForgotSelected = true;
               isSignUpSelected = false;
+              isSignInSelected = false;
               setState(() {});
             },
             child: Text(
@@ -435,6 +478,7 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
                   onTap: () {
                     isForgotSelected = false;
                     isSignUpSelected = true;
+                    isSignInSelected = false;
                     setState(() {});
                   },
                   child: Text(
@@ -650,10 +694,6 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
                       fullName: _textFullNameController.text,
                       email: _textEmailController.text,
                       password: _textPasswordController.text);
-
-                  _textPasswordController.clear();
-                  _textFullNameController.clear();
-                  _textEmailController.clear();
                 }
               },
               child: Container(
@@ -690,6 +730,7 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
               onTap: () {
                 isForgotSelected = false;
                 isSignUpSelected = false;
+                isSignInSelected = true;
                 setState(() {});
               },
               child: Text(
@@ -786,7 +827,9 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6)),
               onPressed: () {
-                if (_formForgotPasswordKey.currentState.validate()) {}
+                if (_formForgotPasswordKey.currentState.validate()) {
+                  callForgotPasswordApi(_forgotEmailController.text);
+                }
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 14),
@@ -805,7 +848,8 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
           MaterialButton(
             onPressed: () {
               isForgotSelected = false;
-              isSignUpSelected = true;
+              isSignInSelected = true;
+              isSignUpSelected = false;
               setState(() {});
             },
             child: Text(
@@ -860,9 +904,12 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
                         Expanded(
                             // height: MediaQuery.of(context).size.height*0.7,
                             flex: 8,
-                            child: Image.asset(
-                              "${item.imageUrl}",
-                              fit: BoxFit.fitHeight,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 30.0),
+                              child: Image.asset(
+                                "${item.imageUrl}",
+                                // fit: BoxFit.fitHeight,
+                              ),
                             )),
                         Expanded(
                           // height: MediaQuery.of(context).size.height*0.1,
@@ -937,13 +984,20 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
         decoration: BoxDecoration(
             color: AppColor.webPrimaryColor,
             borderRadius: BorderRadius.circular(14)),
-        child: isForgotSelected && !isSignUpSelected
-            ? _forgotPasswordWidget()
-            : !isSignUpSelected && !isForgotSelected
-                ? _signInWidget()
-                : isSignUpSelected && !isForgotSelected
-                    ? _signUpWidget()
+        child: isSignInSelected && !isSignUpSelected && !isForgotSelected
+            ? _signInWidget()
+            : !isSignInSelected && isSignUpSelected && !isForgotSelected
+                ? _signUpWidget()
+                : !isSignInSelected && !isSignUpSelected && isForgotSelected
+                    ? _forgotPasswordWidget()
                     : _signUpWidget(),
+        // child: isForgotSelected && !isSignUpSelected
+        //     ? _forgotPasswordWidget()
+        //     : !isSignUpSelected && !isForgotSelected
+        //         ? _signInWidget()
+        //         : isSignUpSelected && !isForgotSelected
+        //             ? _signUpWidget()
+        //             : _signUpWidget(),
       ),
     );
   }
@@ -955,13 +1009,20 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
       decoration: BoxDecoration(
           color: AppColor.webPrimaryColor,
           borderRadius: BorderRadius.circular(14)),
-      child: isForgotSelected && !isSignUpSelected
-          ? _forgotPasswordWidget()
-          : !isSignUpSelected && !isForgotSelected
-              ? _signInWidget()
-              : isSignUpSelected && !isForgotSelected
-                  ? _signUpWidget()
+      child: isSignInSelected && !isSignUpSelected && !isForgotSelected
+          ? _signInWidget()
+          : !isSignInSelected && isSignUpSelected && !isForgotSelected
+              ? _signUpWidget()
+              : !isSignInSelected && !isSignUpSelected && isForgotSelected
+                  ? _forgotPasswordWidget()
                   : _signUpWidget(),
+      // child: isForgotSelected && !isSignUpSelected
+      //     ? _forgotPasswordWidget()
+      //     : !isSignUpSelected && !isForgotSelected
+      //         ? _signInWidget()
+      //         : isSignUpSelected && !isForgotSelected
+      //             ? _signUpWidget()
+      //             : _signUpWidget(),
     );
   }
 }

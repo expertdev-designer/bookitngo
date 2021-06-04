@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:book_it/Web/WebHome/WebDashboardPage.dart';
 import 'package:book_it/network_helper/local_storage.dart';
 
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +16,7 @@ import 'UI/B1_Home/Hotel/Hotel_Detail_Concept_2/BookItNow.dart';
 import 'UI/Bottom_Nav_Bar/bottomNavBar.dart';
 import 'UI/IntroApps/Login.dart';
 import 'UI/IntroApps/CategorySelection.dart';
+import 'Web/CategorySelection/CategorySelectionPage.dart';
 import 'Web/LoginSign/WebSignInSignUpPage.dart';
 
 void main() {
@@ -47,34 +49,33 @@ class splash extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
 
-    return kIsWeb ?
-    MaterialApp(
-      home: WebSignInSignUpPage(),
-      //home: splashScreen(),
-      debugShowCheckedModeBanner: false,
+    return kIsWeb
+        ? MaterialApp(
+            // home: WebSignInSignUpPage(),
+            home: WebDashBoardPage(),
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+                brightness: Brightness.light,
+                backgroundColor: Colors.white,
+                primaryColorLight: Colors.white,
+                fontFamily: "Poppins",
+                primaryColorBrightness: Brightness.light,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                primaryColor: Colors.white),
+          )
+        : MaterialApp(
+            home: splashScreen(),
+            //home: splashScreen(),
+            debugShowCheckedModeBanner: false,
 
-      theme: ThemeData(
-          brightness: Brightness.light,
-          backgroundColor: Colors.white,
-          primaryColorLight: Colors.white,
-          fontFamily: "Poppins",
-          primaryColorBrightness: Brightness.light,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          primaryColor: Colors.white),
-    ) :
-    MaterialApp(
-      home: splashScreen(),
-      //home: splashScreen(),
-      debugShowCheckedModeBanner: false,
-
-      theme: ThemeData(
-          brightness: Brightness.light,
-          backgroundColor: Colors.white,
-          primaryColorLight: Colors.white,
-          primaryColorBrightness: Brightness.light,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          primaryColor: Colors.white),
-    );
+            theme: ThemeData(
+                brightness: Brightness.light,
+                backgroundColor: Colors.white,
+                primaryColorLight: Colors.white,
+                primaryColorBrightness: Brightness.light,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                primaryColor: Colors.white),
+          );
   }
 }
 
@@ -95,8 +96,7 @@ class _splashScreenState extends State<splashScreen> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    bottomNavBar(
+                builder: (context) => bottomNavBar(
                       userID: value,
                     )));
       }

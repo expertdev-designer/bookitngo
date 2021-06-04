@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
+import 'package:book_it/Web/CategorySelection/CategorySelectionPage.dart';
 import 'package:book_it/Web/WebHome/WebDashboardPage.dart';
 import 'package:book_it/network_helper/api_repository.dart';
 import 'package:book_it/network_helper/local_storage.dart';
@@ -18,6 +19,12 @@ class LoginBloc {
   final BehaviorSubject progressController = BehaviorSubject<bool>();
 
   StreamSink get progressSink => progressController.sink;
+
+  Stream get onSuccessStream => onSuccessController.stream;
+
+  final BehaviorSubject onSuccessController = BehaviorSubject<int>();
+
+  StreamSink get onSuccessSink => onSuccessController.sink;
 
   ApiRepository apiRepository = ApiRepository();
   AppConstantHelper helper = AppConstantHelper();
@@ -39,16 +46,22 @@ class LoginBloc {
       } else if (onResponse.status) {
         setLocalStorage(onResponse.data);
         if (kIsWeb) {
+          // Navigator.of(context).pushReplacement(PageRouteBuilder(
+          //     pageBuilder: (_, __, ___) => WebDashBoardPage(),
+          //     transitionDuration: Duration(milliseconds: 2000),
+          //     transitionsBuilder:
+          //         (_, Animation<double> animation, __, Widget child) {
+          //       return Opacity(
+          //         opacity: animation.value,
+          //         child: child,
+          //       );
+          //     }));
+
           Navigator.of(context).pushReplacement(PageRouteBuilder(
-              pageBuilder: (_, __, ___) => WebDashBoardPage(),
-              transitionDuration: Duration(milliseconds: 2000),
-              transitionsBuilder:
-                  (_, Animation<double> animation, __, Widget child) {
-                return Opacity(
-                  opacity: animation.value,
-                  child: child,
-                );
-              }));
+              pageBuilder: (_, __, ___) => new WebCategorySelectionPage(
+                    token: onResponse.data.token,
+                    isFrom: "Login",
+                  )));
         } else {
           Navigator.of(context).pushReplacement(PageRouteBuilder(
               pageBuilder: (_, __, ___) => new CategorySelectionPage(
@@ -66,6 +79,7 @@ class LoginBloc {
 
   void forgotPassword({String email, BuildContext context}) {
     progressSink.add(true);
+
     apiRepository
         .forgotPasswordApi(
       email: email,
@@ -76,6 +90,7 @@ class LoginBloc {
         showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
         print("Register" + onResponse.message);
+        onSuccessSink.add(2);
         showErrorDialog(context, "Forgot Password", onResponse.message);
       }
 
@@ -102,6 +117,7 @@ class LoginBloc {
         showErrorDialog(context, "Error", onResponse.message);
       } else if (onResponse.status) {
         print("Register" + onResponse.message);
+        onSuccessSink.add(1);
         showErrorDialog(context, "Congratulations!!!",
             "Thanks for creating the account with us. We have sent you a mail on your registered email account. Please follow the steps in the mail to complete the sign up process.");
       }
