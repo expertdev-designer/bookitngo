@@ -1,9 +1,11 @@
 import 'package:book_it/UI/IntroApps/login_bloc/CategoryBloc.dart';
 import 'package:book_it/UI/IntroApps/model/CategoriesResponse.dart';
+import 'package:book_it/UI/Utills/AppColors.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/UI/Utills/WebAppStrings.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
+import 'package:book_it/Web/WebHome/WebDashboardPage.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -127,7 +129,31 @@ class _WebCategorySelectionPageState extends State<WebCategorySelectionPage> {
                                             image: DecorationImage(
                                                 image: NetworkImage("${AppStrings.imagePAth+snapshot
                                                     .data.data[index].image}"),
-                                                fit: BoxFit.cover)),
+                                                fit: BoxFit.cover)
+                                            // CachedNetworkImage(
+                                            //   imageUrl: "${AppStrings.imagePAth+snapshot
+                                            //       .data.data[index].image}",
+                                            //   imageBuilder: (context, imageProvider) => Container(
+                                            //     decoration: BoxDecoration(
+                                            //       image: DecorationImage(
+                                            //         image: imageProvider,
+                                            //         fit: BoxFit.cover,
+                                            //       ),
+                                            //     ),
+                                            //   ),
+                                            //   fit: BoxFit.cover,
+                                            //   placeholder: (context, url) => Container(
+                                            //     child: Center(
+                                            //       child: CircularProgressIndicator(
+                                            //         valueColor:
+                                            //         new AlwaysStoppedAnimation<Color>(AppColor.colorGreen),
+                                            //       ),
+                                            //     ),
+                                            //   ),
+                                            //   errorWidget: (context, url, error) => Icon(Icons.error),
+                                            // )
+
+                                        ),
                                         child: Center(
                                             child: Text(
                                           '${snapshot
@@ -219,14 +245,33 @@ class _WebCategorySelectionPageState extends State<WebCategorySelectionPage> {
             //     borderRadius: BorderRadius.circular(4)),
             splashColor: Colors.black12,
             onPressed: () {
-              if (!isSkip) {
-                isSkip = true;
-                isContinue = false;
-              }
+
+              Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WebDashBoardPage(
+                          pageRoute: "Main",
+                          tabIndex: 0,
+                          // userID: AppStrings.authToken,
+                        ),
+                      ));
+
+              // if (!isSkip) {
+              //   Navigator.pushReplacement(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => WebDashBoardPage(
+              //           // userID: AppStrings.authToken,
+              //         ),
+              //       ));
+              //   isSkip = true;
+              //   isContinue = false;
+
+              // }
               /*else {
                 isSkip = true;
               }*/
-              setState(() {});
+              // setState(() {});
             },
             child: Text(
               WebAppStrings.skip,
@@ -258,11 +303,24 @@ class _WebCategorySelectionPageState extends State<WebCategorySelectionPage> {
               // } else {
               //   isSkip = true;
               // }
-              if (!isContinue) {
-                isContinue = true;
-                isSkip = false;
+              // if (!isContinue) {
+              //   isContinue = true;
+              //   isSkip = false;
+              // }
+              // setState(() {});
+              if (ids!=null&&ids.length>0) {
+                _categoryBloc.saveCategory(
+                    context: context, categories: ids, isFrom: widget.isFrom);
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AppConstantHelper.showDialog(
+                          context: context,
+                          title: "Select destination",
+                          msg: "Please choose atleast one destination to continue");
+                    });
               }
-              setState(() {});
             },
             child: Text(
               WebAppStrings.continue_text,
@@ -369,7 +427,7 @@ class _WebCategorySelectionPageState extends State<WebCategorySelectionPage> {
                     fontWeight: FontWeight.w300,
                     color: Color(0xFFFFFFFF),
                     letterSpacing: 1.5),
-              ),
+              )
             ],
           ),
         ),

@@ -13,13 +13,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
 
   cupertino_icons: ^1.0.0
-#  shimmer: ^1.0.0
+  #  shimmer: ^1.0.0
   shimmer: ^2.0.0
   transparent_image: ^0.1.0
   flutter_slidable: ^0.4.9
@@ -29,64 +27,64 @@ dependencies:
   percent_indicator: ^1.0.15
   flutter_rating: ^0.0.2
   giffy_dialog: ^1.3.0
-#  flutter_credit_card:
+  #  flutter_credit_card:
   flutter_credit_card: ^2.0.0
-#  google_maps_flutter: ^0.5.27+1
+  #  google_maps_flutter: ^0.5.27+1
   google_maps_flutter: ^2.0.6
   shared_preferences:
-#  cloud_firestore: ^0.12.7
+  #  cloud_firestore: ^0.12.7
   cloud_firestore: ^0.12.0
-#  firebase_auth: ^0.11.1+10
-#  firebase_auth: ^1.2.0
+  #  firebase_auth: ^0.11.1+10
+  #  firebase_auth: ^1.2.0
 
   firebase_storage:
   firebase_database: ^3.0.4
-#  firebase_core:
-#  firebase_core: ^0.4.0
+  #  firebase_core:
+  #  firebase_core: ^0.4.0
   firebase_messaging:
   image_picker:
-#  url_launcher: ^5.7.10
+  #  url_launcher: ^5.7.10
   url_launcher: ^6.0.4
-#  carousel_slider: ^2.0.0
+  #  carousel_slider: ^2.0.0
   carousel_slider: ^3.0.0
   flutter_dialogflow: ^0.1.2
-#  flutter_dialogflow: ^0.1.3
-#  date_time_picker: ^1.1.1
+  #  flutter_dialogflow: ^0.1.3
+  #  date_time_picker: ^1.1.1
   date_time_picker: ^2.0.0
-#  date_format: ^1.0.9
+  #  date_format: ^1.0.9
   date_format: ^2.0.2
   flat_icons_flutter: ^1.0.2
-#  flutter_svg:
+  #  flutter_svg:
   flutter_svg: ^0.22.0
   flutter_bloc:
   http_parser: ^3.0.0
   http: ^0.12.0+2
-#  http: ^0.13.3
+  #  http: ^0.13.3
   bloc:
   rxdart:
   dio:
   image_cropper:         #IMAGE CROPPER
-#  permission_handler:
+  #  permission_handler:
   permission_handler: ^8.0.0
   stripe_payment:
-#  dot_navigation_bar:
+  #  dot_navigation_bar:
   dot_navigation_bar: ^0.2.0
   paged_vertical_calendar:
   flutter_webview_plugin:
   liquid_pull_to_refresh:
   suggestion_search_bar: ^0.0.2
   intl: ^0.17.0
+#  cached_network_image: any
 #  table_calendar: ^2.3.3
 #  calendar_views: ^0.5.2
 #  vertical_calendar: ^1.0.1+6
 #  paged_vertical_calendar:
 #  simple_vertical_calendar:
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
-#  flutter_launcher_icons: "^0.8.0"
+  #  flutter_launcher_icons: "^0.8.0"
   flutter_launcher_icons: ^0.9.0
 
 flutter_icons:
@@ -279,8 +277,7 @@ flutter:
     - assets/image/images/update_location2.svg
     - assets/image/images/privacy_policy.svg
     - assets/image/images/terms.svg
-
-
+    - assets/image/images/search_bg.png
 
 
   # To add assets to your application, add an assets section, like this:

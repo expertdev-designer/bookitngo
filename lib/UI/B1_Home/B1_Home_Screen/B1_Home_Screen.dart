@@ -33,11 +33,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  static final _txtStyle = TextStyle(
-      fontSize: 15.5,
-      color: Colors.black,
-      fontWeight: FontWeight.w700,
-      fontFamily: 'Gotik');
+    static final _txtStyle = TextStyle(
+        fontSize: 15.5,
+        color: Colors.black,
+        fontWeight: FontWeight.w700,
+        fontFamily: 'Gotik');
 
   HomeBloc _homeBloc;
   AppConstantHelper _appConstantHelper;
@@ -328,7 +328,7 @@ class _HomeState extends State<Home> {
                 "Featured",
                 style: _txtStyle,
               ),
-              FlatButton(
+              MaterialButton(
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   Navigator.of(context).push(PageRouteBuilder(
@@ -1191,7 +1191,7 @@ class FeaturedCard extends StatelessWidget {
           var latLang1 = featured[i].latitude;
           var latLang2 = featured[i].longitude;
 
-          return i >= 6
+          return /*i >= 6
               ? Container(
                   width: MediaQuery.of(context).size.width * 0.4,
                   alignment: Alignment.center,
@@ -1213,7 +1213,7 @@ class FeaturedCard extends StatelessWidget {
                     ),
                   ),
                 )
-              : Padding(
+              :*/ Padding(
                   padding:
                       const EdgeInsets.only(left: 18.0, top: 10.0, bottom: 8.0),
                   child: InkWell(

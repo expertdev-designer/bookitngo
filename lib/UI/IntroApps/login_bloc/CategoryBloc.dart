@@ -81,8 +81,10 @@ class CategoryBloc {
                 context,
                 MaterialPageRoute(
                   builder: (context) => WebDashBoardPage(
-                      // userID: AppStrings.authToken,
-                      ),
+                    tabIndex: 0,
+                    pageRoute: "Main",
+                    // userID: AppStrings.authToken,
+                  ),
                 ));
           } else {
             Navigator.pushReplacement(

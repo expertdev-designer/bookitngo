@@ -16,4 +16,5 @@ static const webPrimaryColor=Color(0xFF00293E);
 static const webBlackColor=Color(0xFF000000);
 static const webGreenColor=Color(0xFF00C19B);
 static const webWhiteColor=Color(0xFFFFFFFF);
+static const webBlueColor=Color(0xFF6774E7);
 }

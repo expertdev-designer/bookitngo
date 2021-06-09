@@ -23,7 +23,7 @@ class ratingbar extends StatelessWidget {
     } else if(index> starRating - 1 && index < starRating){
       iconData = Icons.star_half;
     }
-    return Icon(iconData,size: 14.0,color: warna);
+    return Icon(iconData,size: 20,color: warna);
   }
 
   @override

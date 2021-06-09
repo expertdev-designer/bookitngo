@@ -35,24 +35,29 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-class splash extends StatelessWidget {
+class splash extends StatefulWidget {
+  @override
+  _splashState createState() => _splashState();
+}
+
+class _splashState extends State<splash> {
   @override
   Widget build(BuildContext context) {
     ///Set color status bar
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
       statusBarColor: Colors.transparent,
     ));
-
     /// To set orientation always portrait
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
 
+
     return kIsWeb
         ? MaterialApp(
-            // home: WebSignInSignUpPage(),
-            home: WebDashBoardPage(),
+            home: WebSignInSignUpPage(),
+            // home: WebDashBoardPage(),
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
                 brightness: Brightness.light,
