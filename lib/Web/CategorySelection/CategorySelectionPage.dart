@@ -276,7 +276,7 @@ class _WebCategorySelectionPageState extends State<WebCategorySelectionPage> {
             child: Text(
               WebAppStrings.skip,
               style: TextStyle(
-                  fontSize: isSkip && !isContinue ? 16.0 : 14,
+                  fontSize: isSkip && !isContinue ? 14.0 : 14,
                   fontWeight:
                       isSkip && !isContinue ? FontWeight.w500 : FontWeight.w500,
                   color: isSkip && !isContinue
@@ -325,11 +325,11 @@ class _WebCategorySelectionPageState extends State<WebCategorySelectionPage> {
             child: Text(
               WebAppStrings.continue_text,
               style: TextStyle(
-                  fontSize: isContinue && !isSkip ? 16.0 : 14,
+                  fontSize: isContinue && !isSkip ? 14.0 : 14,
                   fontWeight:
                       isContinue && !isSkip ? FontWeight.w500 : FontWeight.w500,
                   color: isContinue && !isSkip
-                      ? Colors.black87
+                      ? Colors.black87.withOpacity(0.7)
                       : Colors.black87.withOpacity(0.7),
                   letterSpacing: 1.5),
             ),

@@ -20,7 +20,7 @@ class WebHomePage extends StatefulWidget {
   static final _txtStyle = TextStyle(
       fontSize: 14,
       color: Colors.black,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w600,
       fontFamily: 'Poppins');
 
   @override
@@ -35,6 +35,7 @@ class _WebHomePageState extends State<WebHomePage> {
   int _exitCounter = 0;
   double x = 0.0;
   double y = 0.0;
+  final _controller = ScrollController();
 
   void _incrementEnter(PointerEvent details) {
     setState(() {
@@ -319,9 +320,9 @@ class _WebHomePageState extends State<WebHomePage> {
       {BuildContext context, String title, VoidCallback onClick}) {
     return Padding(
       padding: EdgeInsets.only(
-          left: MediaQuery.of(context).size.width * 0.05,
+          left: MediaQuery.of(context).size.width * 0.09,
           top: 40.0,
-          right: MediaQuery.of(context).size.width * 0.05,
+          right: MediaQuery.of(context).size.width * 0.09,
           bottom: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -337,8 +338,8 @@ class _WebHomePageState extends State<WebHomePage> {
               title == "Vacations" ? "" : "See More",
               style: WebHomePage._txtStyle.copyWith(
                   color: Colors.black,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500),
             ),
           )
         ],
@@ -348,29 +349,35 @@ class _WebHomePageState extends State<WebHomePage> {
 
   Widget _featuredAndRecommendedHotelListview(
       height, width, context, List<HotelData> dataList) {
+     var currentindex=1;
+    _animateToIndex(i) => _controller.animateTo(250* i, duration: Duration(seconds: 2), curve: Curves.fastOutSlowIn);
     return Stack(
       children: [
         Container(
+          width: width,
           padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.05),
+              horizontal: MediaQuery.of(context).size.width * 0.09),
           height: 330,
           child: ListView.builder(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
               primary: false,
               itemCount: dataList.length > 0 ? dataList.length : 0,
+              // itemCount: 10,
+              controller: _controller,
               itemBuilder: (context, i) {
                 return Padding(
-                  padding: EdgeInsets.only(top: 10.0, bottom: 10.0, right: 24),
+                  padding: EdgeInsets.only(top: 10.0, bottom: 10.0, right:24),
                   child: InkWell(
                     onTap: () {},
                     child: Container(
                         width: width > 650
-                            ? MediaQuery.of(context).size.width * 0.21
-                            : MediaQuery.of(context).size.width * 0.38,
+                            ? MediaQuery.of(context).size.width * 0.19
+                            : MediaQuery.of(context).size.width * 0.30,
                         decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(2.0)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(2.0)),
                             boxShadow: [
                               BoxShadow(
                                   color: Color(0xFF656565).withOpacity(0.1),
@@ -395,14 +402,20 @@ class _WebHomePageState extends State<WebHomePage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  left: 10.0, right: 10.0, top: 10.0, bottom: 10.0),
+                                  left: 10.0,
+                                  right: 10.0,
+                                  top: 10.0,
+                                  bottom: 10.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           '${dataList[i].name}',
@@ -428,7 +441,8 @@ class _WebHomePageState extends State<WebHomePage> {
                                   Expanded(
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       children: <Widget>[
                                         Text(
                                           " Starting at ",
@@ -467,9 +481,21 @@ class _WebHomePageState extends State<WebHomePage> {
                                   padding: EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(2),
-                                      side:
-                                          BorderSide(width: 0.8, color: textColor)),
-                                  onPressed: () {},
+                                      side: BorderSide(
+                                          width: 0.8, color: textColor)),
+                                  onPressed: () {
+
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => WebDashBoardPage(
+                                              tabIndex: 0,
+                                              pageRoute: "HotelDetailPage",
+                                              title: "Detail",
+                                              categoryId: "features",
+                                              hotelData: dataList[i],
+                                            )));
+                                  },
                                   child: Text(
                                     "View Details".toUpperCase(),
                                     style: WebHomePage._txtStyle.copyWith(
@@ -487,41 +513,49 @@ class _WebHomePageState extends State<WebHomePage> {
               }),
         ),
         Positioned(
-          left: MediaQuery.of(context).size.width * 0.043,top: 150,
-          child: Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 4,
-                      offset: Offset(0,2)
-                  )
-                ]
+          left: MediaQuery.of(context).size.width * 0.075,
+          top: 150,
+          child: InkWell(
+            onTap: ()
+            {
+              currentindex=currentindex--;
+              _animateToIndex(currentindex);
+            },
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, blurRadius: 4, offset: Offset(0, 2))
+                  ]),
+              child: Icon(Icons.keyboard_arrow_left_outlined),
             ),
-            child: Icon(Icons.keyboard_arrow_left_outlined),
           ),
         ),
         Positioned(
-          right: MediaQuery.of(context).size.width * 0.046,top: 150,
-          child: Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 4,
-                      offset: Offset(0,2)
-                  )
-                ]
+          right: MediaQuery.of(context).size.width * 0.076,
+          top: 150,
+          child: InkWell(
+            onTap: ()
+            {
+              currentindex=currentindex++;
+              _animateToIndex(currentindex);
+            },
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, blurRadius: 4, offset: Offset(0, 2))
+                  ]),
+              child: Icon(Icons.keyboard_arrow_right_outlined),
             ),
-            child: Icon(Icons.keyboard_arrow_right_outlined),
           ),
         )
       ],
@@ -534,8 +568,9 @@ class _WebHomePageState extends State<WebHomePage> {
       children: [
         Container(
           padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.05),
+              horizontal: MediaQuery.of(context).size.width * 0.09),
           height: 320,
+          width: width,
           child: ListView.builder(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
@@ -545,14 +580,26 @@ class _WebHomePageState extends State<WebHomePage> {
                 return Padding(
                   padding: EdgeInsets.only(top: 10.0, bottom: 10.0, right: 24),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WebDashBoardPage(
+                                tabIndex: 0,
+                                pageRoute: "HotelDetailPage",
+                                title: "Detail",
+                                categoryId: "recommended",
+                                hotelData: _recommended[i],
+                              )));
+                    },
                     child: Container(
                         width: width > 650
-                            ? MediaQuery.of(context).size.width * 0.29
-                            : MediaQuery.of(context).size.width * 0.48,
+                            ? MediaQuery.of(context).size.width * 0.26
+                            : MediaQuery.of(context).size.width * 0.40,
                         decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(2.0)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(2.0)),
                             boxShadow: [
                               BoxShadow(
                                   color: Color(0xFF656565).withOpacity(0.1),
@@ -577,7 +624,10 @@ class _WebHomePageState extends State<WebHomePage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  left: 10.0, right: 10.0, top: 10.0, bottom: 10.0),
+                                  left: 10.0,
+                                  right: 10.0,
+                                  top: 10.0,
+                                  bottom: 10.0),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -597,7 +647,9 @@ class _WebHomePageState extends State<WebHomePage> {
                                     maxLines: 3,
                                     style: TextStyle(
                                         letterSpacing: 0.5,
-                                        color: Colors.black,
+                                        height: 1.2,
+                                        wordSpacing: 1.5,
+                                        color: Colors.black87.withOpacity(0.7),
                                         fontFamily: "Poppins",
                                         fontWeight: FontWeight.w400,
                                         fontSize: 11.0),
@@ -613,41 +665,47 @@ class _WebHomePageState extends State<WebHomePage> {
               }),
         ),
         Positioned(
-          left: MediaQuery.of(context).size.width * 0.043,top: 150,
-          child: Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 4,
-                      offset: Offset(0,2)
-                  )
-                ]
+          left: MediaQuery.of(context).size.width * 0.075,
+          top: 130,
+          child: InkWell(
+            onTap: ()
+            {
+
+            },
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, blurRadius: 4, offset: Offset(0, 2))
+                  ]),
+              child: Icon(Icons.keyboard_arrow_left_outlined),
             ),
-            child: Icon(Icons.keyboard_arrow_left_outlined),
           ),
         ),
         Positioned(
-          right: MediaQuery.of(context).size.width * 0.046,top: 150,
-          child: Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 4,
-                      offset: Offset(0,2)
-                  )
-                ]
+          right: MediaQuery.of(context).size.width * 0.076,
+          top: 130,
+          child: InkWell(
+            onTap: ()
+            {
+
+            },
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, blurRadius: 4, offset: Offset(0, 2))
+                  ]),
+              child: Icon(Icons.keyboard_arrow_right_outlined),
             ),
-            child: Icon(Icons.keyboard_arrow_right_outlined),
           ),
         )
       ],
@@ -660,8 +718,9 @@ class _WebHomePageState extends State<WebHomePage> {
       children: [
         Container(
             height: 320.0,
+            width: width,
             padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.05),
+                horizontal: MediaQuery.of(context).size.width * 0.09),
             child: ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
@@ -670,8 +729,8 @@ class _WebHomePageState extends State<WebHomePage> {
                   return Container(
                     height: 320.0,
                     width: width > 650
-                        ? MediaQuery.of(context).size.width * 0.21
-                        : MediaQuery.of(context).size.width * 0.38,
+                        ? MediaQuery.of(context).size.width * 0.19
+                        : MediaQuery.of(context).size.width * 0.30,
                     margin: EdgeInsets.only(right: 24),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(2.0)),
@@ -692,7 +751,7 @@ class _WebHomePageState extends State<WebHomePage> {
                       child: Text(
                         "${_destinations[index].name}",
                         style: TextStyle(
-                          fontFamily: 'Amira',
+                          fontFamily: 'poppins',
                           color: Color(0xFFFFFFFF),
                           fontSize: 32.0,
                           letterSpacing: 2.0,
@@ -703,41 +762,47 @@ class _WebHomePageState extends State<WebHomePage> {
                   );
                 })),
         Positioned(
-          left: MediaQuery.of(context).size.width * 0.043,top: 150,
-          child: Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 4,
-                      offset: Offset(0,2)
-                  )
-                ]
+          left: MediaQuery.of(context).size.width * 0.075,
+          top: 150,
+          child: InkWell(
+            onTap: ()
+            {
+
+            },
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, blurRadius: 4, offset: Offset(0, 2))
+                  ]),
+              child: Icon(Icons.keyboard_arrow_left_outlined),
             ),
-            child: Icon(Icons.keyboard_arrow_left_outlined),
           ),
         ),
         Positioned(
-          right: MediaQuery.of(context).size.width * 0.046,top: 150,
-          child: Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 4,
-                      offset: Offset(0,2)
-                  )
-                ]
+          right: MediaQuery.of(context).size.width * 0.076,
+          top: 150,
+          child: InkWell(
+            onTap: ()
+            {
+
+            },
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, blurRadius: 4, offset: Offset(0, 2))
+                  ]),
+              child: Icon(Icons.keyboard_arrow_right_outlined),
             ),
-            child: Icon(Icons.keyboard_arrow_right_outlined),
           ),
         )
       ],
@@ -749,32 +814,33 @@ class _WebHomePageState extends State<WebHomePage> {
       children: [
         Container(
             height: 320.0,
+            width: width,
             padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.05),
+                horizontal: MediaQuery.of(context).size.width * 0.09),
             child: ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 itemCount: categories.length > 0 ? categories.length : 0,
+                // itemCount: 10,
                 itemBuilder: (context, index) {
                   return InkWell(
-                    onTap: ()
-                    {
+                    onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => WebDashBoardPage(
-                                tabIndex: 0,
-                                pageRoute: "ListingPage",
-                                title: "${categories[index].name}",
-                                categoryId: "${_categories[index].sId}",
-                              )));
+                                    tabIndex: 0,
+                                    pageRoute: "ListingPage",
+                                    title: "${categories[index].name}",
+                                    categoryId: "${_categories[index].sId}",
+                                  )));
                     },
                     child: Container(
                       height: 320.0,
                       width: width > 650
-                          ? MediaQuery.of(context).size.width * 0.21
-                          : MediaQuery.of(context).size.width * 0.38,
-                      margin: EdgeInsets.only(right: 24),
+                          ? MediaQuery.of(context).size.width * 0.19
+                          : MediaQuery.of(context).size.width * 0.30,
+                      margin: EdgeInsets.only(right:24),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(2.0)),
                           image: DecorationImage(
@@ -805,41 +871,47 @@ class _WebHomePageState extends State<WebHomePage> {
                   );
                 })),
         Positioned(
-          left: MediaQuery.of(context).size.width * 0.043,top: 150,
-          child: Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 4,
-                      offset: Offset(0,2)
-                  )
-                ]
+          left: MediaQuery.of(context).size.width * 0.075,
+          top: 150,
+          child: InkWell(
+            onTap: ()
+            {
+
+            },
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, blurRadius: 4, offset: Offset(0, 2))
+                  ]),
+              child: Icon(Icons.keyboard_arrow_left_outlined),
             ),
-            child: Icon(Icons.keyboard_arrow_left_outlined),
           ),
         ),
         Positioned(
-          right: MediaQuery.of(context).size.width * 0.046,top: 150,
-          child: Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 4,
-                      offset: Offset(0,2)
-                  )
-                ]
+          right: MediaQuery.of(context).size.width * 0.076,
+          top: 150,
+          child: InkWell(
+            onTap: ()
+            {
+
+            },
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, blurRadius: 4, offset: Offset(0, 2))
+                  ]),
+              child: Icon(Icons.keyboard_arrow_right_outlined),
             ),
-            child: Icon(Icons.keyboard_arrow_right_outlined),
           ),
         )
       ],

@@ -9,6 +9,8 @@ import 'package:book_it/Web/common_widget/CommonFooter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'WebDashboardPage.dart';
+
 // ignore: must_be_immutable
 class WebHotelCategoryWiseListingPage extends StatefulWidget {
   var title, categoryId;
@@ -305,7 +307,23 @@ class _WebHotelCategoryWiseListingPageState
                                                       width: 1,
                                                       color:
                                                           Color(0xFF6774E7))),
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            WebDashBoardPage(
+                                                              tabIndex: 0,
+                                                              pageRoute:
+                                                                  "HotelDetailPage",
+                                                              title: "Detail",
+                                                              categoryId:
+                                                                  "recommended",
+                                                              hotelData:
+                                                                  snapshot.data
+                                                                      .data[i],
+                                                            )));
+                                              },
                                               child: Text(
                                                 "View Details".toUpperCase(),
                                                 style: TextStyle(

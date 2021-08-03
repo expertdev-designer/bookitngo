@@ -1,6 +1,9 @@
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HomeResponse.dart';
 import 'package:book_it/UI/Utills/AppColors.dart';
 import 'package:book_it/UI/Utills/WebAppStrings.dart';
 import 'package:book_it/Web/WebHome/WebHomePage.dart';
+import 'package:book_it/Web/WebHome/WebHotelBookingFormPage.dart';
+import 'package:book_it/Web/WebHome/WebHotelDetailPage.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +15,14 @@ class WebDashBoardPage extends StatefulWidget {
   var pageRoute;
   var title;
   var categoryId;
+  HotelData hotelData;
 
-  WebDashBoardPage({this.tabIndex, this.pageRoute,this.title,this.categoryId});
+  WebDashBoardPage(
+      {this.tabIndex,
+      this.pageRoute,
+      this.title,
+      this.categoryId,
+      this.hotelData});
 
   @override
   _WebDashBoardPageState createState() => _WebDashBoardPageState();
@@ -54,7 +63,18 @@ class _WebDashBoardPageState extends State<WebDashBoardPage> {
       if (widget.pageRoute == "ListingPage") {
         return WebHotelCategoryWiseListingPage(
             title: widget.title, categoryId: widget.categoryId);
-      } else {
+      }
+      if (widget.pageRoute == "HotelDetailPage") {
+        return WebHotelDetailPage(
+            title: widget.title, hotelData: widget.hotelData);
+      }
+      if (widget.pageRoute == "BookingFormPage") {
+        return WebHotelBookingFormPage(
+          //category id is a hotel id here used for getting hotels rooms
+            title: widget.title, categoryId: widget.categoryId);
+      }
+
+      else {
         return WebHomePage();
       }
     }
@@ -92,7 +112,7 @@ class _WebDashBoardPageState extends State<WebDashBoardPage> {
                 style: TextStyle(
                     fontSize: isHomeSelected ? 14 : 12,
                     fontWeight:
-                        isHomeSelected ? FontWeight.w600 : FontWeight.w500,
+                        isHomeSelected ? FontWeight.w600 : FontWeight.w400,
                     color: Colors.black,
                     letterSpacing: 1.5),
               ),
@@ -114,7 +134,7 @@ class _WebDashBoardPageState extends State<WebDashBoardPage> {
                 style: TextStyle(
                     fontSize: isMsgSelected ? 14 : 12,
                     fontWeight:
-                        isMsgSelected ? FontWeight.w600 : FontWeight.w500,
+                        isMsgSelected ? FontWeight.w600 : FontWeight.w400,
                     color: Colors.black,
                     letterSpacing: 1.5),
               ),
@@ -137,7 +157,7 @@ class _WebDashBoardPageState extends State<WebDashBoardPage> {
                     fontSize: isReservationSelected ? 14 : 13,
                     fontWeight: isReservationSelected
                         ? FontWeight.w600
-                        : FontWeight.w500,
+                        : FontWeight.w400,
                     color: Colors.black,
                     letterSpacing: 1.5),
               ),
@@ -159,7 +179,7 @@ class _WebDashBoardPageState extends State<WebDashBoardPage> {
                 style: TextStyle(
                     fontSize: isSettingSelected ? 14 : 12,
                     fontWeight:
-                        isSettingSelected ? FontWeight.w600 : FontWeight.w500,
+                        isSettingSelected ? FontWeight.w600 : FontWeight.w400,
                     color: Colors.black,
                     letterSpacing: 1.5),
               ),
@@ -197,7 +217,7 @@ class _WebDashBoardPageState extends State<WebDashBoardPage> {
                 style: TextStyle(
                     fontSize: isHomeSelected ? 14 : 12,
                     fontWeight:
-                        isHomeSelected ? FontWeight.w600 : FontWeight.w500,
+                        isHomeSelected ? FontWeight.w600 : FontWeight.w400,
                     color: Colors.black,
                     letterSpacing: 1.5),
               ),
@@ -219,7 +239,7 @@ class _WebDashBoardPageState extends State<WebDashBoardPage> {
                 style: TextStyle(
                     fontSize: isMsgSelected ? 14 : 12,
                     fontWeight:
-                        isMsgSelected ? FontWeight.w600 : FontWeight.w500,
+                        isMsgSelected ? FontWeight.w600 : FontWeight.w400,
                     color: Colors.black,
                     letterSpacing: 1.5),
               ),
@@ -242,7 +262,7 @@ class _WebDashBoardPageState extends State<WebDashBoardPage> {
                     fontSize: isReservationSelected ? 14 : 12,
                     fontWeight: isReservationSelected
                         ? FontWeight.w600
-                        : FontWeight.w500,
+                        : FontWeight.w400,
                     color: Colors.black,
                     letterSpacing: 1.5),
               ),
@@ -264,7 +284,7 @@ class _WebDashBoardPageState extends State<WebDashBoardPage> {
                 style: TextStyle(
                     fontSize: isSettingSelected ? 14 : 12,
                     fontWeight:
-                        isSettingSelected ? FontWeight.w600 : FontWeight.w500,
+                        isSettingSelected ? FontWeight.w600 : FontWeight.w400,
                     color: Colors.black,
                     letterSpacing: 1.5),
               ),

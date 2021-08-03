@@ -1,4 +1,5 @@
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/bloc/HomeBloc.dart';
+import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HomeResponse.dart';
 import 'package:book_it/UI/B1_Home/B1_Home_Screen/model/HotelHotelByCategoryResponse.dart';
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/hotelDetailPage.dart';
 import 'package:book_it/UI/B4_Booking/Booking.dart';
@@ -303,7 +304,7 @@ class card extends StatelessWidget {
 
 class CardList extends StatelessWidget {
   String dataUser;
-  final List<HotelByCategoryData> list;
+  final List<HotelData> list;
 
   @override
   var _txtStyleTitle = TextStyle(
@@ -492,7 +493,6 @@ class CardList extends StatelessWidget {
         });
   }
 }
-
 
 class cardCountry extends StatelessWidget {
   Color colorTop, colorBottom;

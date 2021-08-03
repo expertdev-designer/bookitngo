@@ -2,27 +2,16 @@ import 'dart:async';
 import 'dart:io';
 import 'package:book_it/Web/WebHome/WebDashboardPage.dart';
 import 'package:book_it/network_helper/local_storage.dart';
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/UI/IntroApps/OnBoarding.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-
-import 'UI/B1_Home/Hotel/Hotel_Detail_Concept_2/BookItNow.dart';
 import 'UI/Bottom_Nav_Bar/bottomNavBar.dart';
-import 'UI/IntroApps/Login.dart';
-import 'UI/IntroApps/CategorySelection.dart';
-import 'Web/CategorySelection/CategorySelectionPage.dart';
 import 'Web/LoginSign/WebSignInSignUpPage.dart';
 
 void main() {
   HttpOverrides.global = new MyHttpOverrides();
-
-  // runApp(Home());
   runApp(splash());
 }
 
@@ -47,14 +36,16 @@ class _splashState extends State<splash> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
       statusBarColor: Colors.transparent,
     ));
+
     /// To set orientation always portrait
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
 
+    return
 
-    return kIsWeb
+        /*kIsWeb
         ? MaterialApp(
             home: WebSignInSignUpPage(),
             // home: WebDashBoardPage(),
@@ -68,76 +59,64 @@ class _splashState extends State<splash> {
                 visualDensity: VisualDensity.adaptivePlatformDensity,
                 primaryColor: Colors.white),
           )
-        : MaterialApp(
-            home: splashScreen(),
-            //home: splashScreen(),
-            debugShowCheckedModeBanner: false,
-
-            theme: ThemeData(
-                brightness: Brightness.light,
-                backgroundColor: Colors.white,
-                primaryColorLight: Colors.white,
-                primaryColorBrightness: Brightness.light,
-                visualDensity: VisualDensity.adaptivePlatformDensity,
-                primaryColor: Colors.white),
-          );
+        : */
+        MaterialApp(
+      title: "Book It n Go",
+      home: SplashScreen(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          brightness: Brightness.light,
+          backgroundColor: Colors.white,
+          primaryColorLight: Colors.white,
+          primaryColorBrightness: Brightness.light,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          primaryColor: Colors.white),
+    );
   }
 }
 
-class splashScreen extends StatefulWidget {
+class SplashScreen extends StatefulWidget {
   @override
-  _splashScreenState createState() => _splashScreenState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _splashScreenState extends State<splashScreen> {
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void _Navigator() {
     LocalStorage.getUserAuthToken().then((value) {
-      if (value.isEmpty) {
-        Navigator.of(context).pushReplacement(PageRouteBuilder(
-          pageBuilder: (_, __, ___) => onBoarding(),
-        ));
+      if (kIsWeb) {
+        if (value.isEmpty) {
+          Navigator.of(context).pushReplacement(PageRouteBuilder(
+            pageBuilder: (_, __, ___) => WebSignInSignUpPage(),
+          ));
+        } else {
+          Navigator.of(context).pushReplacement(PageRouteBuilder(
+            pageBuilder: (_, __, ___) => WebDashBoardPage(
+              tabIndex: 0,
+              pageRoute: 'main',
+            ),
+          ));
+        }
       } else {
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => bottomNavBar(
-                      userID: value,
-                    )));
+        if (value.isEmpty) {
+          Navigator.of(context).pushReplacement(PageRouteBuilder(
+            pageBuilder: (_, __, ___) => onBoarding(),
+          ));
+        } else {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => bottomNavBar(
+                        userID: value,
+                      )));
+        }
       }
     });
-
-    /*FirebaseAuth.instance
-        .currentUser()
-        .then((currentUser) => {
-              if (currentUser == null)
-                {
-                  Navigator.of(context).pushReplacement(PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => onBoarding(),
-                  ))
-                }
-              else
-                {
-                  Firestore.instance
-                      .collection("users")
-                      .document(currentUser.uid)
-                      .get()
-                      .then((DocumentSnapshot result) =>
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => bottomNavBar(
-                                        userID: currentUser.uid,
-                                      ))))
-                      .catchError((err) => print(err))
-                }
-            })
-        .catchError((err) => print(err));*/
   }
 
   /// Set timer splash
   _timer() async {
-    return Timer(Duration(milliseconds: 2300), _Navigator);
+    return Timer(Duration(milliseconds: kIsWeb ? 0 : 2300), _Navigator);
   }
 
   @override
@@ -145,12 +124,6 @@ class _splashScreenState extends State<splashScreen> {
     super.initState();
     _timer();
 
-    ///
-    /// Setting Message Notification from firebase to user
-    ///
-    // _messaging.getToken().then((token) {
-    //   print(token);
-    // });
   }
 
   /// Check user
@@ -159,23 +132,6 @@ class _splashScreenState extends State<splashScreen> {
   bool loggedIn = false;
   @override
   SharedPreferences prefs;
-
-  ///
-  /// Checking user is logged in or not logged in
-  ///
-  Future<Null> _function() async {
-    SharedPreferences prefs;
-    prefs = await SharedPreferences.getInstance();
-    this.setState(() {
-      if (prefs.getString("username") != null) {
-        print('false');
-        _checkUser = false;
-      } else {
-        print('true');
-        _checkUser = true;
-      }
-    });
-  }
 
   Widget build(BuildContext context) {
     return Scaffold(

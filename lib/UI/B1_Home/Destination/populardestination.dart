@@ -110,46 +110,46 @@ class _PopularDestinationState extends State<PopularDestination> {
                   height: 250.0,
                   child: widget.destinations.images != null &&
                           widget.destinations.images.length > 0
-                      ? new Carousel(
-                          boxFit: BoxFit.cover,
-                          dotColor: Colors.white.withOpacity(0.8),
-                          dotSize: 5.5,
-                          dotSpacing: 16.0,
-                          dotBgColor: Colors.transparent,
-                          showIndicator: true,
-                          overlayShadow: true,
-                          overlayShadowColors: Colors.white.withOpacity(0.9),
-                          overlayShadowSize: 0.9,
-                          images: widget.destinations.images.map((i) {
-                            return InkWell(
-                              onTap: () {},
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: FractionalOffset(0.0, 0.0),
-                                    end: FractionalOffset(0.0, 1.0),
-                                    stops: [0.0, 1.0],
-                                    colors: <Color>[
-                                      Color(0x00FFFFFF),
-                                      Color(0xFFFFFFFF),
-                                    ],
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        blurRadius: 9.0,
-                                        spreadRadius: 7.0,
-                                        color: Colors.black12.withOpacity(0.03))
+                    ? new Carousel(
+                        boxFit: BoxFit.cover,
+                        dotColor: Colors.white.withOpacity(0.8),
+                        dotSize: 5.5,
+                        dotSpacing: 16.0,
+                        dotBgColor: Colors.transparent,
+                        showIndicator: true,
+                        overlayShadow: true,
+                        overlayShadowColors: Colors.white.withOpacity(0.9),
+                        overlayShadowSize: 0.9,
+                        images: widget.destinations.images.map((i) {
+                          return InkWell(
+                            onTap: () {},
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: FractionalOffset(0.0, 0.0),
+                                  end: FractionalOffset(0.0, 1.0),
+                                  stops: [0.0, 1.0],
+                                  colors: <Color>[
+                                    Color(0x00FFFFFF),
+                                    Color(0xFFFFFFFF),
                                   ],
-                                  image: DecorationImage(
-                                      image: NetworkImage(
-                                          AppStrings.imagePAth + i),
-                                      fit: BoxFit.cover),
                                 ),
+                                boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 9.0,
+                                      spreadRadius: 7.0,
+                                      color: Colors.black12.withOpacity(0.03))
+                                ],
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                        AppStrings.imagePAth + i),
+                                    fit: BoxFit.cover),
                               ),
-                            );
-                          }).toList(),
-                        )
+                            ),
+                          );
+                        }).toList(),
+                      )
                       : Container(
                           height: 190.0,
                           width: MediaQuery.of(context).size.width,

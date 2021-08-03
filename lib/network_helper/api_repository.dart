@@ -386,11 +386,11 @@ class ApiRepository {
   }
 
   getDioOptions(Dio _dio) {
-    String authTOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNzdkNTk0YWEyNzFkNjlmODAyY2Y4MyIsImlhdCI6MTYyMzE0NTgzOCwiZXhwIjoxNjU0NjgxODM4fQ.cm0IJeFzhmgGUr-ohOVzzIP1kE1RzyNGYsnkA9qmr7o";
-    // LocalStorage.getUserAuthToken().then((value) {
-    //   authTOKEN = value;
-    //   print("x-access-token $authTOKEN");
-    // });
+    String authTOKEN="";
+    LocalStorage.getUserAuthToken().then((value) {
+      authTOKEN = value;
+      print("x-access-token $authTOKEN");
+    });
     _dio.interceptors
         .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
       // Do something before request is sent
