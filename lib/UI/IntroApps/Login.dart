@@ -2,6 +2,7 @@ import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
+import 'package:flutter_svg/svg.dart';
 import 'ForgotPassword.dart';
 import 'SignUp.dart';
 import 'login_bloc/LoginBloc.dart';
@@ -17,7 +18,6 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
   AnimationController sanimationController;
 
   var tap = 0;
-
   bool isLoading = false;
   bool autoValidation = false;
   bool _isHidden = false;
@@ -447,8 +447,61 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                               ),
                             ),
                           ),
-                        ))
+                        )
+                    ),
+
                   ],
+                ),
+                FadeAnimation(
+                  2.1,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+
+
+
+                      Row(children: <Widget>[
+                        SizedBox(width: 60),
+                        Expanded(
+                          child: new Container(
+                             // margin: const EdgeInsets.only(left: 40.0),
+                              child: Divider(
+                                color: Colors.black,
+                               // height: 50,
+                              )),
+                        ),
+                        Icon(Icons.brightness_1_outlined, color: Colors.black,size: 10,),
+                        SizedBox(width: 10),
+                        Text("Login With",  style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: "Sofia",
+                            fontSize: 12,
+                            letterSpacing: 1.2),),
+                        SizedBox(width: 10),
+                        Icon(Icons.brightness_1_outlined, color: Colors.black,size: 10,),
+                        Expanded(
+                          child: new Container(
+                             // margin: const EdgeInsets.only(right: 40.0),
+                              child: Divider(
+                                color: Colors.black,
+                                height: 50,
+                              )),
+                        ),
+                        SizedBox(width: 60),
+                      ]),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          socialMediaIconWidget(context,"assets/image/images/fb_n.svg"),
+                          socialMediaIconWidget(context,"assets/image/images/google_n.svg"),
+                          socialMediaIconWidget(context,"assets/image/images/linkedin_n.svg"),
+                        ],
+                      ),
+                      Padding(padding: EdgeInsets.only(bottom: 30)),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -464,6 +517,19 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  Widget socialMediaIconWidget(BuildContext context,var iconType) {
+    return IconButton(
+
+      iconSize: 80,
+        padding: EdgeInsets.zero,
+        icon: SvgPicture.asset(iconType),
+        color: Colors.white,
+       // iconSize: MediaQuery.of(context).size.width*0.2,
+        onPressed: () {
+        },
+      );
   }
 
   void _togglePasswordView() {

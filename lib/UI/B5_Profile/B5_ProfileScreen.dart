@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'ListProfile/CallCenter.dart';
 import 'ListProfile/CreditCard.dart';
+import 'ListProfile/HelpCenter.dart';
 
 class profile extends StatefulWidget {
   String userID;
@@ -171,6 +172,18 @@ class _profileState extends State<profile> {
                   },
                   child: category(
                     txt: "Call Center",
+                    image: "assets/image/icon/callCenter.png",
+                    padding: 20.0,
+                    isSvg: false,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => new helpCenter()));
+                  },
+                  child: category(
+                    txt: "Help Center",
                     image: "assets/image/icon/callCenter.png",
                     padding: 20.0,
                     isSvg: false,
