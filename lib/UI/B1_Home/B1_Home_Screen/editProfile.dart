@@ -5,9 +5,7 @@ import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:book_it/bottomsheet/file_picker_bottomsheet.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-
 import 'package:permission_handler/permission_handler.dart';
-
 import 'bloc/EditProfileBloc.dart';
 
 class updateProfile extends StatefulWidget {
@@ -197,45 +195,99 @@ class _updateProfileState extends State<updateProfile> {
                   child: Container(
 
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                              blurRadius: 10.0,
-                              color: Colors.black12.withOpacity(0.1)),
-                        ],
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(40.0))),
                     child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20.0, right: 20.0,top: 4,bottom: 4),
-                        child: Theme(
-                          data: ThemeData(
-                            highlightColor: Colors.white,
-                            hintColor: Colors.white,
-                          ),
-                          child: Form(
-                            key: _formKey,
-                            child: TextFormField(
-                                style: TextStyle(
-                                    color: Colors.black87, fontFamily: "Sofia"),
-                                controller: nameController,
-                                validator: (val) {
-                                  if (val.isEmpty) {
-                                    return "Please enter your full name";
-                                  } else
-                                    return null;
-                                },
-                                decoration: InputDecoration(
-                                  labelText: 'Full name',
-                                  labelStyle: TextStyle(
-                                      color: Colors.black54, fontFamily: "Sofia",height:1.0),
-                                  enabledBorder: new UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white,
-                                        width: 1.0,
-                                        style: BorderStyle.none),
-                                  ),
-                                )),
+                      child: Theme(
+                        data: ThemeData(
+                          highlightColor: Colors.white,
+                          hintColor: Colors.white,
+                        ),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.only(left: 20.0, right: 20.0,top: 4,bottom: 4),
+                                decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          blurRadius: 10.0,
+                                          color: Colors.black12.withOpacity(0.1)),
+                                    ],
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(40.0))),
+                                child: TextFormField(
+                                    style: TextStyle(
+                                        color: Colors.black87, fontFamily: "Sofia"),
+                                    controller: nameController,
+                                    validator: (val) {
+                                      if (val.isEmpty) {
+                                        return "Please enter your full name";
+                                      } else
+                                        return null;
+                                    },
+
+
+
+                                    decoration: InputDecoration(
+                                      labelText: 'Full name',
+                                      border: OutlineInputBorder(),
+
+                                      labelStyle: TextStyle(
+                                          color: Colors.black54, fontFamily: "Sofia",height:1.0),
+                                      enabledBorder: new UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.white,
+                                            width: 1.0,
+                                            style: BorderStyle.none),
+                                      ),
+                                    )),
+                              ),
+                              SizedBox(height: 20,),
+
+                              TextFormField(
+                                  style: TextStyle(
+                                      color: Colors.black87, fontFamily: "Sofia"),
+                                  controller: nameController,
+                                  validator: (val) {
+                                    if (val.isEmpty) {
+                                      return "Please enter your last name";
+                                    } else
+                                      return null;
+                                  },
+                                  decoration: InputDecoration(
+                                    labelText: 'Last name',
+                                    labelStyle: TextStyle(
+                                        color: Colors.black54, fontFamily: "Sofia",height:1.0),
+                                    enabledBorder: new UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: 1.0,
+                                          style: BorderStyle.none),
+                                    ),
+                                  )),
+                              SizedBox(height: 20,),
+                              TextFormField(
+                                  style: TextStyle(
+                                      color: Colors.black87, fontFamily: "Sofia"),
+                                  controller: nameController,
+                                  validator: (val) {
+                                    if (val.isEmpty) {
+                                      return "Please enter your date of birth";
+                                    } else
+                                      return null;
+                                  },
+                                  decoration: InputDecoration(
+                                    labelText: 'Date of Birth',
+                                    labelStyle: TextStyle(
+                                        color: Colors.black54, fontFamily: "Sofia",height:1.0),
+                                    enabledBorder: new UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: 1.0,
+                                          style: BorderStyle.none),
+                                    ),
+                                  )),
+                            ],
                           ),
                         ),
                       ),
@@ -264,7 +316,7 @@ class _updateProfileState extends State<updateProfile> {
                         child: Center(
                           child: Text("Update Profile",
                               style: TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.blueAccent,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 17.0,
                                   fontFamily: "Sofia")),

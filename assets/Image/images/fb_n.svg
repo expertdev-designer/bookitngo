@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="135px" height="135px" viewBox="0 0 135 135" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>Group 4</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="48.5" cy="48.5" r="48.5"></circle>
+        <filter x="-29.9%" y="-29.9%" width="159.8%" height="159.8%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="9.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.121011801 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="new_updates" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="signin" transform="translate(-79.000000, -945.000000)">
+            <g id="Group-4" transform="translate(98.000000, 964.000000)">
+                <g id="Oval">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <use stroke="#F3F3F3" stroke-width="1" fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                </g>
+                <g id="5296500_fb_social-media_facebook_facebook-logo_social-network_icon" transform="translate(38.000000, 32.000000)" fill="#1877F2" fill-rule="nonzero">
+                    <path d="M16.7679197,19.5388184 L17.6944599,13.2524219 L11.8981314,13.2524219 L11.8981314,9.17293945 C11.8981314,7.45308594 12.7078029,5.77670898 15.3040073,5.77670898 L17.9394307,5.77670898 L17.9394307,0.424785156 C17.9394307,0.424785156 15.5476642,-1.59872116e-14 13.2611387,-1.59872116e-14 C8.48719708,-1.59872116e-14 5.36708759,3.01068359 5.36708759,8.46118164 L5.36708759,13.2524219 L0.0605693431,13.2524219 L0.0605693431,19.5388184 L5.36708759,19.5388184 L5.36708759,34.735791 C6.43112409,34.9095605 7.52170073,35 8.63264234,35 C9.74358394,35 10.8341606,34.9095605 11.8981314,34.735791 L11.8981314,19.5388184 L16.7679197,19.5388184 Z" id="Path"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

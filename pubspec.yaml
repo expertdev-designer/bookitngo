@@ -268,6 +268,9 @@ flutter:
     - assets/image/images/privacy_policy.svg
     - assets/image/images/terms.svg
     - assets/image/images/search_bg.png
+    - assets/image/images/fb_n.svg
+    - assets/image/images/google_n.svg
+    - assets/image/images/linkedin_n.svg
 
 
   # To add assets to your application, add an assets section, like this:
