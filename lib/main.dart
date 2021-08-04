@@ -123,7 +123,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _timer();
-
   }
 
   /// Check user

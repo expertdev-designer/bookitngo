@@ -1,14 +1,12 @@
-import 'package:book_it/Library/loader_animation/dot.dart';
-import 'package:book_it/Library/loader_animation/loader.dart';
-import 'package:book_it/UI/IntroApps/CategorySelection.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
+import 'package:dropdown_date_picker/dropdown_date_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
-import 'package:book_it/Library/SupportingLibrary/Animation/LoginAnimation.dart';
 import 'package:book_it/UI/IntroApps/Login.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'SignUp.dart';
+import 'BookitDropdownDatePicker.dart';
 import 'login_bloc/LoginBloc.dart';
 
 class Signup extends StatefulWidget {
@@ -23,20 +21,33 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
   bool isLoading = false;
   bool autoValidation = false;
   bool _isHidden = false;
+  bool isIAgreeSelected = false;
   final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
   String _email, _pass, _pass2, _name;
   var profilePicUrl;
   TextEditingController signupEmailController = new TextEditingController();
   TextEditingController signupNameController = new TextEditingController();
+  TextEditingController signupLastNameController = new TextEditingController();
   TextEditingController signupPasswordController = new TextEditingController();
-
-  /*TextEditingController signupConfirmPasswordController =
-      new TextEditingController();*/
-
   var tap = 0;
-
   LoginBloc _loginBloc;
   AppConstantHelper _appConstantHelper;
+  static final now = DateTime.now();
+
+  final dropdownDatePicker = BookitDropdownDatePicker(
+    dateFormat: DateFormat.mdy,
+    firstDate: ValidDate(year: now.year - 100, month: 1, day: 1),
+    lastDate: ValidDate(year: now.year, month: now.month, day: now.day),
+    textStyle: TextStyle(
+        fontFamily: "Sofia",
+        fontWeight: FontWeight.w400,
+        color: Colors.black,
+        fontSize: 16.5,
+        wordSpacing: 0.1),
+    dropdownColor: Colors.white,
+    dateHint: DateHint(year: 'Year', month: 'Month', day: 'Day'),
+    ascending: false,
+  );
 
   @override
 
@@ -54,6 +65,7 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
     _loginBloc = LoginBloc();
     _appConstantHelper = AppConstantHelper();
     _appConstantHelper.setContext(context);
+
     super.initState();
   }
 
@@ -99,6 +111,8 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
 
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+
+    print("dfsdfsfds${dropdownDatePicker.getDate()}");
     return Scaffold(
       backgroundColor: Colors.white,
       body:
@@ -113,6 +127,7 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
               duration: Duration(seconds: 1),
             ))
           :*/
+
           Stack(
         children: [
           Form(
@@ -191,10 +206,15 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                                       color:
                                                           Colors.grey[200]))),
                                           child: TextFormField(
-                                            autovalidate: autoValidation,
+                                            autovalidateMode: AutovalidateMode
+                                                .onUserInteraction,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp("[a-zA-Z]")),
+                                            ],
                                             validator: (input) {
                                               if (input.isEmpty) {
-                                                return 'Please enter your Full Name';
+                                                return 'Please enter your First Name';
                                               }
                                             },
                                             onChanged: (value) {
@@ -206,7 +226,7 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                             controller: signupNameController,
                                             decoration: InputDecoration(
                                                 border: InputBorder.none,
-                                                labelText: "Full Name",
+                                                labelText: "First Name",
                                                 icon: Icon(
                                                   Icons.person,
                                                   color: Colors.black12,
@@ -224,7 +244,46 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                                       color:
                                                           Colors.grey[200]))),
                                           child: TextFormField(
-                                            autovalidate: autoValidation,
+                                            autovalidateMode: AutovalidateMode
+                                                .onUserInteraction,
+                                            validator: (input) {
+                                              if (input.isEmpty) {
+                                                return 'Please enter your Last Name';
+                                              }
+                                            },
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp("[a-zA-Z]")),
+                                            ],
+                                            onChanged: (value) {
+                                              setState(() {});
+                                            },
+                                            textInputAction:
+                                                TextInputAction.next,
+                                            controller:
+                                                signupLastNameController,
+                                            decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                labelText: "Last Name",
+                                                icon: Icon(
+                                                  Icons.person,
+                                                  color: Colors.black12,
+                                                ),
+                                                labelStyle: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontFamily: "sofia")),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                                      color:
+                                                          Colors.grey[200]))),
+                                          child: TextFormField(
+                                            autovalidateMode: AutovalidateMode
+                                                .onUserInteraction,
                                             validator: (input) {
                                               Pattern pattern =
                                                   r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
@@ -263,7 +322,8 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                         Container(
                                           padding: EdgeInsets.all(10),
                                           child: TextFormField(
-                                            autovalidate: autoValidation,
+                                            autovalidateMode: AutovalidateMode
+                                                .onUserInteraction,
                                             controller:
                                                 signupPasswordController,
                                             validator: (input) {
@@ -301,7 +361,8 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                                   ),
                                                 )),
                                           ),
-                                        )
+                                        ),
+                                        birthDateSelectWidget(),
                                       ],
                                     ),
                                   )),
@@ -356,75 +417,10 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                         signupNameController.clear();
                                         signupEmailController.clear();
                                         signupPasswordController.clear();
-                                        /*formState.save();
-                              setState(() {
-                                isLoading = true;
-                              });
-                              try {
-                                prefs.setString("username", _name);
-                                prefs.setString("email", _email);
-                                prefs.setString(
-                                    "photoURL", profilePicUrl.toString());
-                                FirebaseAuth.instance
-                                    .createUserWithEmailAndPassword(
-                                        email:
-                                            signupEmailController.text.trim(),
-                                        password: signupPasswordController.text)
-                                    .then((currentUser) => Firestore.instance
-                                        .collection("users")
-                                        .document(currentUser.uid)
-                                        .setData({
-                                          "photoProfile":
-                                              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
-                                          "uid": currentUser.uid,
-                                          "name": signupNameController.text,
-                                          "email": signupEmailController.text,
-                                          "password":
-                                              signupPasswordController.text,
-                                        })
-                                        .then((result) => {
-                                              Navigator.of(context)
-                                                  .pushReplacement(
-                                                      PageRouteBuilder(
-                                                          pageBuilder: (_, __,
-                                                                  ___) =>
-                                                              new mainSelection(
-                                                                userID:
-                                                                    currentUser
-                                                                        .uid,
-                                                              ))),
-                                            })
-                                        .catchError((err) => print(err)))
-                                    .catchError((err) => print(err));
-                              } catch (e) {
-                                print(e.message);
-                                print(_email);
-                                print(_pass);
-                              }*/
                                       } else {
-                                        // Activate autovalidation
                                         autoValidation = true;
                                       }
                                       return false;
-                                      /*else {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text("Error"),
-
-                                      content: Text("Please input all form"),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          child: Text("Close"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  });
-                            }*/
                                     },
                                     child: Container(
                                       height: 55.0,
@@ -480,5 +476,125 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
     setState(() {
       _isHidden = !_isHidden;
     });
+  }
+
+  birthDateSelectWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            "Birthday",
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: "Sofia",
+                fontWeight: FontWeight.w500,
+                fontSize: 17.5,
+                letterSpacing: 1.2),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            "To sign up, you must be 18 or older. Other people won't see your birthday.",
+            style: TextStyle(
+                color: Colors.grey,
+                fontFamily: "Sofia",
+                fontWeight: FontWeight.w400,
+                fontSize: 12.5,
+                letterSpacing: 1.2),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: dropdownDatePicker,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Checkbox(
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                checkColor: Colors.white,
+                activeColor: Colors.green,
+                value: isIAgreeSelected,
+                onChanged: (val) {
+                  isIAgreeSelected = val;
+                  setState(() {});
+                }),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: RichText(
+                  text: TextSpan(
+                      text: "By singing up, I agree to Bookit n Go's ",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "Sofia",
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12.5,
+                          letterSpacing: 1.2),
+                      children: [
+                        TextSpan(
+                            text: 'Term of Services,',
+                            style: TextStyle(
+                                color: Colors.green.withOpacity(0.8),
+                                fontFamily: "Sofia",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12.5,
+                                letterSpacing: 1.2)),
+                        TextSpan(
+                            text: ' Privacy Policy,',
+                            style: TextStyle(
+                                color: Colors.green.withOpacity(0.8),
+                                fontFamily: "Sofia",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12.5,
+                                letterSpacing: 1.2)),
+                        TextSpan(
+                            text: ' Guest Refund,',
+                            style: TextStyle(
+                                color: Colors.green.withOpacity(0.8),
+                                fontFamily: "Sofia",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12.5,
+                                letterSpacing: 1.2)),
+                        TextSpan(
+                            text: ' Copyright policy,',
+                            style: TextStyle(
+                                color: Colors.green.withOpacity(0.8),
+                                fontFamily: "Sofia",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12.5,
+                                letterSpacing: 1.2)),
+                        TextSpan(
+                            text: ' About Us,',
+                            style: TextStyle(
+                                color: Colors.green.withOpacity(0.8),
+                                fontFamily: "Sofia",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12.5,
+                                letterSpacing: 1.2)),
+                        TextSpan(
+                            text: ' FAQs. ',
+                            style: TextStyle(
+                                color: Colors.green.withOpacity(0.8),
+                                fontFamily: "Sofia",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12.5,
+                                letterSpacing: 1.2)),
+                      ]),
+                ),
+              ),
+            )
+          ],
+        ),
+        SizedBox(
+          height: 12.0,
+        ),
+      ],
+    );
   }
 }
