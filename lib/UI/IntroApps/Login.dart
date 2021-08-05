@@ -2,6 +2,7 @@ import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_svg/svg.dart';
 import 'ForgotPassword.dart';
 import 'SignUp.dart';
@@ -87,7 +88,8 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: /*
+      body:
+          /*
       isLoading
           ? Center(
           child: ColorLoader5(
@@ -186,22 +188,20 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                                                   r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
                                                   r"{0,253}[a-zA-Z0-9])?)*$";
                                               RegExp regex =
-                                              new RegExp(pattern);
+                                                  new RegExp(pattern);
                                               if (input.isEmpty) {
                                                 return 'Please enter an Email';
                                               } else if (!regex
-                                                  .hasMatch(input) ||
+                                                      .hasMatch(input) ||
                                                   input == null)
                                                 return 'Please enter a valid Email';
                                               else
                                                 return null;
                                             },
-                                            autovalidate: autoValidation,
-                                            onChanged: (value)
-                                            {
-                                              setState(() {
-
-                                              });
+                                            autovalidateMode: AutovalidateMode
+                                                .onUserInteraction,
+                                            onChanged: (value) {
+                                              setState(() {});
                                             },
                                             onSaved: (input) => _email = input,
                                             controller: loginEmailController,
@@ -220,39 +220,43 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                                         Container(
                                           padding: EdgeInsets.all(10),
                                           child: TextFormField(
-
                                             validator: (input) {
                                               if (input.isEmpty) {
                                                 return 'Please enter a Password';
                                               }
                                               if (input.length < 5) {
                                                 return 'Minimum of 5 characters allowed';
-                                              }else return null;
+                                              } else
+                                                return null;
                                             },
-                                            autovalidate: autoValidation,
-                                            onChanged: (value)
-                                            {
-                                              setState(() {
-
-                                              });
+                                            autovalidateMode: AutovalidateMode
+                                                .onUserInteraction,
+                                            onChanged: (value) {
+                                              setState(() {});
                                             },
                                             onSaved: (input) => _pass = input,
                                             controller: loginPasswordController,
                                             obscureText: _isHidden,
                                             decoration: InputDecoration(
-                                                border: InputBorder.none,
-                                                labelText: "Password",
-                                                icon: Icon(
-                                                  Icons.vpn_key,
-                                                  color: Colors.black12,
-                                                ),
-                                                labelStyle: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontFamily: "sofia"),
+                                              border: InputBorder.none,
+                                              labelText: "Password",
+                                              icon: Icon(
+                                                Icons.vpn_key,
+                                                color: Colors.black12,
+                                              ),
+                                              labelStyle: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontFamily: "sofia"),
                                               suffix: InkWell(
                                                 onTap: _togglePasswordView,
-                                                child: Icon( !_isHidden?Icons.visibility:Icons.visibility_off,color: Colors.black12,),
-                                              ),),
+                                                child: Icon(
+                                                  !_isHidden
+                                                      ? Icons.visibility
+                                                      : Icons.visibility_off,
+                                                  color: Colors.black12,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         )
                                       ],
@@ -343,7 +347,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                             if (_registerFormKey.currentState.validate()) {
                               await callLoginApi(loginEmailController.text,
                                   loginPasswordController.text);
-                            }else{
+                            } else {
                               autoValidation = true;
                             }
                             return false;
@@ -447,56 +451,76 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                               ),
                             ),
                           ),
-                        )
-                    ),
-
+                        )),
                   ],
                 ),
+                SizedBox(height: 14),
                 FadeAnimation(
                   2.1,
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-
-
-
                       Row(children: <Widget>[
-                        SizedBox(width: 60),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.2),
                         Expanded(
                           child: new Container(
-                             // margin: const EdgeInsets.only(left: 40.0),
+                              // margin: const EdgeInsets.only(left: 40.0),
                               child: Divider(
-                                color: Colors.black,
-                               // height: 50,
-                              )),
+                            color: Colors.black12,
+                            // height: 50,
+                          )),
                         ),
-                        Icon(Icons.brightness_1_outlined, color: Colors.black,size: 10,),
+                        Icon(
+                          Icons.brightness_1_outlined,
+                          color: Colors.black12,
+                          size: 10,
+                        ),
                         SizedBox(width: 10),
-                        Text("Login With",  style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Sofia",
-                            fontSize: 12,
-                            letterSpacing: 1.2),),
+                        Text(
+                          "Login With",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: "Sofia",
+                              fontSize: 14,
+                              letterSpacing: 1.2),
+                        ),
                         SizedBox(width: 10),
-                        Icon(Icons.brightness_1_outlined, color: Colors.black,size: 10,),
+                        Icon(
+                          Icons.brightness_1_outlined,
+                          color: Colors.black12,
+                          size: 10,
+                        ),
                         Expanded(
                           child: new Container(
-                             // margin: const EdgeInsets.only(right: 40.0),
+                              // margin: const EdgeInsets.only(right: 40.0),
                               child: Divider(
-                                color: Colors.black,
-                                height: 50,
-                              )),
+                            color: Colors.black12,
+                            height: 50,
+                          )),
                         ),
-                        SizedBox(width: 60),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.2),
                       ]),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          socialMediaIconWidget(context,"assets/image/images/fb_n.svg"),
-                          socialMediaIconWidget(context,"assets/image/images/google_n.svg"),
-                          socialMediaIconWidget(context,"assets/image/images/linkedin_n.svg"),
+                          socialMediaIconWidget(
+                              context, "assets/image/images/fb_wb.svg", () {
+                            _onPressedLogInButton();
+                          }),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          socialMediaIconWidget(
+                              context, "assets/image/images/g_wb.svg", () {}),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          socialMediaIconWidget(context,
+                              "assets/image/images/linkedin_wb.svg", () {}),
                         ],
                       ),
                       Padding(padding: EdgeInsets.only(bottom: 30)),
@@ -519,17 +543,32 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
     );
   }
 
-  Widget socialMediaIconWidget(BuildContext context,var iconType) {
-    return IconButton(
-
-      iconSize: 80,
-        padding: EdgeInsets.zero,
-        icon: SvgPicture.asset(iconType),
+  Widget socialMediaIconWidget(
+      BuildContext context, var iconType, VoidCallback onPressed) {
+    return Container(
+      height: 70,
+      width: 70,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(60),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(196, 135, 198, .3),
+              blurRadius: 10,
+              offset: Offset(0, 5),
+            )
+          ]),
+      child: IconButton(
+        iconSize: 45,
+        icon: SvgPicture.asset(
+          iconType,
+          width: 24,
+          height: 24,
+        ),
         color: Colors.white,
-       // iconSize: MediaQuery.of(context).size.width*0.2,
-        onPressed: () {
-        },
-      );
+        onPressed: onPressed,
+      ),
+    );
   }
 
   void _togglePasswordView() {
@@ -538,4 +577,24 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
     });
   }
 
+  Future<void> _onPressedLogInButton() async {
+    FacebookLogin facebookLogin;
+    await facebookLogin.logIn(permissions: [
+      FacebookPermission.publicProfile,
+      FacebookPermission.email,
+    ]);
+    final info = facebookLogin;
+    final token = await info.accessToken;
+    FacebookUserProfile profile;
+    String email;
+
+    if (token != null) {
+      profile = await info.getUserProfile();
+      if (token.permissions.contains(FacebookPermission.email.name)) {
+        email = await info.getUserEmail();
+        print("token${token}");
+        print("email${email}");
+      }
+    }
+  }
 }

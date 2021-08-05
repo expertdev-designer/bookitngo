@@ -1,30 +1,25 @@
-class LoginResponse {
+class RegisterResponse {
   String _message;
   bool _status;
-  LoginData _data;
+  RegisterData _data;
 
-  LoginResponse({String message, bool status, LoginData data}) {
+  RegisterResponse({String message, bool status, RegisterData data}) {
     this._message = message;
     this._status = status;
     this._data = data;
   }
 
   String get message => _message;
-
   set message(String message) => _message = message;
-
   bool get status => _status;
-
   set status(bool status) => _status = status;
+  RegisterData get data => _data;
+  set data(RegisterData data) => _data = data;
 
-  LoginData get data => _data;
-
-  set data(LoginData data) => _data = data;
-
-  LoginResponse.fromJson(Map<String, dynamic> json) {
+  RegisterResponse.fromJson(Map<String, dynamic> json) {
     _message = json['message'];
     _status = json['status'];
-    _data = json['data'] != null ? new LoginData.fromJson(json['data']) : null;
+    _data = json['data'] != null ? new RegisterData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -38,9 +33,9 @@ class LoginResponse {
   }
 }
 
-class LoginData {
-  String _accessToken;
+class RegisterData {
   int _userId;
+  String _accessToken;
   String _firstName;
   String _lastName;
   String _userImage;
@@ -49,9 +44,9 @@ class LoginData {
   String _currencyCode;
   String _currencySymbol;
 
-  LoginData(
-      {String accessToken,
-      int userId,
+  RegisterData(
+      {int userId,
+      String accessToken,
       String firstName,
       String lastName,
       String userImage,
@@ -59,8 +54,8 @@ class LoginData {
       String emailId,
       String currencyCode,
       String currencySymbol}) {
-    this._accessToken = accessToken;
     this._userId = userId;
+    this._accessToken = accessToken;
     this._firstName = firstName;
     this._lastName = lastName;
     this._userImage = userImage;
@@ -70,45 +65,28 @@ class LoginData {
     this._currencySymbol = currencySymbol;
   }
 
-  String get accessToken => _accessToken;
-
-  set accessToken(String accessToken) => _accessToken = accessToken;
-
   int get userId => _userId;
-
   set userId(int userId) => _userId = userId;
-
+  String get accessToken => _accessToken;
+  set accessToken(String accessToken) => _accessToken = accessToken;
   String get firstName => _firstName;
-
   set firstName(String firstName) => _firstName = firstName;
-
   String get lastName => _lastName;
-
   set lastName(String lastName) => _lastName = lastName;
-
   String get userImage => _userImage;
-
   set userImage(String userImage) => _userImage = userImage;
-
   String get dob => _dob;
-
   set dob(String dob) => _dob = dob;
-
   String get emailId => _emailId;
-
   set emailId(String emailId) => _emailId = emailId;
-
   String get currencyCode => _currencyCode;
-
   set currencyCode(String currencyCode) => _currencyCode = currencyCode;
-
   String get currencySymbol => _currencySymbol;
-
   set currencySymbol(String currencySymbol) => _currencySymbol = currencySymbol;
 
-  LoginData.fromJson(Map<String, dynamic> json) {
-    _accessToken = json['access_token'];
+  RegisterData.fromJson(Map<String, dynamic> json) {
     _userId = json['user_id'];
+    _accessToken = json['access_token'];
     _firstName = json['first_name'];
     _lastName = json['last_name'];
     _userImage = json['user_image'];
@@ -120,8 +98,8 @@ class LoginData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['access_token'] = this._accessToken;
     data['user_id'] = this._userId;
+    data['access_token'] = this._accessToken;
     data['first_name'] = this._firstName;
     data['last_name'] = this._lastName;
     data['user_image'] = this._userImage;

@@ -110,28 +110,4 @@ class BookingHistoryBloc {
               context: context, title: title, msg: msg);
         });
   }
-
-  setLocalStorage(LoginData onResponse) {
-    LocalStorage.setUserName(onResponse.username).then((sucess) {
-      LocalStorage.setUserAuthToken(onResponse.token);
-      LocalStorage.setEmail(onResponse.email.toString());
-      LocalStorage.setUserImage(onResponse.image.toString());
-    });
-    LocalStorage.getEmail().then((email) {
-      AppStrings.userEmail = email;
-      print('Email.......$email');
-    });
-    LocalStorage.getUserName().then((name) {
-      AppStrings.userName = name;
-      print('Name.......$name');
-    });
-    LocalStorage.getUserAuthToken().then((token) {
-      AppStrings.authToken = token;
-      print('AuthToken...........$token');
-    });
-    LocalStorage.getUserImage().then((image) {
-      AppStrings.userImage = image;
-      print('UserImage...........$image');
-    });
-  }
 }

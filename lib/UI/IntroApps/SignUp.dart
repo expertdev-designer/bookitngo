@@ -29,23 +29,24 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
   TextEditingController signupNameController = new TextEditingController();
   TextEditingController signupLastNameController = new TextEditingController();
   TextEditingController signupPasswordController = new TextEditingController();
+  String dob = "";
   var tap = 0;
   LoginBloc _loginBloc;
   AppConstantHelper _appConstantHelper;
   static final now = DateTime.now();
 
   final dropdownDatePicker = BookitDropdownDatePicker(
-    dateFormat: DateFormat.mdy,
+    dateFormat: DateFormat.dmy,
     firstDate: ValidDate(year: now.year - 100, month: 1, day: 1),
-    lastDate: ValidDate(year: now.year, month: now.month, day: now.day),
+    lastDate: ValidDate(year: now.year - 18, month: now.month, day: now.day),
     textStyle: TextStyle(
         fontFamily: "Sofia",
         fontWeight: FontWeight.w400,
         color: Colors.black,
-        fontSize: 16.5,
+        fontSize: 13.5,
         wordSpacing: 0.1),
     dropdownColor: Colors.white,
-    dateHint: DateHint(year: 'Year', month: 'Month', day: 'Day'),
+    dateHint: DateHint(year: 'Year    ', month: 'Month    ', day: 'Day    '),
     ascending: false,
   );
 
@@ -85,16 +86,20 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
   }
 
   void callRegisterApi(
-    String username,
+    String firstName,
+    String lastName,
     String email,
-    String passowrd,
+    String password,
+    String dob,
   ) {
     AppConstantHelper.checkConnectivity().then((isConnected) {
       if (isConnected) {
         _loginBloc.register(
-            username: username,
+            firstName: firstName,
+            lastName: lastName,
             email: email,
-            password: passowrd,
+            password: password,
+            dob: dob,
             context: context);
       } else {
         showDialog(
@@ -410,13 +415,20 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                       final formState =
                                           _registerFormKey.currentState;
                                       if (formState.validate()) {
-                                        callRegisterApi(
-                                            signupNameController.text,
-                                            signupEmailController.text,
-                                            signupPasswordController.text);
-                                        signupNameController.clear();
-                                        signupEmailController.clear();
-                                        signupPasswordController.clear();
+                                        if (dropdownDatePicker
+                                                .getDate()
+                                                .toString() !=
+                                            "null-null-null") {
+                                          callRegisterApi(
+                                              signupNameController.text,
+                                              signupNameController.text,
+                                              signupEmailController.text,
+                                              signupPasswordController.text,
+                                              dropdownDatePicker.getDate());
+                                          // signupNameController.clear();
+                                          // signupEmailController.clear();
+                                          // signupPasswordController.clear();
+                                        }
                                       } else {
                                         autoValidation = true;
                                       }

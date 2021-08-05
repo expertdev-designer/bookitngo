@@ -82,121 +82,121 @@ class _WebCategorySelectionPageState extends State<WebCategorySelectionPage> {
               SizedBox(
                 height: 20,
               ),
-              StreamBuilder<CategoriesResponse>(
-                  initialData: null,
-                  stream: _categoryBloc.categoryDataStream,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData &&
-                        snapshot.data != null &&
-                        snapshot.data.data != null &&
-                        snapshot.data.data.length > 0) {
-                      return Expanded(
-                        child: GridView.builder(
-                            shrinkWrap: true,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: width > 650 ? 4 : 2,
-                                    crossAxisSpacing: 25,
-                                    mainAxisSpacing: 20,
-                                    childAspectRatio: 0.8),
-                            padding: EdgeInsets.only(
-                                left: width * 0.18,
-                                right: width * 0.18,
-                                bottom: 100),
-                            itemCount: snapshot.data.data.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return InkWell(
-                                onTap: () {
-                                  if (snapshot.data.data[index].isSelect) {
-                                    snapshot.data.data[index].isSelect = false;
-                                    ids.remove(snapshot.data.data[index].sId);
-                                  } else {
-                                    snapshot.data.data[index].isSelect = true;
-                                    ids.add(snapshot.data.data[index].sId);
-                                  }
-
-                                  setState(() {});
-                                  ids.forEach((element) {
-                                    print("Element${element}");
-                                  });
-                                },
-                                child: Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(4),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                image: NetworkImage("${AppStrings.imagePAth+snapshot
-                                                    .data.data[index].image}"),
-                                                fit: BoxFit.cover)
-                                            // CachedNetworkImage(
-                                            //   imageUrl: "${AppStrings.imagePAth+snapshot
-                                            //       .data.data[index].image}",
-                                            //   imageBuilder: (context, imageProvider) => Container(
-                                            //     decoration: BoxDecoration(
-                                            //       image: DecorationImage(
-                                            //         image: imageProvider,
-                                            //         fit: BoxFit.cover,
-                                            //       ),
-                                            //     ),
-                                            //   ),
-                                            //   fit: BoxFit.cover,
-                                            //   placeholder: (context, url) => Container(
-                                            //     child: Center(
-                                            //       child: CircularProgressIndicator(
-                                            //         valueColor:
-                                            //         new AlwaysStoppedAnimation<Color>(AppColor.colorGreen),
-                                            //       ),
-                                            //     ),
-                                            //   ),
-                                            //   errorWidget: (context, url, error) => Icon(Icons.error),
-                                            // )
-
-                                        ),
-                                        child: Center(
-                                            child: Text(
-                                          '${snapshot
-                                              .data.data[index].name}',
-                                          style: TextStyle(
-                                              fontSize: 26,
-                                              // fontWeight: FontWeight.w600,
-                                              color: Colors.white,
-                                              fontFamily: "Amira",
-                                              letterSpacing: 1.5),
-                                        )),
-                                      ),
-                                    ),
-                                    Visibility(
-                                      visible:
-                                          snapshot.data.data[index].isSelect,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                            gradient: LinearGradient(colors: [
-                                              Color(0xFF6774E7)
-                                                  .withOpacity(0.7),
-                                              Color(0xFF7D55B6)
-                                                  .withOpacity(0.7),
-                                            ], tileMode: TileMode.mirror)),
-                                        child: Center(
-                                            child: Icon(
-                                          Icons.check,
-                                          color: Colors.white,
-                                          size: 30,
-                                        )),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  }),
+              // StreamBuilder<CategoriesResponse>(
+              //     initialData: null,
+              //     stream: _categoryBloc.categoryDataStream,
+              //     builder: (context, snapshot) {
+              //       if (snapshot.hasData &&
+              //           snapshot.data != null &&
+              //           snapshot.data.data != null &&
+              //           snapshot.data.data.length > 0) {
+              //         return Expanded(
+              //           child: GridView.builder(
+              //               shrinkWrap: true,
+              //               gridDelegate:
+              //                   SliverGridDelegateWithFixedCrossAxisCount(
+              //                       crossAxisCount: width > 650 ? 4 : 2,
+              //                       crossAxisSpacing: 25,
+              //                       mainAxisSpacing: 20,
+              //                       childAspectRatio: 0.8),
+              //               padding: EdgeInsets.only(
+              //                   left: width * 0.18,
+              //                   right: width * 0.18,
+              //                   bottom: 100),
+              //               itemCount: snapshot.data.data.length,
+              //               itemBuilder: (BuildContext context, int index) {
+              //                 return InkWell(
+              //                   onTap: () {
+              //                     if (snapshot.data.data[index].isSelect) {
+              //                       snapshot.data.data[index].isSelect = false;
+              //                       ids.remove(snapshot.data.data[index].sId);
+              //                     } else {
+              //                       snapshot.data.data[index].isSelect = true;
+              //                       ids.add(snapshot.data.data[index].sId);
+              //                     }
+              //
+              //                     setState(() {});
+              //                     ids.forEach((element) {
+              //                       print("Element${element}");
+              //                     });
+              //                   },
+              //                   child: Stack(
+              //                     children: [
+              //                       ClipRRect(
+              //                         borderRadius: BorderRadius.circular(4),
+              //                         child: Container(
+              //                           decoration: BoxDecoration(
+              //                               image: DecorationImage(
+              //                                   image: NetworkImage("${AppStrings.imagePAth+snapshot
+              //                                       .data.data[index].image}"),
+              //                                   fit: BoxFit.cover)
+              //                               // CachedNetworkImage(
+              //                               //   imageUrl: "${AppStrings.imagePAth+snapshot
+              //                               //       .data.data[index].image}",
+              //                               //   imageBuilder: (context, imageProvider) => Container(
+              //                               //     decoration: BoxDecoration(
+              //                               //       image: DecorationImage(
+              //                               //         image: imageProvider,
+              //                               //         fit: BoxFit.cover,
+              //                               //       ),
+              //                               //     ),
+              //                               //   ),
+              //                               //   fit: BoxFit.cover,
+              //                               //   placeholder: (context, url) => Container(
+              //                               //     child: Center(
+              //                               //       child: CircularProgressIndicator(
+              //                               //         valueColor:
+              //                               //         new AlwaysStoppedAnimation<Color>(AppColor.colorGreen),
+              //                               //       ),
+              //                               //     ),
+              //                               //   ),
+              //                               //   errorWidget: (context, url, error) => Icon(Icons.error),
+              //                               // )
+              //
+              //                           ),
+              //                           child: Center(
+              //                               child: Text(
+              //                             '${snapshot
+              //                                 .data.data[index].name}',
+              //                             style: TextStyle(
+              //                                 fontSize: 26,
+              //                                 // fontWeight: FontWeight.w600,
+              //                                 color: Colors.white,
+              //                                 fontFamily: "Amira",
+              //                                 letterSpacing: 1.5),
+              //                           )),
+              //                         ),
+              //                       ),
+              //                       Visibility(
+              //                         visible:
+              //                             snapshot.data.data[index].isSelect,
+              //                         child: Container(
+              //                           decoration: BoxDecoration(
+              //                               borderRadius:
+              //                                   BorderRadius.circular(4),
+              //                               gradient: LinearGradient(colors: [
+              //                                 Color(0xFF6774E7)
+              //                                     .withOpacity(0.7),
+              //                                 Color(0xFF7D55B6)
+              //                                     .withOpacity(0.7),
+              //                               ], tileMode: TileMode.mirror)),
+              //                           child: Center(
+              //                               child: Icon(
+              //                             Icons.check,
+              //                             color: Colors.white,
+              //                             size: 30,
+              //                           )),
+              //                         ),
+              //                       ),
+              //                     ],
+              //                   ),
+              //                 );
+              //               }),
+              //         );
+              //       } else {
+              //         return Container();
+              //       }
+              //     }),
             ],
           ),
           _footerWidget(height, width),

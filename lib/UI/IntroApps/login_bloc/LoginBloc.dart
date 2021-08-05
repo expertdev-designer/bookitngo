@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
+import 'package:book_it/UI/IntroApps/model/RegisterResponse.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
 import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/Web/CategorySelection/CategorySelectionPage.dart';
@@ -59,13 +60,13 @@ class LoginBloc {
 
           Navigator.of(context).pushReplacement(PageRouteBuilder(
               pageBuilder: (_, __, ___) => new WebCategorySelectionPage(
-                    token: onResponse.data.token,
+                    token: onResponse.data.accessToken,
                     isFrom: "Login",
                   )));
         } else {
           Navigator.of(context).pushReplacement(PageRouteBuilder(
               pageBuilder: (_, __, ___) => new CategorySelectionPage(
-                    userID: onResponse.data.token,
+                    userID: onResponse.data.accessToken,
                   )));
         }
       }
@@ -103,12 +104,14 @@ class LoginBloc {
   }
 
   void register(
-      {String email, String username, String password, BuildContext context}) {
+      {String email, String firstName,String lastName,String dob, String password, BuildContext context}) {
     progressSink.add(true);
     apiRepository
         .registerApi(
       userEmail: email,
-      username: username,
+      firstName: firstName,
+      lastName: lastName,
+      dob: dob,
       password: password,
     )
         .then((onResponse) {
@@ -118,8 +121,13 @@ class LoginBloc {
       } else if (onResponse.status) {
         print("Register" + onResponse.message);
         onSuccessSink.add(1);
-        showErrorDialog(context, "Congratulations!!!",
-            "Thanks for creating the account with us. We have sent you a mail on your registered email account. Please follow the steps in the mail to complete the sign up process.");
+        setLocalStorageAfterRegister(onResponse.data);
+        Navigator.of(context).pushReplacement(PageRouteBuilder(
+            pageBuilder: (_, __, ___) => new CategorySelectionPage(
+              userID: onResponse.data.accessToken,
+            )));
+        // showErrorDialog(context, "Congratulations!!!",
+        //     "Thanks for creating the account with us. We have sent you a mail on your registered email account. Please follow the steps in the mail to complete the sign up process.");
       }
       progressSink.add(false);
     }).catchError((onError) {
@@ -139,10 +147,10 @@ class LoginBloc {
   }
 
   setLocalStorage(LoginData onResponse) {
-    LocalStorage.setUserName(onResponse.username).then((sucess) {
-      LocalStorage.setUserAuthToken(onResponse.token);
-      LocalStorage.setEmail(onResponse.email.toString());
-      LocalStorage.setUserImage(onResponse.image.toString());
+    LocalStorage.setUserName(onResponse.firstName).then((sucess) {
+      LocalStorage.setUserAuthToken(onResponse.accessToken);
+      LocalStorage.setEmail(onResponse.emailId.toString());
+      LocalStorage.setUserImage(onResponse.userImage.toString());
     });
 
     LocalStorage.getEmail().then((email) {
@@ -162,5 +170,32 @@ class LoginBloc {
       print('UserImage...........$image');
     });
   }
+
+  setLocalStorageAfterRegister(RegisterData onResponse) {
+    LocalStorage.setUserName(onResponse.firstName ).then((sucess) {
+      LocalStorage.setUserAuthToken(onResponse.accessToken);
+      LocalStorage.setEmail(onResponse.emailId.toString());
+      LocalStorage.setUserImage(onResponse.userImage.toString());
+    });
+
+    LocalStorage.getEmail().then((email) {
+      AppStrings.userEmail = email;
+      print('Email.......$email');
+    });
+    LocalStorage.getUserName().then((name) {
+      AppStrings.userName = name;
+      print('Name.......$name');
+    });
+    LocalStorage.getUserAuthToken().then((token) {
+      AppStrings.authToken = token;
+      print('AuthToken...........$token');
+    });
+    LocalStorage.getUserImage().then((image) {
+      AppStrings.userImage = image;
+      print('UserImage...........$image');
+    });
+  }
+
+
 //
 }

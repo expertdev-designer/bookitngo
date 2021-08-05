@@ -107,7 +107,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Text(
                       // "Choose your Desired Destination",
-                      "Choose your preferred destination",
+                      "Choose your preferred location",
                       style: TextStyle(
                         color: Colors.black87,
                         fontSize: 30.0,
@@ -120,7 +120,6 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                 SizedBox(
                   height: 10.0,
                 ),
-
                 StreamBuilder<CategoriesResponse>(
                     initialData: null,
                     stream: _categoryBloc.categoryDataStream,
@@ -130,9 +129,9 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                           snapshot.data.data != null &&
                           snapshot.data.data.length > 0) {
                         return GridView.count(
-                          crossAxisCount: 2,
+                          crossAxisCount: 3,
                           shrinkWrap: true,
-                          childAspectRatio: 1.6,
+                          childAspectRatio: 0.8,
                           crossAxisSpacing: 10,
                           padding: EdgeInsets.only(left: 20, right: 20),
                           physics: NeverScrollableScrollPhysics(),
@@ -142,12 +141,12 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                               onTap: () {
                                 if (snapshot.data.data[index].isSelect) {
                                   snapshot.data.data[index].isSelect = false;
-                                  ids.remove(snapshot.data.data[index].sId);
+                                  ids.remove(snapshot.data.data[index].id);
                                 } else {
                                   snapshot.data.data[index].isSelect = true;
-                                  ids.add(snapshot.data.data[index].sId);
+                                  ids.add(
+                                      snapshot.data.data[index].id.toString());
                                 }
-
                                 setState(() {});
                                 ids.forEach((element) {
                                   print("Element${element}");
@@ -157,26 +156,11 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                                   0.9,
                                   itemCard(
                                       image:
-                                          "${AppStrings.imagePAth + snapshot.data.data[index].image}",
+                                          "${snapshot.data.data[index].imageUrl}",
                                       title:
                                           "${snapshot.data.data[index].name}",
                                       isSelected:
-                                          snapshot.data.data[index].isSelect)
-                                  // !snapshot.data.data[index].isSelect
-                                  //     ? itemCard(
-                                  //         image:
-                                  //             "${AppStrings.imagePAth + snapshot.data.data[index].image}",
-                                  //         title:
-                                  //             "${snapshot.data.data[index].name}",
-                                  //       )
-                                  //     : itemCardSelected(
-                                  //         image:
-                                  //             "${AppStrings.imagePAth + snapshot.data.data[index].image}",
-                                  //         title:
-                                  //             "${snapshot.data.data[index].name}",
-                                  //         sizeFont: 25.0,
-                                  //       ),
-                                  ),
+                                          snapshot.data.data[index].isSelect)),
                             );
                           }),
                         );
@@ -184,176 +168,9 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                         return Container();
                       }
                     }),
-                // SizedBox(
-                //   height: 50.0,
-                // ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: <Widget>[
-                //     InkWell(
-                //         onTap: () {
-                //           setState(() {
-                //             if (button1 == true) {
-                //               button1 = false;
-                //             } else {
-                //               button1 = true;
-                //             }
-                //           });
-                //         },
-                //         child: FadeAnimation(
-                //           0.9,
-                //           button1
-                //               ? itemCard(
-                //                   image:
-                //                       "assets/image/destinationPopuler/destination1.png",
-                //                   title: "Museum",
-                //                 )
-                //               : itemCardSelected(
-                //                   image:
-                //                       "assets/image/destinationPopuler/destination1.png",
-                //                   title: "Museum",
-                //                   sizeFont: 25.0,
-                //                 ),
-                //         )),
-                //     InkWell(
-                //         onTap: () {
-                //           setState(() {
-                //             if (button2 == true) {
-                //               button2 = false;
-                //             } else {
-                //               button2 = true;
-                //             }
-                //           });
-                //         },
-                //         child: FadeAnimation(
-                //           1.7,
-                //           button2
-                //               ? itemCard(
-                //                   image:
-                //                       "assets/image/destinationPopuler/destination5.jpg",
-                //                   title: "Park",
-                //                 )
-                //               : itemCardSelected(
-                //                   image:
-                //                       "assets/image/destinationPopuler/destination5.jpg",
-                //                   title: "Park",
-                //                   sizeFont: 25.0,
-                //                 ),
-                //         )),
-                //   ],
-                // ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: <Widget>[
-                //     InkWell(
-                //         onTap: () {
-                //           setState(() {
-                //             if (button3 == true) {
-                //               button3 = false;
-                //             } else {
-                //               button3 = true;
-                //             }
-                //           });
-                //         },
-                //         child: FadeAnimation(
-                //           2.4,
-                //           button3
-                //               ? itemCard(
-                //                   image:
-                //                       "assets/image/destinationPopuler/populer2.png",
-                //                   title: "Beach",
-                //                 )
-                //               : itemCardSelected(
-                //                   image:
-                //                       "assets/image/destinationPopuler/populer2.png",
-                //                   title: "Beach",
-                //                   sizeFont: 22.0,
-                //                 ),
-                //         )),
-                //     InkWell(
-                //         onTap: () {
-                //           setState(() {
-                //             if (button4 == true) {
-                //               button4 = false;
-                //             } else {
-                //               button4 = true;
-                //             }
-                //           });
-                //         },
-                //         child: FadeAnimation(
-                //           3.2,
-                //           button4
-                //               ? itemCard(
-                //                   image:
-                //                       "assets/image/destinationPopuler/destination4.jpg",
-                //                   title: "Mountain",
-                //                 )
-                //               : itemCardSelected(
-                //                   image:
-                //                       "assets/image/destinationPopuler/destination4.jpg",
-                //                   title: "Mountain",
-                //                   sizeFont: 25.0,
-                //                 ),
-                //         )),
-                //   ],
-                // ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: <Widget>[
-                //     InkWell(
-                //         onTap: () {
-                //           setState(() {
-                //             if (button5 == true) {
-                //               button5 = false;
-                //             } else {
-                //               button5 = true;
-                //             }
-                //           });
-                //         },
-                //         child: FadeAnimation(
-                //           4.0,
-                //           button5
-                //               ? itemCard(
-                //                   image: "assets/image/homeImage/hotel.png",
-                //                   title: "Hotel",
-                //                 )
-                //               : itemCardSelected(
-                //                   image: "assets/image/homeImage/hotel.png",
-                //                   title: "Hotel",
-                //                   sizeFont: 25.0,
-                //                 ),
-                //         )),
-                //     InkWell(
-                //         onTap: () {
-                //           setState(() {
-                //             if (button6 == true) {
-                //               button6 = false;
-                //             } else {
-                //               button6 = true;
-                //             }
-                //           });
-                //         },
-                //         child: FadeAnimation(
-                //           4.8,
-                //           button6
-                //               ? itemCard(
-                //                   image:
-                //                       "assets/image/homeImage/experience.png",
-                //                   title: "Experience",
-                //                 )
-                //               : itemCardSelected(
-                //                   image:
-                //                       "assets/image/homeImage/experience.png",
-                //                   title: "Experience",
-                //                   sizeFont: 25.0,
-                //                 ),
-                //         )),
-                //   ],
-                // ),
                 SizedBox(
                   height: 70.0,
                 ),
-
                 FadeAnimation(
                     4.0,
                     ids != null && ids.length > 0
@@ -407,55 +224,52 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                             ),
                           )),
                 SizedBox(
-                  height: 20.0,
+                  height: 60.0,
                 ),
-              ],
-            ),
-          ),
-          Visibility(
-            visible: widget.isFrom == "Home" ? false : true,
-            child: Positioned(
-              bottom: 30,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: FlatButton(
-                  onPressed: () {
-
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => bottomNavBar(
-                            userID: AppStrings.authToken,
-                          ),
-                        ));
-                    // Navigator.of(context).push(PageRouteBuilder(
-                    //     pageBuilder: (_, __, ___) => new bottomNavBar(
-                    //           userID: widget.userID,
-                    //         ),
-                    //     transitionDuration: Duration(milliseconds: 600),
-                    //     transitionsBuilder:
-                    //         (_, Animation<double> animation, __, Widget child) {
-                    //       return Opacity(
-                    //         opacity: animation.value,
-                    //         child: child,
-                    //       );
-                    //     }));
-                  },
-                  child: FadeAnimation(
-                    6.0,
-                    Text(
-                      "Skip",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "Sofia",
-                          fontWeight: FontWeight.w600,
-                          fontSize: 19.5,
-                          letterSpacing: 1.2),
+                Visibility(
+                  visible: widget.isFrom == "Home" ? false : true,
+                  child: Center(
+                    child: MaterialButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => bottomNavBar(
+                                userID: AppStrings.authToken,
+                              ),
+                            ));
+                        Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => new bottomNavBar(
+                                  userID: widget.userID,
+                                ),
+                            transitionDuration: Duration(milliseconds: 600),
+                            transitionsBuilder: (_, Animation<double> animation,
+                                __, Widget child) {
+                              return Opacity(
+                                opacity: animation.value,
+                                child: child,
+                              );
+                            }));
+                      },
+                      child: FadeAnimation(
+                        6.0,
+                        Text(
+                          "Skip",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: "Sofia",
+                              fontWeight: FontWeight.w600,
+                              fontSize: 19.5,
+                              letterSpacing: 1.2),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+                SizedBox(
+                  height: 20.0,
+                ),
+              ],
             ),
           ),
           StreamBuilder<bool>(
@@ -487,47 +301,47 @@ class itemCard extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(
-              left: 5.0, right: 5.0, top: 16.0, bottom: 10.0),
+              left: 5.0, right: 5.0, top: 16.0, bottom: 4.0),
           child: Container(
-            height: 95.0,
+            // height: 95.0,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                borderRadius: BorderRadius.all(Radius.circular(4.0))),
             child: Material(
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
                   image: DecorationImage(
                       image: NetworkImage(image), fit: BoxFit.cover),
                   border: Border.all(
                       width: isSelected ? 2 : 0,
                       color: isSelected ? Color(0xFF7F53AC) : Colors.white),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Color(0xFFABABAB).withOpacity(0.7),
-                        blurRadius: 6.0,
-                        offset: Offset(0, 3)),
-                  ],
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //       color: Color(0xFFABABAB).withOpacity(0.7),
+                  //       blurRadius: 6.0,
+                  //       offset: Offset(0, 3)),
+                  // ],
                 ),
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
                     color: Colors.black12.withOpacity(0.1),
                   ),
                   child: Center(
                     child: Text(
                       title,
                       style: TextStyle(
-                        shadows: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.7),
-                              blurRadius: 10.0,
-                              spreadRadius: 2.0)
-                        ],
+                        // shadows: [
+                        //   BoxShadow(
+                        //       color: Colors.black.withOpacity(0.7),
+                        //       blurRadius: 10.0,
+                        //       spreadRadius: 2.0)
+                        // ],
                         color: Colors.white,
                         fontFamily: "Sofia",
-                        fontWeight: FontWeight.w800,
-                        fontSize: 25.0,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
                       ),
                     ),
                   ),

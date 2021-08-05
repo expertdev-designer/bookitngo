@@ -24,10 +24,10 @@ class _bottomNavBarState extends State<bottomNavBar> {
   bool _color = true;
   List<Widget> pageList = [
     Home(
-      userID:"userID",
+      userID: "userID",
     ),
     noMessage(
-      userID:"userID",
+      userID: "userID",
     ),
     trip(
       userID: "afs",
@@ -37,12 +37,12 @@ class _bottomNavBarState extends State<bottomNavBar> {
     ),
     profile(
       userID: "ferwt24",
-    ),profile(
+    ),
+    profile(
       userID: "ferwt24",
     ),
-
-
   ];
+
   Widget callPage(int current) {
     switch (current) {
       case 0:
@@ -76,6 +76,7 @@ class _bottomNavBarState extends State<bottomNavBar> {
         );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     void _handleIndexChanged(int i) {
@@ -83,52 +84,61 @@ class _bottomNavBarState extends State<bottomNavBar> {
         currentIndex = i;
       });
     }
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body:callPage(currentIndex)
+      body: callPage(currentIndex)
       /*IndexedStack(
         index: currentIndex,
         children: pageList,
           //
-      )*/,
-      bottomNavigationBar:  Container(
-       decoration: BoxDecoration(
-         color: Colors.white,
-         boxShadow: [
-           BoxShadow(
-             color: Colors.grey.withOpacity(0.3),
-             spreadRadius: 3,
-             blurRadius: 4,
-             offset: Offset(0, 3), // changes position of shadow
-           ),
-         ],
-       ),
+      )*/
+      ,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 3,
+              blurRadius: 4,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
         child: DotNavigationBar(
           margin: EdgeInsets.symmetric(horizontal: 30.0),
-    itemPadding: EdgeInsets.symmetric(vertical: 2,horizontal: 12.0),
-
-    unselectedItemColor: Colors.grey,
+          itemPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 12.0),
+          unselectedItemColor: Colors.grey,
           selectedItemColor: AppColor.primaryColor,
-          currentIndex:currentIndex,
+          currentIndex: currentIndex,
           dotIndicatorColor: AppColor.primaryColor,
           duration: Duration(milliseconds: 1000),
           onTap: _handleIndexChanged,
           // dotIndicatorColor: Colors.black,
+
           items: [
             /// Home
             DotNavigationBarItem(
               unselectedColor: Colors.grey,
               selectedColor: AppColor.primaryColor,
-              icon: SvgPicture.asset('assets/image/icon/home.svg',width: 20,height: 20,color:currentIndex==0? AppColor.primaryColor:Colors.grey,),
-
+              icon: SvgPicture.asset(
+                'assets/image/icon/home.svg',
+                width: 20,
+                height: 20,
+                color: currentIndex == 0 ? AppColor.primaryColor : Colors.grey,
+              ),
             ),
 
             /// Likes
             DotNavigationBarItem(
               unselectedColor: Colors.grey,
               selectedColor: AppColor.primaryColor,
-              icon: SvgPicture.asset('assets/image/icon/chat.svg',width: 20,height: 20,color: currentIndex==1?AppColor.primaryColor:Colors.grey),
-
+              icon: SvgPicture.asset('assets/image/icon/chat.svg',
+                  width: 20,
+                  height: 20,
+                  color:
+                      currentIndex == 1 ? AppColor.primaryColor : Colors.grey),
             ),
 
             /// Search
@@ -142,18 +152,25 @@ class _bottomNavBarState extends State<bottomNavBar> {
             DotNavigationBarItem(
               unselectedColor: Colors.grey,
               selectedColor: AppColor.primaryColor,
-              icon: SvgPicture.asset('assets/image/icon/heart.svg',width: 20,height: 20,color: currentIndex==3?AppColor.primaryColor:Colors.grey,),
-
+              icon: SvgPicture.asset(
+                'assets/image/icon/heart.svg',
+                width: 20,
+                height: 20,
+                color: currentIndex == 3 ? AppColor.primaryColor : Colors.grey,
+              ),
             ),
 
             /// Profile
             DotNavigationBarItem(
               unselectedColor: Colors.grey,
               selectedColor: AppColor.primaryColor,
-              icon: SvgPicture.asset('assets/image/icon/profile.svg',width: 20,height: 20,color:currentIndex==4? AppColor.primaryColor:Colors.grey,),
-
+              icon: SvgPicture.asset(
+                'assets/image/icon/profile.svg',
+                width: 20,
+                height: 20,
+                color: currentIndex == 4 ? AppColor.primaryColor : Colors.grey,
+              ),
             ),
-
           ],
         ),
       ),

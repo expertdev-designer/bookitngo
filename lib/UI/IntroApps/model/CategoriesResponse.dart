@@ -1,31 +1,31 @@
 class CategoriesResponse {
-  bool _status;
   String _message;
+  bool _status;
   List<CategoriesData> _data;
 
-  CategoriesResponse({bool status, String message, List<CategoriesData> data}) {
-    this._status = status;
+  CategoriesResponse({String message, bool status, List<CategoriesData> data}) {
     this._message = message;
+    this._status = status;
     this._data = data;
   }
-
-  bool get status => _status;
-
-  set status(bool status) => _status = status;
 
   String get message => _message;
 
   set message(String message) => _message = message;
+
+  bool get status => _status;
+
+  set status(bool status) => _status = status;
 
   List<CategoriesData> get data => _data;
 
   set data(List<CategoriesData> data) => _data = data;
 
   CategoriesResponse.fromJson(Map<String, dynamic> json) {
-    _status = json['status'];
     _message = json['message'];
+    _status = json['status'];
     if (json['data'] != null) {
-      _data = new List<CategoriesData>();
+      _data = <CategoriesData>[];
       json['data'].forEach((v) {
         _data.add(new CategoriesData.fromJson(v));
       });
@@ -34,8 +34,8 @@ class CategoriesResponse {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this._status;
     data['message'] = this._message;
+    data['status'] = this._status;
     if (this._data != null) {
       data['data'] = this._data.map((v) => v.toJson()).toList();
     }
@@ -44,37 +44,24 @@ class CategoriesResponse {
 }
 
 class CategoriesData {
-  String _sId;
+  int _id;
   String _name;
   String _image;
-  bool _isDeleted;
-  String _updatedAt;
-  String _createdAt;
-  int _iV;
-  bool isSelect = false;
+  String _imageUrl;
+  bool _isSelect=false;
 
   CategoriesData(
-      {String sId,
-      String name,
-      String image,
-      bool isDeleted,
-      String updatedAt,
-      String createdAt,
-      int iV,
-      bool isSelect}) {
-    this._sId = sId;
+      {int id, String name, String image, String imageUrl, bool isSelect}) {
+    this._id = id;
     this._name = name;
     this._image = image;
-    this._isDeleted = isDeleted;
-    this._updatedAt = updatedAt;
-    this._createdAt = createdAt;
-    this._iV = iV;
-    this.isSelect = isSelect;
+    this._imageUrl = imageUrl;
+    this._isSelect = isSelect;
   }
 
-  String get sId => _sId;
+  int get id => _id;
 
-  set sId(String sId) => _sId = sId;
+  set id(int id) => _id = id;
 
   String get name => _name;
 
@@ -84,45 +71,27 @@ class CategoriesData {
 
   set image(String image) => _image = image;
 
-  bool get isDeleted => _isDeleted;
+  String get imageUrl => _imageUrl;
 
-  set isDeleted(bool isDeleted) => _isDeleted = isDeleted;
+  set imageUrl(String imageUrl) => _imageUrl = imageUrl;
 
-  String get updatedAt => _updatedAt;
+  bool get isSelect => _isSelect;
 
-  set updatedAt(String updatedAt) => _updatedAt = updatedAt;
-
-  String get createdAt => _createdAt;
-
-  set createdAt(String createdAt) => _createdAt = createdAt;
-
-  int get iV => _iV;
-
-  set iV(int iV) => _iV = iV;
-
-  bool get iSSelect => isSelect;
-
-  set iSSelect(bool isSelect) => isSelect = isSelect;
+  set isSelect(bool isSelect) => _isSelect = isSelect;
 
   CategoriesData.fromJson(Map<String, dynamic> json) {
-    _sId = json['_id'];
+    _id = json['id'];
     _name = json['name'];
     _image = json['image'];
-    _isDeleted = json['is_deleted'];
-    _updatedAt = json['updated_at'];
-    _createdAt = json['created_at'];
-    _iV = json['__v'];
+    _imageUrl = json['image_url'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this._sId;
+    data['id'] = this._id;
     data['name'] = this._name;
     data['image'] = this._image;
-    data['is_deleted'] = this._isDeleted;
-    data['updated_at'] = this._updatedAt;
-    data['created_at'] = this._createdAt;
-    data['__v'] = this._iV;
+    data['image_url'] = this._imageUrl;
     return data;
   }
 }

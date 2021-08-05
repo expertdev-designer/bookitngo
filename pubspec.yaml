@@ -71,12 +71,8 @@ dependencies:
   intl: ^0.17.0
   google_maps: ^5.1.0
   dropdown_date_picker: ^0.1.1+2
-#  cached_network_image: any
-#  table_calendar: ^2.3.3
-#  calendar_views: ^0.5.2
-#  vertical_calendar: ^1.0.1+6
-#  paged_vertical_calendar:
-#  simple_vertical_calendar:
+  flutter_login_facebook: ^1.0.1
+
 
 dev_dependencies:
   flutter_test:
@@ -271,6 +267,9 @@ flutter:
     - assets/image/images/fb_n.svg
     - assets/image/images/google_n.svg
     - assets/image/images/linkedin_n.svg
+    - assets/image/images/fb_wb.svg
+    - assets/image/images/g_wb.svg
+    - assets/image/images/linkedin_wb.svg
 
 
   # To add assets to your application, add an assets section, like this:

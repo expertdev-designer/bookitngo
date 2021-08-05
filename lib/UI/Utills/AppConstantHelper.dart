@@ -31,10 +31,10 @@ class AppConstantHelper {
     return AlertDialog(
       insetPadding: EdgeInsets.symmetric(
           horizontal: kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 20),
-      title: Text("$title"),
+      // title: Text("$title"),
       content: Text("$msg"),
       actions: <Widget>[
-        FlatButton(
+        MaterialButton(
           child: Text("Close"),
           onPressed: () {
             Navigator.of(context).pop();

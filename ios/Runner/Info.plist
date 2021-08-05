@@ -52,5 +52,18 @@
         <key>NSAllowsArbitraryLoadsInWebContent</key>
         <true/>
     </dict>
+    <key>CFBundleURLTypes</key>
+    <array>
+      <dict>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>fb[1485486175135137]</string>
+      </array>
+      </dict>
+    </array>
+    <key>FacebookAppID</key>
+    <string>[1485486175135137]</string>
+    <key>FacebookDisplayName</key>
+    <string>Book It n Go</string>
 </dict>
 </plist>

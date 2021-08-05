@@ -14,33 +14,32 @@ import 'package:book_it/UI/B4_Booking/model/BookingHistoryResponse.dart';
 import 'package:book_it/UI/B5_Profile/model/PaymentCardResponse.dart';
 import 'package:book_it/UI/IntroApps/model/CategoriesResponse.dart';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
+import 'package:book_it/UI/IntroApps/model/RegisterResponse.dart';
 import 'package:book_it/UI/Search/model/SearchResponse.dart';
 import 'package:book_it/UI/Search/model/SearchTagResponse.dart';
 import 'package:book_it/model/CommonResponse.dart';
 import 'package:dio/dio.dart';
-import 'api_helper.dart';
 import 'common_api_utils.dart';
 import 'local_storage.dart';
 
 class ApiRepository {
-  ApiHelper apiHelper = ApiHelper();
   Dio _dio = Dio();
 
-  var base_url = "http://18.217.126.228:3002/api/";
+  // var base_url = "http://18.217.126.228:3002/api/";
+  var base_url = "http://192.168.1.67/bookitngo/public/api/";
 
   var image_base_url = "http://18.217.126.228:3002/api/";
-
-  /*................... login api ..........*/
 
   Future<LoginResponse> loginApi(
       {String usernameEmail, String password}) async {
     print('usernameEmail${usernameEmail}password${password}');
-    var response =
-        await _dio.post(base_url + ApiEndPoints.post_api_Login, data: {
+    var response = await _dio.get(base_url +
+            'login?${"email=$usernameEmail&password=$password"}' /*data: {
       'email': usernameEmail,
       'device_token': 'ADFSDFDSdfbsbkfshfb',
       'password': password
-    });
+    }*/
+        );
     print("LoginResponse" + response.toString());
     Map<String, dynamic> data = jsonDecode(response.toString());
     return LoginResponse.fromJson(data);
@@ -61,19 +60,28 @@ class ApiRepository {
 
   /*................... Register api ..........*/
 
-  Future<CommonResponse> registerApi(
-      {String username, String userEmail, String password}) async {
-    print('usernameEmail${userEmail}password${password}');
-    var response =
-        await _dio.post(base_url + ApiEndPoints.post_api_Register, data: {
-      'username': username,
+  Future<RegisterResponse> registerApi(
+      {String firstName,
+      String lastName,
+      String userEmail,
+      String password,
+      String dob}) async {
+    print(
+        'firstName${firstName}lastName${lastName}password${password} userEmail${userEmail}dob${dob}');
+    var response = await _dio.get(
+      "http://192.168.1.67/bookitngo/public/api/" +
+          'signup?${"email=$userEmail&password=$password&dob=$dob&first_name=$firstName&last_name=$lastName"}', /*data: {
+      'first_name': firstName,
+      'last_name': lastName,
       'email': userEmail,
-      'device_token': 'ADFSDFDSdfbsbkfshfb',
-      'password': password
-    });
+      // 'device_token': 'ADFSDFDSdfbsbkfshfb',
+      'password': password,
+      'dob': dob
+    }*/
+    );
     print("RegisterResponse" + response.toString());
     Map<String, dynamic> data = jsonDecode(response.toString());
-    return CommonResponse.fromJson(data);
+    return RegisterResponse.fromJson(data);
   }
 
   //  uploadDocument api ..........
@@ -125,14 +133,14 @@ class ApiRepository {
   /*................... get Category api ..........*/
 
   Future<CategoriesResponse> getCategories(String token) async {
-    _dio.interceptors
-        .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-      // Do something before request is sent
-      if (token != null) {
-        options.headers["x-access-token"] = token;
-      }
-    }));
-    var response = await _dio.post(base_url + ApiEndPoints.getCategory);
+    // _dio.interceptors
+    //     .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
+    //   // Do something before request is sent
+    //   if (token != null) {
+    //     options.headers["x-access-token"] = token;
+    //   }
+    // }));
+    var response = await _dio.get(base_url + ApiEndPoints.getCategory);
     print("getCategoryResponse" + response.toString());
     Map<String, dynamic> data = jsonDecode(response.toString());
     return CategoriesResponse.fromJson(data);
@@ -386,7 +394,7 @@ class ApiRepository {
   }
 
   getDioOptions(Dio _dio) {
-    String authTOKEN="";
+    String authTOKEN = "";
     LocalStorage.getUserAuthToken().then((value) {
       authTOKEN = value;
       print("x-access-token $authTOKEN");
@@ -395,7 +403,7 @@ class ApiRepository {
         .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
       // Do something before request is sent
       // if (authTOKEN != null) {
-        options.headers["x-access-token"] = authTOKEN;
+      options.headers["x-access-token"] = authTOKEN;
       // }
     }));
   }

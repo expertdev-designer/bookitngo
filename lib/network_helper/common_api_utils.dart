@@ -7,7 +7,7 @@ class ApiEndPoints {
   static const String post_api_uploadImage_document = "uploadUserImage";
   static const String update_username = "updateProfile";
   static const String callCenter = "callCenter";
-  static const String getCategory = "getCategory";
+  static const String getCategory = "home_cities";
   static const String saveUserCategory = "saveUserCategory";
   static const String addCard = "addCard";
   static const String getCards = "getCards";

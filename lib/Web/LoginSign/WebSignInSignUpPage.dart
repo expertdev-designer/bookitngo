@@ -75,11 +75,11 @@ class _WebSignInSignUpPageState extends State<WebSignInSignUpPage> {
   }
 
   void callSignUpApi({String email, String password, String fullName}) {
-    _loginBloc.register(
-        username: fullName,
-        email: email,
-        password: password.trim(),
-        context: context);
+    // _loginBloc.register(
+    //     username: fullName,
+    //     email: email,
+    //     password: password.trim(),
+    //     context: context);
   }
 
   void callForgotPasswordApi(String email) {

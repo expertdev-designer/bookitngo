@@ -132,7 +132,7 @@ class _BookitDropdownDatePickerState extends State<BookitDropdownDatePicker> {
               alignment: Alignment.center,
               child: Text(
                 Date.toStringWithLeadingZeroIfLengthIsOne(i),
-                textAlign: TextAlign.start,
+                textAlign: TextAlign.center,
                 style: widget.textStyle,
               ),
             ),
@@ -165,11 +165,11 @@ class _BookitDropdownDatePickerState extends State<BookitDropdownDatePicker> {
         hint: Container(
 
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left:40.0),
+                padding: const EdgeInsets.only(left:30.0),
                 child: Text(
                   hint,
                   textAlign: TextAlign.center,// dd, mm, yyyy
@@ -290,7 +290,6 @@ class _BookitDropdownDatePickerState extends State<BookitDropdownDatePicker> {
 
   List<Widget> _buildDropdownButtonsByDateFormat() {
     final dropdownButtonList = <Widget>[];
-
     switch (widget.dateFormat) {
       case DateFormat.dmy:
         dropdownButtonList
@@ -317,7 +316,7 @@ class _BookitDropdownDatePickerState extends State<BookitDropdownDatePicker> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: _buildDropdownButtonsByDateFormat(),
     );
   }

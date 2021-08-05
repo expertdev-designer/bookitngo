@@ -62,10 +62,10 @@ class MapBloc {
   }
 
   setLocalStorage(LoginData onResponse) {
-    LocalStorage.setUserName(onResponse.username).then((sucess) {
-      LocalStorage.setUserAuthToken(onResponse.token);
-      LocalStorage.setEmail(onResponse.email.toString());
-      LocalStorage.setUserImage(onResponse.image.toString());
+    LocalStorage.setUserName(onResponse.firstName).then((sucess) {
+      LocalStorage.setUserAuthToken(onResponse.accessToken);
+      LocalStorage.setEmail(onResponse.emailId.toString());
+      LocalStorage.setUserImage(onResponse.userImage.toString());
     });
     LocalStorage.getEmail().then((email) {
       AppStrings.userEmail = email;
