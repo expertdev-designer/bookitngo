@@ -270,6 +270,9 @@ flutter:
     - assets/image/images/fb_wb.svg
     - assets/image/images/g_wb.svg
     - assets/image/images/linkedin_wb.svg
+    - assets/image/images/doc.svg
+    - assets/image/images/search_new.svg
+    - assets/image/images/help_image.png
 
 
   # To add assets to your application, add an assets section, like this:
