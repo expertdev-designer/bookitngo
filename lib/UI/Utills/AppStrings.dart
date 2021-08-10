@@ -8,8 +8,11 @@ class AppStrings {
   static var userImage = "";
   static var imagePAth = "http://18.217.126.228/server/";
 
+  static var linkedinClientID = '86tgh53q1bmevs';
+  static var linkedinClientSecret = 'QRyKNEg1xQfxsogB';
+  static var linkedinRedirectURl = '';
+
   static List<SelectedRoomList> selectedRoomList = List();
   static var checkInDate = DateTime.now();
   static var checkOutDate = DateTime.now().add(Duration(days: 1));
-
 }

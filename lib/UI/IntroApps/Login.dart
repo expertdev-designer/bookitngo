@@ -1,9 +1,12 @@
+import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
+
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'ForgotPassword.dart';
 import 'SignUp.dart';
 import 'login_bloc/LoginBloc.dart';
@@ -14,10 +17,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> with TickerProviderStateMixin {
-  @override
   //Animation Declaration
   AnimationController sanimationController;
-
   var tap = 0;
   bool isLoading = false;
   bool autoValidation = false;
@@ -31,11 +32,23 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 
   LoginBloc _loginBloc;
   AppConstantHelper _appConstantHelper;
-
+  final String redirectUrl = 'https://smarttersstudio.com';
+  final String clientId = '78el5r2y1dwp4j ';
+  final String clientSecret = 'RnyXiCNz3cahNx1g ';
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+    ],
+  );
   @override
 
   /// set state animation controller
+
   void initState() {
+    // LinkedInLogin.initialize(context,
+    //     clientId: AppStrings.linkedinClientID,
+    //     clientSecret: AppStrings.linkedinClientSecret,
+    //     redirectUri: redirectUrl);
     sanimationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 800))
           ..addStatusListener((statuss) {
@@ -468,13 +481,13 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                           child: new Container(
                               // margin: const EdgeInsets.only(left: 40.0),
                               child: Divider(
-                            color: Colors.black12,
+                            color: Colors.black38,
                             // height: 50,
                           )),
                         ),
                         Icon(
                           Icons.brightness_1_outlined,
-                          color: Colors.black12,
+                          color: Colors.black38,
                           size: 10,
                         ),
                         SizedBox(width: 10),
@@ -489,14 +502,14 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                         SizedBox(width: 10),
                         Icon(
                           Icons.brightness_1_outlined,
-                          color: Colors.black12,
+                          color: Colors.black38,
                           size: 10,
                         ),
                         Expanded(
                           child: new Container(
                               // margin: const EdgeInsets.only(right: 40.0),
                               child: Divider(
-                            color: Colors.black12,
+                            color: Colors.black38,
                             height: 50,
                           )),
                         ),
@@ -508,19 +521,21 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           socialMediaIconWidget(
-                              context, "assets/image/images/fb_wb.svg", () {
-                            _onPressedLogInButton();
-                          }),
+                              context,
+                              "assets/image/images/fb_wb.svg",
+                              () => _facebookButtonOnClick()),
                           SizedBox(
                             width: 20,
                           ),
                           socialMediaIconWidget(
-                              context, "assets/image/images/g_wb.svg", () {}),
+                              context, "assets/image/images/g_wb.svg", ()=>_googleButtonOnClick()),
                           SizedBox(
                             width: 20,
                           ),
-                          socialMediaIconWidget(context,
-                              "assets/image/images/linkedin_wb.svg", () {}),
+                          socialMediaIconWidget(
+                              context,
+                              "assets/image/images/linkedin_wb.svg",
+                              () => _linkedinButtonOnClick()),
                         ],
                       ),
                       Padding(padding: EdgeInsets.only(bottom: 30)),
@@ -577,24 +592,82 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
     });
   }
 
-  Future<void> _onPressedLogInButton() async {
-    FacebookLogin facebookLogin;
-    await facebookLogin.logIn(permissions: [
+  Future<void> _facebookButtonOnClick() async {
+    final fb = FacebookLogin();
+// Log in
+    final res = await fb.logIn(permissions: [
       FacebookPermission.publicProfile,
       FacebookPermission.email,
     ]);
-    final info = facebookLogin;
-    final token = await info.accessToken;
-    FacebookUserProfile profile;
-    String email;
 
-    if (token != null) {
-      profile = await info.getUserProfile();
-      if (token.permissions.contains(FacebookPermission.email.name)) {
-        email = await info.getUserEmail();
-        print("token${token}");
-        print("email${email}");
-      }
+// Check result status
+    switch (res.status) {
+      case FacebookLoginStatus.success:
+        // Logged in
+
+        // Send access token to server for validation and auth
+        final FacebookAccessToken accessToken = res.accessToken;
+        print('Access token: ${accessToken.token}');
+
+        // Get profile data
+        final profile = await fb.getUserProfile();
+        print('Hello, ${profile.name}! Your ID: ${profile.userId}');
+
+        // Get user profile image url
+        final imageUrl = await fb.getProfileImageUrl(width: 100);
+        print('Your profile image: $imageUrl');
+
+        // Get email (since we request email permission)
+        final email = await fb.getUserEmail();
+        // But user can decline permission
+        if (email != null) print('And your email is $email');
+        // await callLoginApi(
+        //     email: email,
+        //     social_id: profile.userId,
+        //     fullname: profile.name,
+        //     social_type: 'facebook');
+        fb.logOut();
+        break;
+      case FacebookLoginStatus.cancel:
+        // User cancel log in
+        break;
+      case FacebookLoginStatus.error:
+        // Log in failed
+        print('Error while log in: ${res.error}');
+        // Utils.showErrorSnackBar(message: '${res.error}', context: context);
+        break;
     }
   }
+
+  void _linkedinButtonOnClick() {
+    // LinkedInLogin.getProfile(
+    //         destroySession: true,
+    //         forceLogin: true,
+    //         appBar: AppBar(
+    //           title: Text('Demo Login Page'),
+    //         ))
+    //     .then((profile) => print(profile.toJson().toString()))
+    //     .catchError((error) {
+    //   print(error.errorDescription);
+    // });
+  }
+
+
+  Future<void> _googleButtonOnClick() async {
+    try {
+      await _googleSignIn.signIn();
+      print('${_googleSignIn.currentUser.email.toString()}');
+      print('${_googleSignIn.currentUser.displayName.toString()}');
+      // await callLoginApi(
+      //     email: _googleSignIn.currentUser.email.toString(),
+      //     social_type: 'google',
+      //     fullname: _googleSignIn.currentUser.displayName.toString(),
+      //     social_id: _googleSignIn.currentUser.id.toString());
+      _handleSignOut();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> _handleSignOut() => _googleSignIn.disconnect();
 }

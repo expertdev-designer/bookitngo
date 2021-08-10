@@ -8,7 +8,7 @@ import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:book_it/DataSample/HotelListData.dart';
 import 'package:book_it/DataSample/travelModelData.dart';
@@ -58,78 +58,78 @@ class _exploreTripState extends State<exploreTrip> {
 
   @override
   Widget build(BuildContext context) {
-    Future getCarouselWidget() async {
-      var firestore = Firestore.instance;
-      QuerySnapshot qn = await firestore.collection("banner").getDocuments();
-      return qn.documents;
-    }
+    // Future getCarouselWidget() async {
+    //   var firestore = Firestore.instance;
+    //   QuerySnapshot qn = await firestore.collection("banner").getDocuments();
+    //   return qn.documents;
+    // }
 
-    var _sliderImage = Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: CarouselSlider(
-        options: CarouselOptions(
-          height: 190,
-          aspectRatio: 24 / 24,
-          viewportFraction: 0.9,
-          initialPage: 0,
-          enableInfiniteScroll: true,
-          reverse: false,
-          autoPlay: true,
-          autoPlayInterval: Duration(seconds: 3),
-          autoPlayAnimationDuration: Duration(milliseconds: 800),
-          autoPlayCurve: Curves.fastOutSlowIn,
-          enlargeCenterPage: true,
-          scrollDirection: Axis.horizontal,
-        ),
-        items: [0, 1, 2, 3].map((i) {
-          return FutureBuilder(
-              future: getCarouselWidget(),
-              builder: (context, AsyncSnapshot snapshot) {
-                if (!snapshot.hasData) {
-                  return new Container(
-                    height: 190.0,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                " dehttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
-                            fit: BoxFit.cover)),
-                  );
-                }
-
-                // List<String> ingredients =
-                //     List.from(snapshot.data[i].data['ingredients']);
-                // List<String> directions =
-                //     List.from(snapshot.data[i].data['directions']);
-                // String title = snapshot.data[i].data['title'].toString();
-                // num rating = snapshot.data[i].data['rating'];
-                // String category = snapshot.data[i].data['category'].toString();
-                // String image = snapshot.data[i].data['image'].toString();
-                // String id = snapshot.data[i].data['id'].toString();
-                // String time = snapshot.data[i].data['time'].toString();
-                // String calorie = snapshot.data[i].data['calorie'].toString();
-                return InkWell(
-                  onTap: () {},
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                              blurRadius: 9.0,
-                              spreadRadius: 7.0,
-                              color: Colors.black12.withOpacity(0.03))
-                        ],
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                snapshot.data[i].data["imageBanner"]),
-                            fit: BoxFit.cover),
-                        color: Color(0xFF23252E)),
-                  ),
-                );
-              });
-        }).toList(),
-      ),
-    );
+    // var _sliderImage = Padding(
+    //   padding: const EdgeInsets.only(top: 20.0),
+    //   child: CarouselSlider(
+    //     options: CarouselOptions(
+    //       height: 190,
+    //       aspectRatio: 24 / 24,
+    //       viewportFraction: 0.9,
+    //       initialPage: 0,
+    //       enableInfiniteScroll: true,
+    //       reverse: false,
+    //       autoPlay: true,
+    //       autoPlayInterval: Duration(seconds: 3),
+    //       autoPlayAnimationDuration: Duration(milliseconds: 800),
+    //       autoPlayCurve: Curves.fastOutSlowIn,
+    //       enlargeCenterPage: true,
+    //       scrollDirection: Axis.horizontal,
+    //     ),
+    //     items: [0, 1, 2, 3].map((i) {
+    //       return FutureBuilder(
+    //           future: getCarouselWidget(),
+    //           builder: (context, AsyncSnapshot snapshot) {
+    //             if (!snapshot.hasData) {
+    //               return new Container(
+    //                 height: 190.0,
+    //                 width: MediaQuery.of(context).size.width,
+    //                 decoration: BoxDecoration(
+    //                     image: DecorationImage(
+    //                         image: NetworkImage(
+    //                             " dehttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
+    //                         fit: BoxFit.cover)),
+    //               );
+    //             }
+    //
+    //             // List<String> ingredients =
+    //             //     List.from(snapshot.data[i].data['ingredients']);
+    //             // List<String> directions =
+    //             //     List.from(snapshot.data[i].data['directions']);
+    //             // String title = snapshot.data[i].data['title'].toString();
+    //             // num rating = snapshot.data[i].data['rating'];
+    //             // String category = snapshot.data[i].data['category'].toString();
+    //             // String image = snapshot.data[i].data['image'].toString();
+    //             // String id = snapshot.data[i].data['id'].toString();
+    //             // String time = snapshot.data[i].data['time'].toString();
+    //             // String calorie = snapshot.data[i].data['calorie'].toString();
+    //             return InkWell(
+    //               onTap: () {},
+    //               child: Container(
+    //                 width: MediaQuery.of(context).size.width,
+    //                 decoration: BoxDecoration(
+    //                     boxShadow: [
+    //                       BoxShadow(
+    //                           blurRadius: 9.0,
+    //                           spreadRadius: 7.0,
+    //                           color: Colors.black12.withOpacity(0.03))
+    //                     ],
+    //                     image: DecorationImage(
+    //                         image: NetworkImage(
+    //                             snapshot.data[i].data["imageBanner"]),
+    //                         fit: BoxFit.cover),
+    //                     color: Color(0xFF23252E)),
+    //               ),
+    //             );
+    //           });
+    //     }).toList(),
+    //   ),
+    // );
 
     double _height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -144,65 +144,65 @@ class _exploreTripState extends State<exploreTrip> {
                   Stack(
                     children: <Widget>[
                       //      _sliderImage,
-                      Container(
-                        height: 292.0,
-                        child: new Carousel(
-                          boxFit: BoxFit.cover,
-                          dotColor: Colors.white.withOpacity(0.8),
-                          dotSize: 5.5,
-                          dotSpacing: 16.0,
-                          dotBgColor: Colors.transparent,
-                          showIndicator: true,
-                          overlayShadow: true,
-                          overlayShadowColors: Colors.white.withOpacity(0.9),
-                          overlayShadowSize: 0.9,
-                          images: [0, 1, 2, 3].map((i) {
-                            return FutureBuilder(
-                                future: getCarouselWidget(),
-                                builder: (context, AsyncSnapshot snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return new Container(
-                                      height: 190.0,
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: NetworkImage(
-                                                  "jkghttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
-                                              fit: BoxFit.cover)),
-                                    );
-                                  }
-                                  return InkWell(
-                                    onTap: () {},
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: FractionalOffset(0.0, 0.0),
-                                          end: FractionalOffset(0.0, 1.0),
-                                          stops: [0.0, 1.0],
-                                          colors: <Color>[
-                                            Color(0x00FFFFFF),
-                                            Color(0xFFFFFFFF),
-                                          ],
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              blurRadius: 9.0,
-                                              spreadRadius: 7.0,
-                                              color: Colors.black12
-                                                  .withOpacity(0.03))
-                                        ],
-                                        image: DecorationImage(
-                                            image: NetworkImage(snapshot
-                                                .data[i].data["imageBanner"]),
-                                            fit: BoxFit.cover),
-                                      ),
-                                    ),
-                                  );
-                                });
-                          }).toList(),
-                        ),
-                      ),
+                      // Container(
+                      //   height: 292.0,
+                      //   child: new Carousel(
+                      //     boxFit: BoxFit.cover,
+                      //     dotColor: Colors.white.withOpacity(0.8),
+                      //     dotSize: 5.5,
+                      //     dotSpacing: 16.0,
+                      //     dotBgColor: Colors.transparent,
+                      //     showIndicator: true,
+                      //     overlayShadow: true,
+                      //     overlayShadowColors: Colors.white.withOpacity(0.9),
+                      //     overlayShadowSize: 0.9,
+                      //     images: [0, 1, 2, 3].map((i) {
+                      //       return FutureBuilder(
+                      //           future: getCarouselWidget(),
+                      //           builder: (context, AsyncSnapshot snapshot) {
+                      //             if (!snapshot.hasData) {
+                      //               return new Container(
+                      //                 height: 190.0,
+                      //                 width: MediaQuery.of(context).size.width,
+                      //                 decoration: BoxDecoration(
+                      //                     image: DecorationImage(
+                      //                         image: NetworkImage(
+                      //                             "jkghttps://firebasestorage.googleapis.com/v0/b/recipeadmin-9b5fb.appspot.com/o/chef.png?alt=media&token=fa89a098-7e68-45d6-b58d-0cfbaef189cc"),
+                      //                         fit: BoxFit.cover)),
+                      //               );
+                      //             }
+                      //             return InkWell(
+                      //               onTap: () {},
+                      //               child: Container(
+                      //                 width: MediaQuery.of(context).size.width,
+                      //                 decoration: BoxDecoration(
+                      //                   gradient: LinearGradient(
+                      //                     begin: FractionalOffset(0.0, 0.0),
+                      //                     end: FractionalOffset(0.0, 1.0),
+                      //                     stops: [0.0, 1.0],
+                      //                     colors: <Color>[
+                      //                       Color(0x00FFFFFF),
+                      //                       Color(0xFFFFFFFF),
+                      //                     ],
+                      //                   ),
+                      //                   boxShadow: [
+                      //                     BoxShadow(
+                      //                         blurRadius: 9.0,
+                      //                         spreadRadius: 7.0,
+                      //                         color: Colors.black12
+                      //                             .withOpacity(0.03))
+                      //                   ],
+                      //                   image: DecorationImage(
+                      //                       image: NetworkImage(snapshot
+                      //                           .data[i].data["imageBanner"]),
+                      //                       fit: BoxFit.cover),
+                      //                 ),
+                      //               ),
+                      //             );
+                      //           });
+                      //     }).toList(),
+                      //   ),
+                      // ),
                       Container(
                         height: 292.0,
                         decoration: BoxDecoration(

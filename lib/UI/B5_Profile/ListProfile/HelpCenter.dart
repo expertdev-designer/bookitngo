@@ -1,9 +1,8 @@
-import 'package:book_it/UI/B5_Profile/bloc/CallCenterBloc.dart';
-import 'package:book_it/UI/Utills/AppConstantHelper.dart';
-import 'package:book_it/UI/Utills/AppStrings.dart';
-import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
+import 'ExpansionTileWidget.dart';
+import 'HelpCenterDetail.dart';
 
 class helpCenter extends StatefulWidget {
   @override
@@ -14,37 +13,45 @@ class _helpCenterState extends State<helpCenter>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
 
+  List<String> gettingStartedSub = ["How it Works"];
+
+  List<String> travellingSub = ["How to Travel", "How to Host"];
+
   List<String> gettingStarted = [
-"How to Create an account","What are the requirement to book on Bookit N Go","How do I submit reservation request","Who can host on Bookit N Go?"
+    "How to Create an account",
+    "What are the requirement to book on Bookit N Go",
+    "How do I submit reservation request",
+    "Who can host on Bookit N Go?"
   ];
   List<String> accountProfile = [
     "Accessing the account profile",
     "Owner account profile - Basic (free)",
-   " Owner account profile - Pro (paid)",
+    " Owner account profile - Pro (paid)",
     "Admin account profile",
     "Member account profile",
   ];
   List<String> hosting = [
-  "What happens if my guest cancels?",
-  "How do I refund my guest?",
-  "How do I cancel a reservation as a host of a place to stay?",
-  "As a host, what penalties apply if I cancel a reservation for a stay?",
-  "When you’ll get your payout",
+    "What happens if my guest cancels?",
+    "How do I refund my guest?",
+    "How do I cancel a reservation as a host of a place to stay?",
+    "As a host, what penalties apply if I cancel a reservation for a stay?",
+    "When you’ll get your payout",
   ];
   List<String> travelling = [
-   " Searching and booking",
+    " Searching and booking",
     "Search tips",
     "Booking places to stay",
-  "  Booking Airbnb Experiences",
-   " Booking business travel and events",
-   " Booking Airbnb.org stays",
+    "  Booking Airbnb Experiences",
+    " Booking business travel and events",
+    " Booking Airbnb.org stays",
     "Messaging",
   ];
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    print(travellingSub.length);
   }
 
   @override
@@ -63,7 +70,7 @@ class _helpCenterState extends State<helpCenter>
         children: [
           searchBarViewWidget(),
           tabBarWidget(),
-          tabBarViewWidget(),
+          tabBarViewWidget(context),
         ],
       ),
     );
@@ -106,8 +113,10 @@ class _helpCenterState extends State<helpCenter>
               hintText:
                   'Search for anything(booking a place,getting paid,reviews)',
               hintStyle: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width / 39,
-                  color: Colors.grey,fontFamily: "Sofia",),
+                fontSize: MediaQuery.of(context).size.width / 39,
+                color: Colors.grey,
+                fontFamily: "Sofia",
+              ),
               border: InputBorder.none,
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -130,9 +139,11 @@ class _helpCenterState extends State<helpCenter>
           child: Text(
             "Suggested Helps List",
             style: TextStyle(
-                color: Colors.black,
-                fontSize: MediaQuery.of(context).size.width / 20,
-                fontWeight: FontWeight.bold,fontFamily: "Sofia",),
+              color: Colors.black,
+              fontSize: MediaQuery.of(context).size.width / 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: "Sofia",
+            ),
           ),
         ),
         Padding(
@@ -179,35 +190,80 @@ class _helpCenterState extends State<helpCenter>
     );
   }
 
-  tabBarViewWidget() {
+  tabBarViewWidget(BuildContext tabbarcontext) {
     return Expanded(
       child: Container(
-          //height: MediaQuery.of(context).size.height - 50.0,
           width: MediaQuery.of(context).size.width,
           child: TabBarView(controller: _tabController, children: [
-            gettingStartedTabBarWidget(gettingStarted),
-            gettingStartedTabBarWidget(accountProfile),
-            gettingStartedTabBarWidget(hosting),
-            gettingStartedTabBarWidget(travelling),
+            tabBarDataWidget(context, gettingStarted, gettingStartedSub,
+                gettingStartedSub.length),
+            tabBarDataWidget(context, accountProfile, gettingStartedSub,
+                gettingStartedSub.length),
+            tabBarDataWidget(
+                context, hosting, gettingStartedSub, gettingStartedSub.length),
+            tabBarDataWidget(
+                context, travelling, travellingSub, travellingSub.length),
           ])),
+    );
+  }
+
+  Widget tabBarDataWidget(
+      BuildContext context, var gettingStarted, var heading, int length) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: length,
+          itemBuilder: (BuildContext context, int index) {
+            return ExpansionTileWidget(
+              // key: cardA,
+              shadowColor: Colors.white,
+              elevation: 0.0,
+              initialElevation: 0.0,
+              expandedTextColor: Colors.black,
+              leading: CircleAvatar(
+                  child: Icon(
+                Icons.circle,
+                size: 10,
+              )),
+              title: Text(heading[0]),
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: gettingStartedTabBarWidget(gettingStarted),
+                ),
+              ],
+            );
+          }),
     );
   }
 
   gettingStartedTabBarWidget(var data) {
     return Container(
-      padding: const EdgeInsets.only( top: 10),
+      padding: const EdgeInsets.only(top: 3),
       child: ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemCount: data.length,
           itemBuilder: (context, index) {
             return ListTile(
-              leading: SvgPicture.asset("assets/image/images/doc.svg",width: 30,height: 30),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HelpCenterDetail(
+                      heading: data[index].toString(),
+                    ),
+                  ),
+                );
+              },
+              leading: SvgPicture.asset("assets/image/images/doc.svg",
+                  width: 30, height: 30),
               title: Transform(
                 transform: Matrix4.translationValues(-20, 0.0, 0.0),
                 child: Text(data[index]),
               ),
-              isThreeLine: false,
             );
           }),
     );

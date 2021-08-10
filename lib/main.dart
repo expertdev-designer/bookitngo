@@ -11,6 +11,7 @@ import 'UI/Bottom_Nav_Bar/bottomNavBar.dart';
 import 'Web/LoginSign/WebSignInSignUpPage.dart';
 
 void main() {
+  SharedPreferences.setMockInitialValues({});
   HttpOverrides.global = new MyHttpOverrides();
   runApp(splash());
 }

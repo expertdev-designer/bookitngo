@@ -192,7 +192,7 @@ class _HomeState extends State<Home> {
       child: InkWell(
         onTap: () => Navigator.of(context).push(PageRouteBuilder(
           pageBuilder: (_, __, ___) => new Search(
-            userId: widget.userID,
+            userId: "",
           ),
           transitionsBuilder:
               (_, Animation<double> animation, __, Widget child) {
@@ -874,39 +874,45 @@ class _HomeState extends State<Home> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 43.0,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(9.0)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12.withOpacity(0.1),
-                  spreadRadius: 1.0,
-                  blurRadius: 3.0,
-                )
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 15.0),
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.search,
-                    color: Color(0xFF09314F),
-                    size: 25.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text("Find what you want",
-                        style: TextStyle(
-                            color: Colors.black26,
-                            fontFamily: "Gotik",
-                            fontWeight: FontWeight.w300,
-                            fontSize: 15.0)),
-                  ),
+          InkWell(
+          onTap: () => Navigator.of(context).push(PageRouteBuilder(
+      pageBuilder: (_, __, ___) => new Search(
+        userId: "",
+      ),),),
+            child: Container(
+              height: 43.0,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(9.0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12.withOpacity(0.1),
+                    spreadRadius: 1.0,
+                    blurRadius: 3.0,
+                  )
                 ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15.0),
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.search,
+                      color: Color(0xFF09314F),
+                      size: 25.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text("Find what you want",
+                          style: TextStyle(
+                              color: Colors.black26,
+                              fontFamily: "Gotik",
+                              fontWeight: FontWeight.w300,
+                              fontSize: 15.0)),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
