@@ -1,3 +1,8 @@
+import 'package:book_it/UI/B5_Profile/bloc/CallCenterBloc.dart';
+import 'package:book_it/UI/B5_Profile/bloc/HelpCenterBloc.dart';
+import 'package:book_it/UI/B5_Profile/model/HelpCenterResponse.dart';
+import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -47,11 +52,34 @@ class _helpCenterState extends State<helpCenter>
     "Messaging",
   ];
 
+  HelpCenterBloc _helpCenterBloc;
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+
+    _helpCenterBloc = HelpCenterBloc();
+    _tabController = TabController(length: 5, vsync: this);
     print(travellingSub.length);
+
+    fetchHelpCenterData();
+  }
+
+  fetchHelpCenterData() {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        _helpCenterBloc.callHelpCenterApi();
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check your internet connection!");
+            });
+      }
+    });
   }
 
   @override
@@ -66,11 +94,33 @@ class _helpCenterState extends State<helpCenter>
           style: TextStyle(fontFamily: "Sofia"),
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          searchBarViewWidget(),
-          tabBarWidget(),
-          tabBarViewWidget(context),
+          StreamBuilder<List<HelpData>>(
+              stream: _helpCenterBloc.helpDataStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData &&
+                    snapshot.data != null &&
+                    snapshot.data.length > 0) {
+                  return Column(
+                    children: [
+                      searchBarViewWidget(),
+                      tabBarWidget(snapshot.data),
+                      tabBarViewWidget(context, snapshot.data),
+                    ],
+                  );
+                } else {
+                  return SizedBox();
+                }
+              }),
+          StreamBuilder<bool>(
+            stream: _helpCenterBloc.progressStream,
+            builder: (context, snapshot) {
+              return Center(
+                  child: CommmonProgressIndicator(
+                      snapshot.hasData ? snapshot.data : false));
+            },
+          )
         ],
       ),
     );
@@ -130,7 +180,7 @@ class _helpCenterState extends State<helpCenter>
     );
   }
 
-  tabBarWidget() {
+  tabBarWidget(List<HelpData> helpDataList) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -183,6 +233,13 @@ class _helpCenterState extends State<helpCenter>
                         fontFamily: 'Sofia',
                         fontSize: MediaQuery.of(context).size.width / 32,
                       )),
+                ),
+                Tab(
+                  child: Text('Review',
+                      style: TextStyle(
+                        fontFamily: 'Sofia',
+                        fontSize: MediaQuery.of(context).size.width / 32,
+                      )),
                 )
               ]),
         ),
@@ -190,62 +247,66 @@ class _helpCenterState extends State<helpCenter>
     );
   }
 
-  tabBarViewWidget(BuildContext tabbarcontext) {
+  tabBarViewWidget(BuildContext tabbarcontext, List<HelpData> helpDataList) {
     return Expanded(
       child: Container(
           width: MediaQuery.of(context).size.width,
-          child: TabBarView(controller: _tabController, children: [
-            tabBarDataWidget(context, gettingStarted, gettingStartedSub,
-                gettingStartedSub.length),
-            tabBarDataWidget(context, accountProfile, gettingStartedSub,
-                gettingStartedSub.length),
-            tabBarDataWidget(
-                context, hosting, gettingStartedSub, gettingStartedSub.length),
-            tabBarDataWidget(
-                context, travelling, travellingSub, travellingSub.length),
-          ])),
+          child: TabBarView(
+            controller: _tabController,
+            children: helpDataList
+                .map((helpDataList) =>
+                    tabBarDataWidget(context: context, helpData: helpDataList))
+                .toList(),
+          )),
     );
   }
 
-  Widget tabBarDataWidget(
-      BuildContext context, var gettingStarted, var heading, int length) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: length,
-          itemBuilder: (BuildContext context, int index) {
-            return ExpansionTileWidget(
-              // key: cardA,
-              shadowColor: Colors.white,
-              elevation: 0.0,
-              initialElevation: 0.0,
-              expandedTextColor: Colors.black,
-              leading: CircleAvatar(
-                  child: Icon(
-                Icons.circle,
-                size: 10,
-              )),
-              title: Text(heading[0]),
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: gettingStartedTabBarWidget(gettingStarted),
-                ),
-              ],
-            );
-          }),
-    );
+  Widget tabBarDataWidget({BuildContext context, HelpData helpData}) {
+    return helpData.questions != null && helpData.questions.length > 0
+        ? questionsWidget(helpData.questions)
+        : ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16.0),
+            itemCount:
+                helpData.subCategory != null && helpData.subCategory.length > 0
+                    ? helpData.subCategory.length
+                    : 0,
+            itemBuilder: (BuildContext context, int index) {
+              return ExpansionTileWidget(
+                // key: cardA,
+
+                shadowColor: Colors.white,
+                elevation: 0.0,
+                initialElevation: 0.0,
+                expandedTextColor: Colors.black,
+                leading: CircleAvatar(
+                    child: Icon(
+                  Icons.circle,
+                  size: 10,
+                )),
+                title: Text(helpData.subCategory[index].name),
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child:
+                        questionsWidget(helpData.subCategory[index].questions),
+                  ),
+                ],
+              );
+            });
   }
 
-  gettingStartedTabBarWidget(var data) {
+  questionsWidget(List<Questions> questions) {
     return Container(
       padding: const EdgeInsets.only(top: 3),
       child: ListView.builder(
+          padding: EdgeInsets.zero,
+          physics: NeverScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          itemCount: data.length,
+          itemCount: questions.length,
           itemBuilder: (context, index) {
             return ListTile(
               onTap: () {
@@ -253,7 +314,8 @@ class _helpCenterState extends State<helpCenter>
                   context,
                   MaterialPageRoute(
                     builder: (context) => HelpCenterDetail(
-                      heading: data[index].toString(),
+                      heading: questions[index].question,
+                      detail: questions[index].answer,
                     ),
                   ),
                 );
@@ -262,7 +324,7 @@ class _helpCenterState extends State<helpCenter>
                   width: 30, height: 30),
               title: Transform(
                 transform: Matrix4.translationValues(-20, 0.0, 0.0),
-                child: Text(data[index]),
+                child: Text(questions[index].question),
               ),
             );
           }),

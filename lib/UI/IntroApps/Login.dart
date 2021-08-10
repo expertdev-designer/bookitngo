@@ -1,12 +1,14 @@
+import 'dart:convert';
+
 import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
-import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+// import 'package:google_sign_in/google_sign_in.dart';
 import 'ForgotPassword.dart';
 import 'SignUp.dart';
 import 'login_bloc/LoginBloc.dart';
@@ -35,11 +37,13 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
   final String redirectUrl = 'https://smarttersstudio.com';
   final String clientId = '78el5r2y1dwp4j ';
   final String clientSecret = 'RnyXiCNz3cahNx1g ';
+
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: [
       'email',
     ],
   );
+
   @override
 
   /// set state animation controller
@@ -364,86 +368,6 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                               autoValidation = true;
                             }
                             return false;
-                            // SharedPreferences prefs;
-                            // prefs =
-                            //     await SharedPreferences.getInstance();
-                            // final formState =
-                            //     _registerFormKey.currentState;
-                            // FirebaseUser user;
-                            // if (formState.validate()) {
-                            //   formState.save();
-                            //   try {
-                            //     prefs.setString("username", _email);
-                            //     prefs.setString("id", _id);
-                            //     user = await FirebaseAuth.instance
-                            //         .signInWithEmailAndPassword(
-                            //       email: _email,
-                            //       password: _pass,
-                            //     );
-                            //
-                            //     setState(() {
-                            //       isLoading = true;
-                            //     });
-                            //     // user.sendEmailVerification();
-                            //
-                            //   } catch (e) {
-                            //     print('Error: $e');
-                            //     CircularProgressIndicator();
-                            //     print(e.message);
-                            //     print(_email);
-                            //
-                            //     print(_pass);
-                            //   } finally {
-                            //     if (user != null) {
-                            //       user = await FirebaseAuth.instance
-                            //           .signInWithEmailAndPassword(
-                            //             email: _email,
-                            //             password: _pass,
-                            //           )
-                            //           .then((currentUser) => Firestore
-                            //               .instance
-                            //               .collection("users")
-                            //               .document(currentUser.uid)
-                            //               .get()
-                            //               .then((DocumentSnapshot
-                            //                       result) =>
-                            //                   Navigator.of(context)
-                            //                       .pushReplacement(
-                            //                           PageRouteBuilder(
-                            //                               pageBuilder: (_,
-                            //                                       __,
-                            //                                       ___) =>
-                            //                                   new mainSelection(
-                            //                                     userID:
-                            //                                         currentUser.uid,
-                            //                                   ))))
-                            //               .catchError(
-                            //                   (err) => print(err)))
-                            //           .catchError((err) => print(err));
-                            //     } else {
-                            //       showDialog(
-                            //           context: context,
-                            //           builder: (BuildContext context) {
-                            //             return AppConstantHelper.showDialog(
-                            //                 context: context,
-                            //                 title: "Login Failed",
-                            //                 msg:
-                            //                     "Please check your password and try again!");
-                            //           });
-                            //     }
-                            //   }
-                            // } else {
-                            //   showDialog(
-                            //       context: context,
-                            //       builder: (BuildContext context) {
-                            //         return AppConstantHelper.showDialog(
-                            //             context: context,
-                            //             title: "Error",
-                            //             msg:
-                            //                 "Please check your email and password");
-                            //       });
-                            // }
-                            // ;
                           },
                           child: Container(
                             height: 55.0,
@@ -528,7 +452,9 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
                             width: 20,
                           ),
                           socialMediaIconWidget(
-                              context, "assets/image/images/g_wb.svg", ()=>_googleButtonOnClick()),
+                              context,
+                              "assets/image/images/g_wb.svg",
+                              () => _googleButtonOnClick()),
                           SizedBox(
                             width: 20,
                           ),
@@ -593,50 +519,77 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
   }
 
   Future<void> _facebookButtonOnClick() async {
-    final fb = FacebookLogin();
-// Log in
-    final res = await fb.logIn(permissions: [
-      FacebookPermission.publicProfile,
-      FacebookPermission.email,
-    ]);
-
-// Check result status
-    switch (res.status) {
-      case FacebookLoginStatus.success:
-        // Logged in
-
-        // Send access token to server for validation and auth
-        final FacebookAccessToken accessToken = res.accessToken;
-        print('Access token: ${accessToken.token}');
-
-        // Get profile data
-        final profile = await fb.getUserProfile();
-        print('Hello, ${profile.name}! Your ID: ${profile.userId}');
-
-        // Get user profile image url
-        final imageUrl = await fb.getProfileImageUrl(width: 100);
-        print('Your profile image: $imageUrl');
-
-        // Get email (since we request email permission)
-        final email = await fb.getUserEmail();
-        // But user can decline permission
-        if (email != null) print('And your email is $email');
-        // await callLoginApi(
-        //     email: email,
-        //     social_id: profile.userId,
-        //     fullname: profile.name,
-        //     social_type: 'facebook');
-        fb.logOut();
-        break;
-      case FacebookLoginStatus.cancel:
-        // User cancel log in
-        break;
-      case FacebookLoginStatus.error:
-        // Log in failed
-        print('Error while log in: ${res.error}');
-        // Utils.showErrorSnackBar(message: '${res.error}', context: context);
-        break;
+    final LoginResult result = await FacebookAuth.instance.login(
+      permissions: ['public_profile', 'email'],
+    );
+    print("Facebook ************${result.accessToken.token}");
+    print("status" + result.status.toString());
+    if (result.status == LoginStatus.success) {
+      String name, email, fbId;
+      final userData = await FacebookAuth.i.getUserData().then((value) {
+        value.forEach((key, value) {
+          print('Key = $key : Value = $value');
+          if (key == "name") {
+            name = value;
+          } else if (key == "id") {
+            fbId = value;
+          } else if (key == "email") {
+            email = value;
+          }
+          print("fbname $name");
+          print("fbId $fbId");
+          print("fbemail $email");
+          // call social api here........
+        });
+      }).onError((error, stackTrace) {
+        print("Error $error}");
+        return error;
+      });
     }
+//     final fb = FacebookLogin();
+// // Log in
+//     final res = await fb.logIn(permissions: [
+//       // FacebookPermission.publicProfile,
+//       FacebookPermission.email,
+//     ]);
+//
+// // Check result status
+//     switch (res.status) {
+//       case FacebookLoginStatus.success:
+//         // Logged in
+//
+//         // Send access token to server for validation and auth
+//         final FacebookAccessToken accessToken = res.accessToken;
+//         print('Access token: ${accessToken.token}');
+//
+//         // Get profile data
+//         final profile = await fb.getUserProfile();
+//         print('Hello, ${profile.name}! Your ID: ${profile.userId}');
+//
+//         // Get user profile image url
+//         final imageUrl = await fb.getProfileImageUrl(width: 100);
+//         print('Your profile image: $imageUrl');
+//
+//         // Get email (since we request email permission)
+//         final email = await fb.getUserEmail();
+//         // But user can decline permission
+//         if (email != null) print('And your email is $email');
+//         // await callLoginApi(
+//         //     email: email,
+//         //     social_id: profile.userId,
+//         //     fullname: profile.name,
+//         //     social_type: 'facebook');
+//         fb.logOut();
+//         break;
+//       case FacebookLoginStatus.cancel:
+//         // User cancel log in
+//         break;
+//       case FacebookLoginStatus.error:
+//         // Log in failed
+//         print('Error while log in: ${res.error}');
+//         // Utils.showErrorSnackBar(message: '${res.error}', context: context);
+//         break;
+//     }
   }
 
   void _linkedinButtonOnClick() {
@@ -651,7 +604,6 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
     //   print(error.errorDescription);
     // });
   }
-
 
   Future<void> _googleButtonOnClick() async {
     try {
@@ -670,4 +622,22 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
   }
 
   Future<void> _handleSignOut() => _googleSignIn.disconnect();
+
+  void callSocialLoginApi(String email, String password) {
+    AppConstantHelper.checkConnectivity().then((isConnected) {
+      if (isConnected) {
+        _loginBloc.doLogin(
+            username: email, password: password.trim(), context: context);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppConstantHelper.showDialog(
+                  context: context,
+                  title: "Network Error",
+                  msg: "Please check internet connection!");
+            });
+      }
+    });
+  }
 }

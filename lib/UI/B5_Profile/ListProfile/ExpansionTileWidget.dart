@@ -288,6 +288,7 @@ class ExpansionTileWidgetState extends State<ExpansionTileWidget>
         elevation: _elevation.value,
         shadowColor: widget.shadowColor,
         child: Container(
+          margin: EdgeInsets.only(bottom: _isExpanded?0:14),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[

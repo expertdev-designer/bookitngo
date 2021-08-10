@@ -11,6 +11,7 @@ import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/HotelMapLi
 import 'package:book_it/UI/B1_Home/Hotel/Hotel_Detail_Concept_2/model/HotelRoomListingResponse.dart';
 import 'package:book_it/UI/B3_Trips/model/DiscoverNewPlacesResponse.dart';
 import 'package:book_it/UI/B4_Booking/model/BookingHistoryResponse.dart';
+import 'package:book_it/UI/B5_Profile/model/HelpCenterResponse.dart';
 import 'package:book_it/UI/B5_Profile/model/PaymentCardResponse.dart';
 import 'package:book_it/UI/IntroApps/model/CategoriesResponse.dart';
 import 'package:book_it/UI/IntroApps/model/LoginResponse.dart';
@@ -128,6 +129,15 @@ class ApiRepository {
     print("callCenterApi" + response.toString());
     Map<String, dynamic> data = jsonDecode(response.toString());
     return CommonResponse.fromJson(data);
+  }
+
+  /*................... help Center api ..........*/
+
+  Future<HelpCenterResponse> callHelpCenterApi() async {
+    var response = await _dio.get(base_url + ApiEndPoints.helpCenter);
+    print("helpCenterApi" + response.toString());
+    Map<String, dynamic> data = jsonDecode(response.toString());
+    return HelpCenterResponse.fromJson(data);
   }
 
   /*................... get Category api ..........*/

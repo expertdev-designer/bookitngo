@@ -47,17 +47,6 @@ class LoginBloc {
       } else if (onResponse.status) {
         setLocalStorage(onResponse.data);
         if (kIsWeb) {
-          // Navigator.of(context).pushReplacement(PageRouteBuilder(
-          //     pageBuilder: (_, __, ___) => WebDashBoardPage(),
-          //     transitionDuration: Duration(milliseconds: 2000),
-          //     transitionsBuilder:
-          //         (_, Animation<double> animation, __, Widget child) {
-          //       return Opacity(
-          //         opacity: animation.value,
-          //         child: child,
-          //       );
-          //     }));
-
           Navigator.of(context).pushReplacement(PageRouteBuilder(
               pageBuilder: (_, __, ___) => new WebCategorySelectionPage(
                     token: onResponse.data.accessToken,
@@ -104,7 +93,12 @@ class LoginBloc {
   }
 
   void register(
-      {String email, String firstName,String lastName,String dob, String password, BuildContext context}) {
+      {String email,
+      String firstName,
+      String lastName,
+      String dob,
+      String password,
+      BuildContext context}) {
     progressSink.add(true);
     apiRepository
         .registerApi(
@@ -124,10 +118,8 @@ class LoginBloc {
         setLocalStorageAfterRegister(onResponse.data);
         Navigator.of(context).pushReplacement(PageRouteBuilder(
             pageBuilder: (_, __, ___) => new CategorySelectionPage(
-              userID: onResponse.data.accessToken,
-            )));
-        // showErrorDialog(context, "Congratulations!!!",
-        //     "Thanks for creating the account with us. We have sent you a mail on your registered email account. Please follow the steps in the mail to complete the sign up process.");
+                  userID: onResponse.data.accessToken,
+                )));
       }
       progressSink.add(false);
     }).catchError((onError) {
@@ -172,7 +164,7 @@ class LoginBloc {
   }
 
   setLocalStorageAfterRegister(RegisterData onResponse) {
-    LocalStorage.setUserName(onResponse.firstName ).then((sucess) {
+    LocalStorage.setUserName(onResponse.firstName).then((sucess) {
       LocalStorage.setUserAuthToken(onResponse.accessToken);
       LocalStorage.setEmail(onResponse.emailId.toString());
       LocalStorage.setUserImage(onResponse.userImage.toString());
@@ -195,7 +187,6 @@ class LoginBloc {
       print('UserImage...........$image');
     });
   }
-
 
 //
 }
