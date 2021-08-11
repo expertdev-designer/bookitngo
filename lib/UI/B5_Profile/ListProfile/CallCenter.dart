@@ -156,7 +156,7 @@ class _callCenterState extends State<callCenter> {
                                             } else
                                               return null;
                                           },
-                                          autovalidate: autoValidate,
+                                          autovalidateMode: AutovalidateMode.onUserInteraction,
                                           onChanged: (val) {
                                             setState(() {});
                                           },
@@ -269,7 +269,7 @@ class _callCenterState extends State<callCenter> {
                                               } else
                                                 return null;
                                             },
-                                            autovalidate: autoValidate,
+                                            autovalidateMode: AutovalidateMode.onUserInteraction,
                                             onChanged: (val) {
                                               setState(() {});
                                             },
@@ -379,7 +379,7 @@ class _callCenterState extends State<callCenter> {
                                             } else
                                               return null;
                                           },
-                                          autovalidate: autoValidate,
+                                          autovalidateMode: AutovalidateMode.onUserInteraction,
                                           onChanged: (val) {
                                             setState(() {});
                                           },
@@ -396,6 +396,7 @@ class _callCenterState extends State<callCenter> {
                                                 color: Colors.black54,
                                                 fontFamily: "Sofia",
                                                 height: 1.0),
+                                           errorMaxLines: 3,
                                             hintStyle: TextStyle(
                                                 color: Colors.black38,
                                                 fontFamily: "Sofia",
