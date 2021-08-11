@@ -118,14 +118,17 @@ class ApiRepository {
   }
 
   /*................... call Center api ..........*/
-
   Future<CommonResponse> callCenterApi(
       {String username, String email, String detail}) async {
-    var response = await _dio.post(base_url + ApiEndPoints.callCenter, data: {
+    print('name${username}email${email}feedback$detail');
+    var response = await _dio.get(base_url +
+            '${ApiEndPoints.callCenter}?${"name=$username&email=$email&feedback=$detail"}'
+        /*data: {
       'name': username,
       'email': email,
       'detail': detail,
-    });
+    }*/
+        );
     print("callCenterApi" + response.toString());
     Map<String, dynamic> data = jsonDecode(response.toString());
     return CommonResponse.fromJson(data);
