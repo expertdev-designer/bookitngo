@@ -62,6 +62,14 @@ class _splashState extends State<splash> {
           )
         : */
         MaterialApp(
+          builder: (BuildContext context, Widget child) {
+            final MediaQueryData data = MediaQuery.of(context);
+            return MediaQuery(
+              data: data.copyWith(
+                  textScaleFactor: data.textScaleFactor > 1.0 ? 1.0 : data.textScaleFactor),
+              child: child,
+            );
+          },
       title: "Book It n Go",
       home: SplashScreen(),
       debugShowCheckedModeBanner: false,

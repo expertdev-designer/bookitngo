@@ -60,7 +60,6 @@ class ApiRepository {
   }
 
   /*................... Register api ..........*/
-
   Future<RegisterResponse> registerApi(
       {String firstName,
       String lastName,
