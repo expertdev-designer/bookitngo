@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:book_it/Library/SupportingLibrary/Animation/FadeAnimation.dart';
 import 'package:book_it/UI/Utills/AppConstantHelper.dart';
+import 'package:book_it/UI/Utills/AppStrings.dart';
 import 'package:book_it/UI/Utills/custom_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -11,6 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 import 'ForgotPassword.dart';
 import 'SignUp.dart';
+import 'linkedin/LinkedInLogin.dart';
 import 'login_bloc/LoginBloc.dart';
 
 class Login extends StatefulWidget {
@@ -49,14 +51,15 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
   /// set state animation controller
 
   void initState() {
-    // LinkedInLogin.initialize(context,
-    //     clientId: AppStrings.linkedinClientID,
-    //     clientSecret: AppStrings.linkedinClientSecret,
-    //     redirectUri: redirectUrl);
+    BookitLinkedInLogin.initialize(context,
+        clientId: AppStrings.linkedinClientID,
+        clientSecret: AppStrings.linkedinClientSecret,
+        redirectUri: AppStrings.linkedinRedirectURl);
+
     sanimationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 800))
-          ..addStatusListener((statuss) {
-            if (statuss == AnimationStatus.dismissed) {
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.dismissed) {
               setState(() {
                 tap = 0;
               });
@@ -68,7 +71,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
     super.initState();
   }
 
-  /// Dispose animation controller
+  // Dispose animation controller
   @override
   void dispose() {
     sanimationController.dispose();
@@ -546,63 +549,29 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
         return error;
       });
     }
-//     final fb = FacebookLogin();
-// // Log in
-//     final res = await fb.logIn(permissions: [
-//       // FacebookPermission.publicProfile,
-//       FacebookPermission.email,
-//     ]);
-//
-// // Check result status
-//     switch (res.status) {
-//       case FacebookLoginStatus.success:
-//         // Logged in
-//
-//         // Send access token to server for validation and auth
-//         final FacebookAccessToken accessToken = res.accessToken;
-//         print('Access token: ${accessToken.token}');
-//
-//         // Get profile data
-//         final profile = await fb.getUserProfile();
-//         print('Hello, ${profile.name}! Your ID: ${profile.userId}');
-//
-//         // Get user profile image url
-//         final imageUrl = await fb.getProfileImageUrl(width: 100);
-//         print('Your profile image: $imageUrl');
-//
-//         // Get email (since we request email permission)
-//         final email = await fb.getUserEmail();
-//         // But user can decline permission
-//         if (email != null) print('And your email is $email');
-//         // await callLoginApi(
-//         //     email: email,
-//         //     social_id: profile.userId,
-//         //     fullname: profile.name,
-//         //     social_type: 'facebook');
-//         fb.logOut();
-//         break;
-//       case FacebookLoginStatus.cancel:
-//         // User cancel log in
-//         break;
-//       case FacebookLoginStatus.error:
-//         // Log in failed
-//         print('Error while log in: ${res.error}');
-//         // Utils.showErrorSnackBar(message: '${res.error}', context: context);
-//         break;
-//     }
   }
 
   void _linkedinButtonOnClick() {
-    // LinkedInLogin.getProfile(
-    //         destroySession: true,
-    //         forceLogin: true,
-    //         appBar: AppBar(
-    //           title: Text('Demo Login Page'),
-    //         ))
-    //     .then((profile) => print(profile.toJson().toString()))
-    //     .catchError((error) {
-    //   print(error.errorDescription);
-    // });
+    BookitLinkedInLogin.getProfile(
+        destroySession: true,
+        forceLogin: true,
+        appBar: AppBar(
+          title: Text('Linkedin Login'),
+        )).then((profile) {
+      print(
+          " Linkedin firstName ${profile.firstName.localized.enUs.toString()}");
+      print(" Linkedin lastName ${profile.lastName.localized.enUs.toString()}");
+      print(" Linkedin id ${profile.id.toString()}");
+
+      BookitLinkedInLogin.getEmail().then((value) {
+        value.toJson().forEach((key, value) {
+          print(
+              "Linkedin Email${value.toString().split("emailAddress:")[1].split("}")[0]}");
+        });
+      });
+    }).catchError((error) {
+      print(error.errorDescription);
+    });
   }
 
   Future<void> _googleButtonOnClick() async {

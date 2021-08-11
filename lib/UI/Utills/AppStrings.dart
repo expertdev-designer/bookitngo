@@ -8,9 +8,13 @@ class AppStrings {
   static var userImage = "";
   static var imagePAth = "http://18.217.126.228/server/";
 
-  static var linkedinClientID = '86tgh53q1bmevs';
-  static var linkedinClientSecret = 'QRyKNEg1xQfxsogB';
-  static var linkedinRedirectURl = '';
+  // static var linkedinClientID = '86tgh53q1bmevs';
+  // static var linkedinClientSecret = 'QRyKNEg1xQfxsogB';
+  // static var linkedinRedirectURl = '';
+  //
+  static String linkedinRedirectURl = 'https://www.cozii.ca/';
+  static String linkedinClientID = '86iywglhbco377';
+  static String linkedinClientSecret = 'yFeilzis3gU8dBqa';
 
   static List<SelectedRoomList> selectedRoomList = List();
   static var checkInDate = DateTime.now();

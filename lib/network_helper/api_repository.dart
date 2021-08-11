@@ -93,6 +93,7 @@ class ApiRepository {
         file.path,
         filename: 'images.jpg', //important
       ),
+
     });
     var response = await _dio.post(
         image_base_url + ApiEndPoints.post_api_uploadImage_document,
